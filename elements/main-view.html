@@ -1,0 +1,680 @@
+
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+
+<!-- Iron elements -->
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<!-- Paper elements -->
+<link rel="import" href="../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+
+<link rel="import" href="order/order-view.html">
+<link rel="import" href="product/product-view.html">
+<link rel="import" href="stock/stock-view.html">
+<link rel="import" href="planning/planning-view.html">
+
+<dom-module id="main-view">
+  <template >
+
+  <style>
+      :host {
+        display: block;
+      }
+
+      #drawerToolbar {
+        color: var(--secondary-text-color);
+        background-color: var(--drawer-menu-color);
+
+      }
+
+      #drawerToolbar .logo {
+      height: 55px;
+      background: #FFF;
+      padding: 3px;
+      margin-top: 15px;
+      }
+
+      .app-name {
+        font-family: 'ostrich', sans-serif !important;
+        max-height: 50px;
+        font-size: 35px;
+      }
+
+      #drawerToolbar .logo img{
+            max-height: 60px;
+      }
+
+      paper-menu {
+        padding: 15px 0 !important;
+      }
+
+
+      .paper-menu > .iron-selected {
+        color: var(--default-primary-color);
+      }
+
+      paper-menu a {
+        text-decoration: none;
+        color: var(--menu-link-color);
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -ms-flex-direction: row;
+        -webkit-flex-direction: row;
+        flex-direction: row;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+        font-family: var(--default-font-family);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        font-weight: 400;
+        min-height: 60px;
+        padding: 0 15px;
+        transition : all 0.5s ease;
+        position: relative;
+      }
+
+      paper-menu a span {
+        max-height: 40px;
+        overflow: hidden;
+        max-width: 75%;
+      }
+
+      paper-menu iron-icon {
+        margin-right: 33px;
+        opacity: 0.54;
+      }
+
+      paper-menu a.iron-selected {
+        background: var(--dark-primary-color);
+        color : var(--text-primary-color);
+      }
+
+      paper-menu a.iron-selected iron-icon{
+        opacity: 1;
+      }
+
+      #mainToolbar .middle-container {
+        height: 100%;
+        margin-left: 48px;
+      }
+
+      #mainToolbar:not(.tall) .middle {
+        font-size: 18px;
+        padding-bottom: 0;
+      }
+
+      .clear-btn:hover,
+      .clear-btn:focus {
+        background-color: var(--text-primary-color);
+        color: var(--default-primary-color);
+      }
+
+      /* Height of the scroll area */
+      .content {
+        padding: 15px 15px 0;
+        padding-bottom: 75px;
+      }
+
+      todo-list {
+        margin: 0 auto 32px;
+      }
+
+      todo-list, todo-input {
+        max-width: 1000px;
+      }
+
+      todo-input {
+        margin: 0 auto;
+      }
+
+      .drawer {
+        z-index: 100;
+      }
+
+      html /deep/ #ink {
+        color: var(--menu-link-color);
+      }
+
+      .loader {
+        text-align: center;
+        margin-bottom: 10px;
+        padding:5px;
+        box-radius : 50%;
+      }
+
+      .loader paper-spinner {
+        background: #FFF;
+        padding: 10px;
+        border-radius: 100%;
+        box-shadow: 0px 2px 1px #ddd;
+      }
+
+      .urlTexarea {
+         opacity: 0;
+         width:1px;
+         position: absolute;
+         right:0;
+         top:0;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .MiniStock {
+        position: fixed;
+          bottom: 0;
+          left: 0;
+          z-index: 300;
+          background: #FFF;
+          padding: 5px 5px 0;
+          max-height: 68px;
+          overflow: auto;
+          box-shadow: 0px 0px 15px -3px #888;
+          width: 100%;
+      }
+
+      .MiniStock .item {
+        display: inline-block;
+        background: var(--dark-primary-color);
+        color : var(--text-primary-color);
+        padding: 5px 15px;
+        border-radius: 20px;
+        margin-bottom: 5px;
+      }
+
+      @-webkit-keyframes  alerting {
+          0% { 
+            background-color: red;
+          }
+          30% {
+            background-color :black;
+          }
+          50% { 
+            background-color: red;
+          }
+          70% {
+            background-color :black;
+          }
+          100% { 
+            background-color: red;
+          }
+      }
+
+      @keyframes alerting {
+          0% { 
+            background-color: red;
+          }
+          30% {
+            background-color :black;
+          }
+          50% { 
+            background-color: red;
+          }
+          70% {
+            background-color :black;
+          }
+          100% { 
+            background-color: red;
+          }
+      }
+
+      .MiniStock .item.warning {
+        animation-name: alerting;
+        animation-duration: 4s;
+        -webkit-animation-name: alerting; /* Chrome, Safari, Opera */
+        -webkit-animation-duration: 4s; /* Chrome, Safari, Opera */  
+        background: var(--alert-background);
+        color : var(--alert-color);
+        animation-iteration-count: infinite;
+        -webkit-animation-iteration-count: infinite;        
+      }
+
+      .MiniStock .item.alert {
+        animation-name: alerting;
+        animation-duration: 1s;
+        -webkit-animation-name: alerting; /* Chrome, Safari, Opera */
+        -webkit-animation-duration: 1s; /* Chrome, Safari, Opera */  
+        background: var(--alert-background);
+        color : var(--alert-color);
+        animation-iteration-count: infinite;
+        -webkit-animation-iteration-count: infinite;        
+      }
+
+      .MiniStock .item.stop {
+        background: var(--alert-background);
+        color : var(--alert-color);   
+      }
+
+      .reset {
+        background: var(--alert-background) !important;
+        color : var(--alert-color) !important;   
+      }
+
+      .list a:hover {
+        background: var(--light-primary-color);
+        color : var(--text-primary-color);
+        cursor: pointer;
+      }
+
+  </style>
+
+    <paper-drawer-panel id="paperDrawerPanel">
+      <div drawer class="drawer">
+
+        <!-- Drawer Toolbar -->
+        <paper-toolbar id="drawerToolbar">
+        <!--
+         <div class='logo'>
+          <img src="../images/touch/icon-128x128.png">
+          </div>
+          -->
+        </paper-toolbar>
+
+        <!-- Drawer Content -->
+        <paper-menu class="list" attr-for-selected="data-route" selected="{{page}}">
+
+          <a data-route="order" tabindex="-1" on-tap="closeDrawer">
+            <iron-icon icon="editor:mode-edit"></iron-icon>
+            <span>Commander</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
+          <a data-route="stock" tabindex="-1" on-tap="closeDrawer" >
+            <iron-icon icon="device:storage"></iron-icon>
+            <span>Stock</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
+          <a data-route="planning" tabindex="-1" on-tap="closeDrawer" >
+            <iron-icon icon="icons:today"></iron-icon>
+            <span>Planning</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
+          <a data-route="products" tabindex="-1" on-tap="closeDrawer" >
+            <iron-icon icon="maps:local-pizza"></iron-icon>
+            <span>Products</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
+          <hr />
+
+          <a tabindex="-1" class="reset" on-tap="reset" >
+            <iron-icon icon="icons:block"></iron-icon>
+            <span>Reset</span>
+            <paper-ripple></paper-ripple>
+          </a>          
+
+        </paper-menu>
+      </div>
+      <paper-header-panel main>
+
+        <!-- Main Toolbar -->
+        <paper-toolbar id="mainToolbar">
+        
+          <paper-icon-button id="paperToggle" icon="icons:menu" paper-drawer-toggle ></paper-icon-button>
+          <span class="flex"></span>
+
+          <!-- Application name -->
+          <div class="middle middle-container center horizontal layout flex">
+            <div class="app-name flex">Black Rhino&nbsp;<span>{{page}}</span></div>
+          </div>
+
+        </paper-toolbar>
+
+        <!-- Main Content -->
+        <div class="content">
+
+          <div hidden="{{!loading}}" class="loader"><paper-spinner active></paper-spinner></div>
+
+          <div hidden="{{page}}" class="loader"><paper-spinner active></paper-spinner></div>
+
+          <item-data location="https://black-rhino.firebaseio.com/stocks" items="{{stocks}}" on-connected="_readyFirebaseStocks" ></item-data>
+
+          <stock-view  stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'stock')}}" class="flex" ></stock-view>
+
+          <item-data location="https://black-rhino.firebaseio.com/products" items="{{products}}" on-connected="_readyFirebaseProducts" ></item-data>
+          
+          <product-view hidden="{{!_selectRoute(page, 'products')}}" class="flex" products="{{products}}" ></product-view>
+
+          <item-data location="https://black-rhino.firebaseio.com/plannings" items="{{plannings}}" on-connected="_readyFirebaseOrders" ></item-data>
+
+          <planning-view  plannings="{{plannings}}" hidden="{{!_selectRoute(page, 'planning')}}" class="flex" ></planning-view>
+
+          <item-data location="https://black-rhino.firebaseio.com/orders" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
+
+          <order-view  filter-by="{{searchSchedule}}" stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'order')}}" class="flex" products="{{products}}" orders="{{orders}}" plannings="{{plannings}}" on-selectproduct="_selectproduct" on-deleteitem="_deleteproduct" on-setschedule="_setschedule" ></order-view>
+
+        </div>
+
+        <div class="MiniStock" hidden="{{!stocks.length}}">
+
+          <template  is="dom-repeat" items="{{stocks}}" as="stock" >
+              <div class$="{{ _getStockClass(stock.nb, stock.nbMax, 'item') }}" class="item" hidden="{{!stock.label}}"><b class="title">{{stock.label}}</b>&nbsp;<span>{{ stock.nb }}</span></div>
+          </template>
+
+        </div>
+
+      </paper-header-panel>
+    </paper-drawer-panel>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'main-view',
+      properties: {
+        page: {
+          value : '',
+          notify: true,
+          observer : '_changePage'
+        },
+        total : {
+          type : Number,
+          notify: true
+        },
+        thePlace : {
+          value : false,
+          notify: true,
+        },
+        theTable : {
+          value : false,
+          notify: true,
+        },
+        position : {
+          value : {}
+        },
+        loading : {
+          type: Boolean,
+          value : false,
+          notify: true,
+        }, 
+        path : Object,
+      },
+      _readyFirebaseOrders : function() {
+        if(!this.page) {
+          this.set('page','order');
+        }
+        this.selectRouting();
+        //this.loader();
+      },
+      _readyFirebaseProducts : function() {
+        /*this.selectRouting();
+        this.loader();
+        */
+      },
+      _readyFirebaseStocks : function() {
+
+      },
+      loader : function() {
+
+        if(this.loading) {
+          this.set('loading', false);
+        } else {
+          this.set('loading', true); 
+        }
+
+      },
+      reset : function(e) {
+
+        if(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+
+        this.closeDrawer(e);
+
+        console.log("reset");
+
+        $(this).find('stock-view').get(0).reset();
+        $(this).find('planning-view').get(0).reset();
+        $(this).find('order-view').get(0).reset();
+
+      },
+      _readyCustomers : function() {
+        this._calcTotal();
+      },
+      _getStockClass : function(stocknb, stocknbMax, allclass) {
+
+
+        if( stocknb <= 0) {
+          return 'stop '+allclass;
+        }    
+
+        if( (stocknb/stocknbMax) * 100 < 20) {
+          return 'alert '+allclass;
+        }
+
+        if( (stocknb/stocknbMax) * 100 < 40) {
+          return 'warning '+allclass;
+        }
+
+        return allclass;
+      },
+      sendSMS : function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        $(this).find('#urlTexarea').val(window.location.href);
+        $(this).find('#urlTexarea').select();
+
+        try {
+          var successful = document.execCommand('copy');
+          var msg = successful ? 'successful' : 'unsuccessful';
+          console.log('Copying text command was ' + msg);
+        } catch (err) {
+          console.log('Oops, unable to copy');
+        }
+        $('#toast').prop('text', 'Url copy to clipboard');
+        $('#toast').get(0).show();
+
+        if(window.mobilecheck()) {
+          window.open('sms:?body='+window.location.href, '_system');
+        }
+
+      },
+      _calcTotal : function(e) {
+
+        this.infoTotal = $(this).find('#personView').get(0).infoTotal;
+
+        this.total = this.infoTotal.total;
+        this.paid = this.infoTotal.paid;
+      },
+      _changePage : function(value) {
+        if(value == 'places') {
+          $('#map').trigger('resize');
+        }
+      },
+      _setschedule : function(e) {
+        $(this).find('planning-view').get(0).setschedule(e.detail);
+      },
+      showMenu : function() {
+
+        if($(this).find('#menu-select-element').get(0).show) {
+          $(this).find('#menu-select-element').get(0).cache();
+        } else {
+          $(this).find('#menu-select-element').get(0).showSelect();
+        }
+
+      },
+      associateProduct : function(template, data) {
+        if(data && data.product) {
+          $(this).find('#personView').get(0).associate(data.product);
+        }
+      },
+      changeRouting : function(params) {
+        this.set('path', params);
+        this.selectRouting();
+      },
+      selectRouting : function() {
+
+        if(this.path) {
+          if(this.path.place && !this.thePlace) {
+            this.selectPlace(this.path.place, true);
+          }
+          if(this.path.table && !this.theTable) {
+            this.selectTable(this.path.table, true);
+          }
+        }
+      },
+      selectPlace : function(id, nourl) {
+        if(!nourl) {
+          var nourl = false;
+        }
+
+        if(id) {
+          var searchPlace = _.findWhere(this.places, {__firebaseKey__ : id});
+          if(searchPlace) {
+            this._selectPlace('', searchPlace, nourl);
+          }
+        }
+      },      
+      _selectPlace : function(event, place, nourl) {
+
+        this.set('page','tables');
+
+        if(place && this.thePlace != place) {
+          this.set('thePlace', place);
+          this.set('theTable', '');
+          if(!nourl) {
+            page('/place/'+this.thePlace.__firebaseKey__);
+          }
+        }
+
+      },
+      _deleteTable : function(e) {
+        if(e.detail.table && e.detail.table == this.theTable) {
+          this.theTable = "";
+          this.set('page','tables');
+        }
+      },
+      selectTable : function(id, nourl) {
+
+        if(!nourl) {
+          var nourl = false;
+        }
+
+        if(id) {
+          var searchTable = _.findWhere(this.tables, {__firebaseKey__ : id});
+          if(searchTable) {
+            this._selectTables('', searchTable, nourl);
+          }
+        }
+      },        
+      _selectTables  : function(event, table, nourl) {
+
+        this.set('page','customers');
+
+        if(this.theTable != table) {
+          this.set('theTable', table);
+          if(!nourl) {
+            page('/place/'+this.thePlace.__firebaseKey__+'/table/'+this.theTable.__firebaseKey__);
+          }
+        }
+
+        this._calcTotal();
+
+      },
+      _getTablesUrl: function(thePlace) {
+
+        if(thePlace && thePlace.__firebaseKey__) {
+          var tablesUrl = "https://lanote.firebaseio.com/places/"+thePlace.__firebaseKey__+"/tables";
+
+          if(tablesUrl != this.tablesUrl) {
+            this.loader();
+            this.set('tablesUrl',tablesUrl); 
+            return tablesUrl;
+          } 
+          
+        }
+
+      },
+      _getProductsUrl: function(thePlace) {
+        if(thePlace && thePlace.__firebaseKey__) {
+          return "https://lanote.firebaseio.com/places/"+thePlace.__firebaseKey__+"/products";
+        }
+      },
+      _getCustomersUrl: function(thePlace, table) {
+        if(thePlace && thePlace.__firebaseKey__ && table && table.__firebaseKey__) {
+          return "https://lanote.firebaseio.com/places/"+thePlace.__firebaseKey__+"/tables/"+table.__firebaseKey__+"/customers";
+        }
+      },
+      _getSharedUrl: function(thePlace, table) {
+        if(thePlace && thePlace.__firebaseKey__ && table && table.__firebaseKey__) {
+          return "https://lanote.firebaseio.com/places/"+thePlace.__firebaseKey__+"/tables/"+table.__firebaseKey__+"/shared";
+        }
+      },
+      _showCustomer : function(thePlace, theTable) {
+
+        if(thePlace && theTable) {
+          return true;
+        }
+
+        return false;
+      },
+      _selectRoute : function(info, target) {
+        if(info == target) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      _selectproduct : function(e) {
+
+        this.gestionStock(e.detail, 'add');
+      },
+      _deleteproduct : function(e) {
+        if(product = _.findWhere(this.products, {__firebaseKey__ : e.detail.product_id})) {
+          this.gestionStock(product, 'delete');
+        }
+      },
+      gestionStock : function(produit, type) {
+
+        if(this.stocks) {
+
+          _.each(produit, _.bind(function(nballiment, alliment) {
+            if(product = _.findWhere(this.stocks, {label : alliment}) ) {
+
+              if(type == 'add') {
+                $(this).find('stock-view').get(0).unstock({
+                  label : alliment,
+                  nb : nballiment
+                });
+              } else {
+                $(this).find('stock-view').get(0).stock({
+                  label : alliment,
+                  nb : nballiment
+                });
+              }
+
+            }
+          },this));
+
+        }
+
+      },  
+      // Close drawer after menu item is selected if drawerPanel is narrow
+      closeDrawer: function(e) {
+        e.preventDefault();
+        var drawerPanel = this.$.paperDrawerPanel;
+        if (drawerPanel.narrow) {
+          drawerPanel.closeDrawer();
+        }
+      }      
+    });
+  </script>
+</dom-module>

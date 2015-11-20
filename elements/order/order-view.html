@@ -1,0 +1,185 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="order-list.html">
+<link rel="import" href="../product/product-list.html">
+<link rel="import" href="../planning/planning-list.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<dom-module id="order-view">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        -webkit-user-select: none; /* Chrome/Safari */        
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* IE10+ */
+        /* Rules below not implemented in browsers yet */
+        -o-user-select: none;
+        user-select: none;
+              
+      }
+      paper-fab {
+          position: fixed;
+          bottom:15px;
+          right:15px;
+      }
+
+      paper-item {
+        background: var(--accent-color);
+        color: var(--text-primary-color);
+        cursor: pointer;
+        margin-bottom: 5px;
+      }
+
+      product-item .editing {
+        display: none !important;
+      }
+
+    </style>
+
+    <paper-item on-tap="add" hidden="{{activate}}">
+      <paper-item-body two-line>
+        <div>Create an order</div>
+        <div secondary></div>
+      </paper-item-body>
+      <paper-ripple></paper-ripple>
+    </paper-item>
+
+    <order-list orders="{{orders}}" filter-by="{{route}}" on-delete="delete" on-validorder="validorder" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" ></order-list>
+
+    <div class="productSelect" hidden="{{!selectProduct}}" style="display: inline-block; width:100%;">
+        <hr />
+        <product-list products="{{products}}" affichage="lite" filter-by="{{route}}" on-selectproduct="_selectproduct"></product-list>
+    </div>
+
+    <div class="planningSelect" hidden="{{!selectPlanning}}" style="display: inline-block; width:100%;">
+        <hr />
+        <planning-list plannings="{{plannings}}" affichage="lite" filter-by="{{filterBy}}" on-selectplanning="_selectplanning" order="{{theOrder}}"></product-list>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'order-view',
+      properties: {
+        products: Array,
+        route: String,
+        selectProduct : {
+          type : Boolean,
+          value: false
+        },
+        selectPlanning : {
+          type : Boolean,
+          value: false
+        },
+        theOrder : {
+          type : Object,
+          value: false,
+        },
+      },
+      selectorder : function(e) {
+
+        if(this.activeOrder && this.activeOrder.detail.label == e.detail.label) {
+
+          if(this.selectPlanning) {
+            this.set('selectPlanning', false);
+            this.set('selectProduct', true);
+          } else {
+            this.set('selectProduct', false);
+            this.set('activeOrder', "");
+            $(this).find('order-item.active').removeClass('active');
+            $(this).find('order-item.hidden').removeClass('hidden');             
+          }
+
+        } else {
+
+          if(this.selectPlanning) {
+            this.set('selectPlanning', false);
+            this.set('selectProduct', true);
+          }
+
+          this.set('activeOrder', e);
+          this.set('theOrder', e.detail);
+          this.set('selectProduct', true);
+          $(this).find('order-item.active').removeClass('active');
+          $(this).find('order-item').addClass('hidden');    
+
+
+        }
+
+      },
+      _selectorderplanned : function(e) {
+
+        if(this.activeOrder && this.activeOrder.detail.label == e.detail.label) {
+
+          if(this.selectProduct) {
+            this.set('selectPlanning', true);
+            this.set('selectProduct', false);
+          } else {
+            this.set('selectPlanning', false);
+            this.set('activeOrder', "");
+            $(this).find('order-item.active').removeClass('active');
+            $(this).find('order-item.hidden').removeClass('hidden');              
+          }
+
+
+        } else {
+
+          if(this.selectProduct) {
+            this.set('selectProduct', false);
+          }
+
+          this.set('activeOrder', e);
+          this.set('theOrder', e.detail);
+         
+          this.set('selectPlanning', true);
+          $(this).find('order-item.active').removeClass('active');
+          $(this).find('order-item').addClass('hidden');       
+        }
+
+      },
+      _selectplanning : function(e) {
+        if(this.activeOrder) {
+          this.activeOrder.target.associatePlanning(e.detail);
+        }
+      },
+      _selectproduct : function(e) {
+        if(this.activeOrder) {
+          this.activeOrder.target.associateProduct(e.detail);
+        }
+      },   
+      add: function(e) {
+        
+        this.push('orders', {
+          label: "",
+          creationDate : new Date().getTime(),
+        });
+        
+      },
+      delete: function(e) {
+
+        this.set('activate', false);
+        this.set('activeOrder', "");
+        $(this).find('order-item.active').removeClass('active');
+        $(this).find('order-item.hidden').removeClass('hidden');
+
+        this.arrayDelete('orders', e.detail.order);
+      },
+      reset : function() {
+        
+        this.arrayDelete('orders', e.detail.order);
+
+      }
+    });
+  </script>
+</dom-module>

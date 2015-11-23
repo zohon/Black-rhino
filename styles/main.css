@@ -12,12 +12,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     src: url("fonts/ostrich_sans_inline-regular-webfont.woff2");
 }
 
+@font-face {
+    font-family: "Roboto";
+    src: url("fonts/Roboto.woff2");
+}
+
 body {
   background: #fafafa;
   font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #333;
 }
-
 
 .clear-btn {
   font-size: 14px;
@@ -48,3 +52,31 @@ paper-toast {
 	opacity: 0.8 !important;
 	left: -100% !important;
 }
+
+/*
+@media print {
+
+  body * { visibility: hidden; }
+  order-item * { visibility: visible; }
+  #drawer { display: none; }
+  #main { left: 0 !important; }
+  #mainToolbar {
+    visibility: visible;
+  }
+  paper-item {
+    display: none !important;
+  }
+  .app-name {
+    visibility: visible;
+  }
+
+  order-item-product.order-item {
+    display: block !important; 
+    border: 1px solid #DDD;
+    cursor: pointer;
+    margin-bottom: 5px;
+    padding: 15px;
+    font-size: 25px;
+  }
+
+}*/

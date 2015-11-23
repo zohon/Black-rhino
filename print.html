@@ -48,38 +48,87 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
   <script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
 
-  <!-- will be replaced with elements/elements.vulcanized.html -->
-  <link rel="import" href="elements/elements.html">
-  <!-- endreplace-->
 
   <!-- build:css styles/main.css -->
   <link rel="stylesheet" href="styles/main.css">
   <!-- endbuild-->
 
+  <style>
+
+  body {
+  	background: #FFF;
+  }
+
+  #schedule {
+  	background: #FFF;
+  	color:#292522;
+  	margin:0;
+  	padding: 0 10px;
+  	font-size: 35px;
+  	display: inline-block;
+  }
+
+  #label {
+  	  	display: inline-block;
+  	background: #FFF;
+  	color:#292522;
+  	margin:0;
+  	padding: 0 10px;
+  	font-size: 35px;  	
+  }
+
+  .items {
+  	  	padding: 0 10px;
+  	  	margin-top: 20px;
+  }
+
+  .items div {
+  	font-size: 25px;
+  }
+
+
+  </style>
+
+
 </head>
 
-<body unresolved class="fullbleed layout vertical">
+<body>
 
-  <span id="browser-sync-binding"></span>
+  <div id="schedule"></div>
+  <div id="label"></div>
 
-  <template is="dom-bind" id="app">
+  <div class="items"></div>
 
-    <main-view></main-view>
+  <script>
 
-    <paper-toast id="caching-complete" duration="6000" text="Caching complete! This app will work offline."></paper-toast>
-    <paper-toast id="toast" text="" duration="3000"></paper-toast>
+	var $_GET = {};
+	document.location.search.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function () {
+	    function decode(s) {
+	        return decodeURIComponent(s.split("+").join(" "));
+	    }
+	    $_GET[decode(arguments[1])] = decode(arguments[2]);
+	});
 
-    <platinum-sw-register auto-register clients-claim skip-waiting 
-      on-service-worker-installed="displayInstalledToast">
-      <platinum-sw-cache default-cache-strategy="networkFirst" precache-file="precache.json">
-      </platinum-sw-cache>
-    </platinum-sw-register>
+	if($_GET.label) { $('#label').html($_GET.label);}
+	if($_GET.schedule) { $('#schedule').html($_GET.schedule);}
 
-  </template>
+	if($_GET.items) {
+		var items = JSON.parse($_GET.items);
 
-  <!-- build:js scripts/app.js -->
-  <script src="scripts/app.js"></script>
-  <!-- endbuild-->
+		$.each(items, function(index, item) {
+			var divItem = document.createElement('div');
+			$(divItem).append(item.nb+ " " +item.label);
+			$(".items").append(divItem);
+		});
+
+	}
+
+	if($_GET) {
+		window.print();
+		setTimeout(function () { window.close(); }, 100);
+	}
+
+  </script>
 </body>
 
 </html>

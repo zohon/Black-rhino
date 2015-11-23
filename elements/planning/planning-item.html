@@ -318,6 +318,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 $('planning-item.active').removeClass('active');
                 $(this).addClass('active');
             }
+
           }
         }
 
@@ -419,6 +420,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
       _getNeedsClass : function(needs, others) {
+
+        console.log("_getNeedsClass");
 
         if(needs > this.planning.nb) {
           return "error "+others;

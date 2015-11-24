@@ -30,7 +30,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <template is="dom-repeat" items="{{plannings}}" as="planning" filter="{{_computeFilter(filter)}}" observe="isComplete" sort="_sort" observe="{{plannings.length}}">
-      <planning-item planning="{{planning}}" affichage="{{affichage}}" order="{{order}}"></planning-item>
+      <planning-item planning="{{planning}}" affichage="{{affichage}}" selectneeds="[[selectneeds]]" selectschedule="[[selectschedule]]"></planning-item>
     </template>
 
   </template>
@@ -47,10 +47,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type : String,
           value: false,
         },
-        order : {
-          type : Object,
-          value: false,
+        selectneed : {
+          type : Number,
+          value: 0,
         },
+        selectschedule : {
+          type : String,
+          value: false,
+        },        
       },
       _sort : function(a, b) {
         if (a.label === b.label) return 0;
@@ -72,8 +76,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               return item;
             };
           }
-
-          console.log(filterBy);
 
           return function(item) {
             return parseInt(item.nb) >= parseInt(filterBy);

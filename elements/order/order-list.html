@@ -49,6 +49,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return a.schedule < b.schedule ? -1 : 1;
       },
       _computeFilter: function(filterBy) {
+
         if (filterBy) {
 
           // If filterBy is 'all', return a filter that always returns
@@ -60,8 +61,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
 
           return function(item) {
-            if(item.shcedule) {
-              return item.shcedule === filterBy;
+            if(item.schedule) {
+              return item.schedule === filterBy;
             }
             
           };

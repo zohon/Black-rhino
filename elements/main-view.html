@@ -176,8 +176,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .MiniStock {
-        position: fixed;
-          bottom: 0;
+          position: fixed;
+          bottom: -65px;
           left: 0;
           z-index: 300;
           background: #FFF;
@@ -186,6 +186,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           overflow: auto;
           box-shadow: 0px 0px 15px -3px #888;
           width: 100%;
+          transition: all 1s ease;
+      }
+
+      .MiniStock.appear {
+        bottom:0;
       }
 
       .MiniStock .item {
@@ -354,17 +359,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <item-data location="https://black-rhino.firebaseio.com/plannings" items="{{plannings}}" on-connected="_readyFirebaseOrders" ></item-data>
 
-          <planning-view  plannings="{{plannings}}" hidden="{{!_selectRoute(page, 'planning')}}" class="flex" ></planning-view>
+          <planning-view  plannings="{{plannings}}" hidden="{{!_selectRoute(page, 'planning')}}" class="flex" on-selectplanning="selectplanning"></planning-view>
 
           <item-data location="https://black-rhino.firebaseio.com/orders" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
 
-          <order-view  filter-by="{{searchSchedule}}" stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'order')}}" class="flex" products="{{products}}" orders="{{orders}}" plannings="{{plannings}}" on-selectproduct="_selectproduct" on-deleteitem="_deleteproduct" on-setschedule="_setschedule" ></order-view>
+          <order-view  search="{{searchSchedule}}" stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'order')}}" class="flex" products="{{products}}" orders="{{orders}}" plannings="{{plannings}}" on-selectproduct="_selectproduct" on-deleteitem="_deleteproduct" on-setschedule="_setschedule" ></order-view>
 
         </div>
 
         <div class="MiniStock" hidden="{{!stocks.length}}">
 
-          <template  is="dom-repeat" items="{{stocks}}" as="stock" >
+          <template  is="dom-repeat" items="{{stocks}}" as="stock"  hidden="{{!stocks.length}}">
               <div class$="{{ _getStockClass(stock.nb, stock.nbMax, 'item') }}" class="item" hidden="{{!stock.label}}"><b class="title">{{stock.label}}</b>&nbsp;<span>{{ stock.nb }}</span></div>
           </template>
 
@@ -387,6 +392,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type : Number,
           notify: true
         },
+        stocks : {
+          type : Array,
+          value : false
+        },
         thePlace : {
           value : false,
           notify: true,
@@ -404,6 +413,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
         }, 
         path : Object,
+        searchSchedule : {
+          type : String,
+          value : false,
+          notify: true,
+        }
       },
       _readyFirebaseOrders : function() {
         if(!this.page) {
@@ -418,6 +432,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         */
       },
       _readyFirebaseStocks : function() {
+        $(this).find('.MiniStock').addClass('appear');
+      },
+      selectplanning : function(e) {
+
+        if(e.detail.label) {
+          this.set('searchSchedule', e.detail.label);
+          this.set('page','order');
+          this.selectRouting();
+        }
 
       },
       loader : function() {
@@ -438,11 +461,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         this.closeDrawer(e);
 
-        console.log("reset");
-
-        $(this).find('stock-view').get(0).reset();
-        $(this).find('planning-view').get(0).reset();
         $(this).find('order-view').get(0).reset();
+        
+        //$(this).find('stock-view').get(0).reset();
+        //$(this).find('planning-view').get(0).reset();
+        
 
       },
       _readyCustomers : function() {

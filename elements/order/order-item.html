@@ -77,6 +77,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     .edit {
+        display: none;
         position: absolute;
         top:10px;
         right:-45px;
@@ -358,6 +359,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if(this.order.schedule == datas.label) {
 
           this.set('order.schedule', "");
+          this.fire('changeorder', this.order);
 
           var infos = {
             needs : needs
@@ -372,6 +374,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
 
           this.set('order.schedule', datas.label);
+          this.fire('changeorder', this.order);
 
           var infos = {
             label : datas.label,
@@ -411,6 +414,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
 
           this.set('order.needs', totalNeed);
+          this.fire('changeorder', this.order);
         }
 
         return totalNeed;
@@ -616,6 +620,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             });
         }
 
+        this.fire('changeorder', this.order);
+
         this.fire('delete-order', {order: this.order});
       },
 
@@ -714,25 +720,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           } else {
 
-            if(this.trackInfo.start.y > this.trackInfo.progress.y) {
+            if(this.trackInfo.start.y > this.trackInfo.progress.y) { // slide top
               /*
                 $(this).css({
                   'margin-top' : diffY,
                 });   
               */ 
               if(diffY > 100) {
-          
-                console.log('slide top');                
+              
               }
-            } else if(this.trackInfo.start.y < this.trackInfo.progress.y) {
+            } else if(this.trackInfo.start.y < this.trackInfo.progress.y) { // slide bottom
 /*
                 $(this).css({
                   'margin-bottom' : diffY,
                 });
 */
               if(diffY > 100) {
-                 
-                console.log('slide bottom');
+
               }
             }
 
@@ -763,8 +767,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           var that = this;
           setTimeout(_.bind(function() {
-            this.fire('delete', {order : this.order});
-            $(this).remove();
+
+            if(this.order.list && this.order.list.length > 0) {
+
+              var nbOrder = this.order.list.length;
+
+                _.each($(this).find('order-item-product'), _.bind(function(item, index) {
+
+                  $(item).get(0).selectall({
+                    success : _.bind(function() {
+
+                      this.getAllNeed();
+
+                      if(index+1 >= nbOrder) {
+                        this.fire('delete', {order : this.order});
+                        $(this).remove();
+                      }
+                    },this)
+                  });
+
+                },this));
+
+            } else {
+
+              this.fire('delete', {order : this.order});
+              $(this).remove();
+
+            }
+            
           },this), 300);
         }
 

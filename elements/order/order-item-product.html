@@ -83,21 +83,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if(this.item.product_id == data.__firebaseKey__) {       
           this.set('item.nb', parseInt(this.item.nb)+1);
         }
-      },      
-      select : function(e) {
+      },
+      selectall : function(callbacks) {
+
+        if (this.item.nb) {
+
+          if(this.item.nb > 1) {
+            for (var i=1; i< this.item.nb; i++) {
+              this.fire('deleteitem', this.item);
+            }
+          }
+
+          this.set('item.nb', 1);
+          this.fire('deleteitem', this.item);
+
+          if(callbacks && callbacks.success) {
+            callbacks.success.call();
+          }
+
+        }
+
+      },  
+      select : function(e, callbacks) {
         if(e) {
           e.preventDefault();
           e.stopPropagation();
         }
 
         this.active = false;
-        this.fire('deleteitem', this.item);
-        
-        if(this.item.nb > 1) {
-          this.set('item.nb', parseInt(this.item.nb)-1);
+        if(this.item) {
+          this.fire('deleteitem', this.item);
+          
+          if(this.item.nb > 1) {
+            this.set('item.nb', parseInt(this.item.nb)-1);
+          }
+          
+          this.fire('changeitem');
+
+          if(callbacks && callbacks.success) {
+            callbacks.success.call();
+          }
+
         }
-        
-        this.fire('changeitem');
 
       },
       _getClass : function(target, others) {

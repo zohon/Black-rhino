@@ -12,6 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../product/product-list.html">
 <link rel="import" href="../planning/planning-list.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <dom-module id="order-view">
 
@@ -26,7 +27,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         /* Rules below not implemented in browsers yet */
         -o-user-select: none;
         user-select: none;
-              
+
+        /* Label and underline color when the input is not focused */
+        --paper-input-container-color: var(--text-primary-color);
+
+        /* Label and underline color when the input is focused */
+        --paper-input-container-focus-color: var(--text-primary-color);
+
+        /* Label and underline color when the input is invalid */
+        --paper-input-container-invalid-color: var(--text-primary-color);
+
+        /* Input foreground color */
+        --paper-input-container-input-color: var(--text-primary-color);
+
       }
       paper-fab {
           position: fixed;
@@ -45,9 +58,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: none !important;
       }
 
+      paper-input {
+        color: var(--text-primary-color) !important;
+        width: 100%;
+      }
+
     </style>
 
-    <paper-item on-tap="add" hidden="{{activate}}">
+    <paper-item on-tap="add" hidden="{{search}}">
       <paper-item-body two-line>
         <div>Create an order</div>
         <div secondary></div>
@@ -55,7 +73,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-ripple></paper-ripple>
     </paper-item>
 
-    <order-list orders="{{orders}}" filter-by="{{route}}" on-delete="delete" on-validorder="validorder" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" ></order-list>
+    <paper-item hidden="{{!search}}"  >
+      <paper-input on-tap="_dontListen" no-label-float value="{{search}}" class="short" label="Search" ><div suffix><iron-icon icon="icons:search" ></iron-icon></div></paper-input>
+    </paper-item>
+
+    <order-list orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder" ></order-list>
 
     <div class="productSelect" hidden="{{!selectProduct}}" style="display: inline-block; width:100%;">
         <hr />
@@ -64,7 +86,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div class="planningSelect" hidden="{{!selectPlanning}}" style="display: inline-block; width:100%;">
         <hr />
-        <planning-list plannings="{{plannings}}" affichage="lite" filter-by="{{filterBy}}" on-selectplanning="_selectplanning" order="{{theOrder}}"></product-list>
+        <planning-list plannings="{{plannings}}" affichage="lite" filter-by="{{filterBy}}" on-selectplanning="_selectplanning" selectneeds="[[selectneeds]]" selectschedule="[[selectschedule]]"></product-list>
     </div>
 
   </template>
@@ -85,7 +107,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         theOrder : {
           type : Object,
           value: false,
+          notify: true,
         },
+      },
+      resetSearch : function() {
+        this.set("search", false);
+      },
+      ready : function() {
+        console.log("searchSchedule");
+        console.log(this.search);
       },
       selectorder : function(e) {
 
@@ -110,11 +140,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           this.set('activeOrder', e);
           this.set('theOrder', e.detail);
+          this.set('selectneeds',  e.detail.needs);
+          this.set('selectschedule',  e.detail.schedule);
+                    
           this.set('selectProduct', true);
           $(this).find('order-item.active').removeClass('active');
-          $(this).find('order-item').addClass('hidden');    
-
-
+          $(this).find('order-item').addClass('hidden');
         }
 
       },
@@ -141,10 +172,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           this.set('activeOrder', e);
           this.set('theOrder', e.detail);
+          this.set('selectneeds',  e.detail.needs);
+          this.set('selectschedule',  e.detail.schedule);
          
           this.set('selectPlanning', true);
           $(this).find('order-item.active').removeClass('active');
           $(this).find('order-item').addClass('hidden');       
+        }
+
+      },
+      changeOrder : function(e) {
+
+        if(this.activeOrder && this.activeOrder.detail.__firebaseKey__ == e.detail.__firebaseKey__) {
+          this.set('selectneeds',  e.detail.needs);
+          this.set('selectschedule',  e.detail.schedule);
         }
 
       },
@@ -159,14 +200,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },   
       add: function(e) {
-        
         this.push('orders', {
           label: "",
           creationDate : new Date().getTime(),
         });
-        
       },
       delete: function(e) {
+
+        if(this.activeOrder && this.activeOrder.detail.label == e.detail.order.label) {
+            this.set('selectPlanning', false);
+            this.set('selectProduct', false);
+            this.set('activeOrder', "");
+        }
 
         this.set('activate', false);
         this.set('activeOrder', "");
@@ -176,9 +221,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.arrayDelete('orders', e.detail.order);
       },
       reset : function() {
-        
-        this.arrayDelete('orders', e.detail.order);
-
+        _.each($(this).find('order-item'), _.bind(function(item, index) {
+          $(item).get(0).destroy();
+        },this));
       }
     });
   </script>

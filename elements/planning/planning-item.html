@@ -249,7 +249,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }     
 
       .error {
-        opacity : 0.2;
+        opacity : 0.4;
       }
 
       :host.active {
@@ -258,7 +258,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
     
-  <div class$="[[_getNeedsClass(order.needs, 'content')]]" class="content">
+  <div class$="[[_getNeedsClass(selectneeds, 'content')]]" class="content">
 
     <paper-icon-item tabindex="0" class="person"  on-track="handleTrack" >
 
@@ -299,22 +299,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type : Boolean,
           value: false,
         },
-        order: {
-          type : Object,
-          observer : "_observeOrder"
-        },    
+        selectneeds: {
+          type : Number,
+          value : 0,
+          notify : true
+        },
+        selectschedule: {
+          type : String,
+          value : false,
+          notify : true,
+          observer : "observeSchedule"
+        }
       },
       ready : function() {
         this.setScrollDirection('y', $(this).find('paper-icon-item').get(0));
       }, 
-      _observeOrder : function() {
+      observeSchedule : function() {
 
-        if(this.order) {
+        if(this.selectschedule) {
+
           if(this.affichage && this.affichage == 'lite') {
+            
+            if(this.order && this.order.needs != undefined) {
+              this.set('orderneeds', this.order.needs);
+            }
 
-            if(!this.order.schedule && $(this).hasClass('active')) {
+            if(!this.selectschedule && $(this).hasClass('active')) {
               $(this).removeClass('active');
-            } else if(this.order.schedule == this.planning.label) {
+            } else if(this.selectschedule == this.planning.label) {
                 $('planning-item.active').removeClass('active');
                 $(this).addClass('active');
             }
@@ -322,7 +334,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
 
-      },
+      },   
       setschedule : function(datas) {
 
         if(datas.old == this.planning.label) {
@@ -421,9 +433,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       _getNeedsClass : function(needs, others) {
 
-        console.log("_getNeedsClass");
-
-        if(needs > this.planning.nb) {
+        if(this.planning && this.planning.nb && needs > this.planning.nb) {
           return "error "+others;
         } else {
           return others;
@@ -568,25 +578,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           } else {
 
-            if(this.trackInfo.start.y > this.trackInfo.progress.y) {
+            if(this.trackInfo.start.y > this.trackInfo.progress.y) { // slide top
               /*
                 $(this).css({
                   'margin-top' : diffY,
                 });   
               */ 
               if(diffY > 100) {
-          
-                console.log('slide top');                
               }
-            } else if(this.trackInfo.start.y < this.trackInfo.progress.y) {
+            } else if(this.trackInfo.start.y < this.trackInfo.progress.y) { // slide bottom
 /*
                 $(this).css({
                   'margin-bottom' : diffY,
                 });
 */
               if(diffY > 100) {
-                 
-                console.log('slide bottom');
               }
             }
 

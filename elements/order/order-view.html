@@ -54,6 +54,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-bottom: 5px;
       }
 
+      .product-item.edit {
+        display: none !important;
+      }
+
+      .returnback {
+        background: var(--light-primary-color);
+        color: var(--text-primary-color);
+        padding:0;
+      }
+
+      .returnback .icon {
+        height:45px;
+        width:45px;
+      }
+
       product-item .editing {
         display: none !important;
       }
@@ -65,7 +80,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <paper-item on-tap="add" hidden="{{search}}">
+    <paper-item on-tap="add" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
       <paper-item-body two-line>
         <div>Create an order</div>
         <div secondary></div>
@@ -73,8 +88,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-ripple></paper-ripple>
     </paper-item>
 
+    <paper-item class="returnback" on-tap="unselect" hidden="{{_onlyhideList(search,selectPlanning,selectProduct)}}">
+      <paper-item-body two-line>
+        <div><iron-icon class="icon" icon="icons:chevron-left" ></iron-icon>Return list</div>
+        <div secondary></div>
+      </paper-item-body>
+      <paper-ripple></paper-ripple>
+    </paper-item>    
+
     <paper-item hidden="{{!search}}"  >
-      <paper-input on-tap="_dontListen" no-label-float value="{{search}}" class="short" label="Search" ><div suffix><iron-icon icon="icons:search" ></iron-icon></div></paper-input>
+      <paper-input on-tap="_dontListen" no-label-float value="{{search}}" class="short" label="Search" ><div on-tap="resetSearch" suffix><iron-icon icon="icons:cancel"></iron-icon></div><div prefix><iron-icon icon="icons:search" ></iron-icon></div></paper-input>
     </paper-item>
 
     <order-list orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-select="select" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder" ></order-list>
@@ -110,6 +133,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
         },
       },
+      _onlyhide : function(elem1, elem2, elem3) {
+
+        if (elem1 || elem2 || elem3) {
+          return true;
+        }
+        return false;
+      },
+      _onlyhideList : function(elem1, elem2, elem3) {
+
+        if (elem1 || (!elem2 && !elem3)) {
+          return true;
+        }
+        return false;
+      },      
       resetSearch : function() {
         this.set("search", false);
       },
@@ -118,10 +155,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(this.search);
       },
       select : function(e) {
-
-        console.log("select");
         $(this).find('order-item.active').removeClass('active');
         $(this).find('order-item').addClass('hidden');
+      },
+      unselect : function(e) {
+        $(this).find('order-item.active').removeClass('active');
+        $(this).find('order-item.hidden').removeClass('hidden');
+        this.set('selectPlanning', false);
+        this.set('selectProduct', false);        
       },
       selectorder : function(e) {
 
@@ -165,8 +206,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           } else {
             this.set('selectPlanning', false);
             this.set('activeOrder', "");
-            $(this).find('order-item.active').removeClass('active');
-            $(this).find('order-item.hidden').removeClass('hidden');              
+            this.desselectOrder();            
           }
 
 
@@ -182,10 +222,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.set('selectschedule',  e.detail.schedule);
          
           this.set('selectPlanning', true);
-          $(this).find('order-item.active').removeClass('active');
-          $(this).find('order-item').addClass('hidden');       
+          this.desselectOrder();       
         }
 
+      },
+      desselectOrder : function() {
+        $(this).find('order-item.active').removeClass('active');
+        $(this).find('order-item').addClass('hidden');
       },
       changeOrder : function(e) {
 

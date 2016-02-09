@@ -353,19 +353,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <div hidden="{{page}}" class="loader"><paper-spinner active></paper-spinner></div>
 
-          <item-data location="https://black-rhino.firebaseio.com/stocks" items="{{stocks}}" on-connected="_readyFirebaseStocks" ></item-data>
+          <item-data location="{{_geturlstocks()}}" items="{{stocks}}" on-connected="_readyFirebaseStocks" ></item-data>
 
           <stock-view  stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'stock')}}" class="flex" ></stock-view>
 
-          <item-data location="https://black-rhino.firebaseio.com/products" items="{{products}}" on-connected="_readyFirebaseProducts" ></item-data>
+          <item-data location="{{_geturlproducts()}}" items="{{products}}" on-connected="_readyFirebaseProducts" ></item-data>
           
           <product-view hidden="{{!_selectRoute(page, 'products')}}" class="flex" products="{{products}}" ></product-view>
 
-          <item-data location="https://black-rhino.firebaseio.com/plannings" items="{{plannings}}" on-connected="_readyFirebaseOrders" ></item-data>
+          <item-data location="{{_geturlplannings()}}" items="{{plannings}}" on-connected="_readyFirebaseOrders" ></item-data>
 
           <planning-view  plannings="{{plannings}}" hidden="{{!_selectRoute(page, 'planning')}}" class="flex" on-selectplanning="selectplanning"></planning-view>
 
-          <item-data location="https://black-rhino.firebaseio.com/orders" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
+          <item-data location="{{_geturlorder()}}" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
 
           <order-view  search="{{searchSchedule}}" stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'order')}}" class="flex" products="{{products}}" orders="{{orders}}" plannings="{{plannings}}" on-selectproduct="_selectproduct" on-deleteitem="_deleteproduct" on-setschedule="_setschedule" ></order-view>
 
@@ -423,7 +423,68 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
         }
       },
+      created: function() {
+        this.dev = false;
+        this.bdd = 'https://black-rhino.firebaseio.com';
+        this.bdd_dev = 'https://black-rhino-dev.firebaseio.com';
+      },
+      _getShiftDate : function() {
+        if (!this.shiftdate) {
+          var d = new Date();
+          var day = (d.getDate() < 10 ? "0"+d.getDate() : d.getDate());
+          var month = (d.getDay() < 10 ? "0"+d.getDay() : d.getDay());          
+          var year = (d.getFullYear() < 10 ? "0"+d.getFullYear() : d.getFullYear());
+          this.shiftdate = day+"-"+month+"-"+year;
+        }
+        return this.shiftdate;
+      },
+      _geturlorder : function() {
+        var shiftdate = this._getShiftDate();
+        var url = "";
+        if(this.dev) {
+          url = this.bdd_dev;
+        } else {
+          url = this.bdd;
+        }
+        return url+"/orders/"+shiftdate;
+      },
+      _geturlplannings : function() {
+
+        var url = "";
+        if(this.dev) {
+          url = this.bdd_dev;
+        } else {
+          url = this.bdd;
+        }
+
+        return url+"/plannings";
+      }, 
+      _geturlproducts : function() {
+
+        var url = "";
+        if(this.dev) {
+          url = this.bdd_dev;
+        } else {
+          url = this.bdd;
+        }
+
+        return url+"/products";
+      },
+      _geturlstocks : function() {
+        var url = "";
+
+        if(this.dev) {
+          url = this.bdd_dev;
+        } else {
+          url = this.bdd;
+        }
+
+        return url+"/stocks";
+      },  
       _readyFirebaseOrders : function() {
+
+        console.log("_readyFirebaseOrders");
+
         if(!this.page) {
           this.set('page','order');
         }
@@ -466,10 +527,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.closeDrawer(e);
 
         $(this).find('order-view').get(0).reset();
-        
-        //$(this).find('stock-view').get(0).reset();
-        //$(this).find('planning-view').get(0).reset();
-        
+        $(this).find('stock-view').get(0).reset();
+        $(this).find('planning-view').get(0).reset();
 
       },
       _readyCustomers : function() {

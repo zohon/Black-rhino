@@ -16912,8 +16912,7 @@ X.prototype.Ze=function(a,b){D("Firebase.resetPassword",1,2,arguments.length);sg
     </firebase-collection>
 
     
-    <iron-localstorage name="polymer-items" on-iron-localstorage-load="_backupLoaded" value="{{backupItems}}">
-    </iron-localstorage>
+    <iron-localstorage name="polymer-items" on-iron-localstorage-load="_backupLoaded" value="{{backupItems}}"></iron-localstorage>
 
   </template>
   <script>
@@ -16933,6 +16932,7 @@ X.prototype.Ze=function(a,b){D("Firebase.resetPassword",1,2,arguments.length);sg
 
       },
       _firebaseLoaded: function() {
+        console.log("_firebaseLoaded");
         this._firebaseConnected = true;
         this.items = this.fbItems;
         this.backupItems = this.fbItems;
@@ -16940,10 +16940,11 @@ X.prototype.Ze=function(a,b){D("Firebase.resetPassword",1,2,arguments.length);sg
         this.linkPaths('backupItems', 'items');
         this.fire('connected');
       },
-
       _backupLoaded: function() {
+        console.log("_backupLoaded");
         if (!this._firebaseConnected) {
           this.items = this.backupItems.slice();
+          this.fire('connected');
         }
       }
 
@@ -24057,6 +24058,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       -o-user-select: none;
       user-select: none;
       position: relative;
+      transition: all 0.2s ease;
+      border-radius: 5px;
+    }
+
+    :host:hover {
+      border-radius: 0px;
     }
 
     :host:hover .number {
@@ -24195,6 +24202,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       /* Rules below not implemented in browsers yet */
       -o-user-select: none;
       user-select: none;
+      transition: all 0.2s ease;
+    }
+    
+    :host.active,
+    :host:hover {
+      box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
     }
 
     :host.active {
@@ -24374,7 +24387,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         top: 0;
         height: 40px;
         line-height: 65px;
-        font-size: 25px;     
+        font-size: 25px;
+        display: none;   
     }
 
     .person {
@@ -24452,9 +24466,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     </style>
     
-  <div class$="[[_getClass(active, 'content')]]" class="content">
+  <div class$="[[_getClass(active, 'content')]]" class="content" on-tap="onTap">
 
-    <paper-icon-item tabindex="0" class="person" on-tap="onTap" on-track="handleTrack">
+    <paper-icon-item tabindex="0" class="person" on-track="handleTrack">
 
         <div class="print" hidden="{{!order.schedule}}" item-icon="" on-tap="printMe"><iron-icon icon="icons:print"></iron-icon><paper-ripple></paper-ripple></div>
 
@@ -24473,13 +24487,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       <div class="planned" hidden="{{!order.list.length}}" item-icon="" on-tap="selectplanned"><iron-icon icon="icons:today"></iron-icon><paper-ripple></paper-ripple></div>
 
+      <div class="total">{{_getTotal(order.list.length)}}</div>
+
     </paper-icon-item>
 
     <div class="editing" hidden="{{!edit}}">
       <paper-input on-tap="_dontListen" no-label-float="" value="{{order.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
     </div>
 
-    <div class="listItemOrder" hidden="{{!order.list.length}}">
+    <div class="listItemOrder" hidden="{{!order.list.length}}" on-tap="_dontListen">
       <template is="dom-repeat" items="{{order.list}}" as="item">
       <order-item-product item="{{item}}" on-deleteitem="deleteItem" on-changeitem="getAllNeed"></order-item-product>
       </template>
@@ -24508,6 +24524,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }, 
       _getquery : function(label, adress) {
         return label+" "+adress;
+      },
+      _getTotal : function() {
+        console.log("_getTotal");
+        var total = 0;
+        
+        if(this.order && this.order.list) {
+          $.each(this.order.list, function(index, data) {
+            total += data.nb*data.value;
+          });
+
+          return total; 
+        }
+
       },
       deleteItem : function(e) {
         if(e.detail.nb <= 1) {
@@ -25056,7 +25085,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       /* Rules below not implemented in browsers yet */
       -o-user-select: none;
       user-select: none;
+      transition: all 0.2s ease;
 
+    }
+
+    :host:hover {
+      box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
     }
 
     paper-icon-item .avatar {
@@ -25102,7 +25136,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     .edit {
         position: absolute;
         top:10px;
-        right:-45px;
+        right:10px;
         display: inline-block;
         width: 40px;
         height: 40px;
@@ -25268,26 +25302,26 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       <div class="delete" item-icon=""><iron-icon icon="icons:delete"></iron-icon><paper-ripple></paper-ripple></div>
 
-      <div class="edit" item-icon="" on-tap="_selectEdit"><iron-icon icon="editor:mode-edit"></iron-icon><paper-ripple></paper-ripple></div>
+      <div class="edit" item-icon="" on-tap="_selectEdit" hidden="{{affichage}}"><iron-icon icon="editor:mode-edit"></iron-icon><paper-ripple></paper-ripple></div>
 
       <div class="select" item-icon="" on-tap="select" hidden="{{edit}}"><iron-icon icon="icons:check"></iron-icon><paper-ripple></paper-ripple></div>
     </paper-icon-item>
 
     <div class="editing" hidden="{{!edit}}">
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{product.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{product.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{product.value}}" on-keydown="_checkKey" class="short" label="value"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{product.value}}" on-keydown="_checkKey" class="short" label="value"></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{product.steak}}" on-keydown="_checkKey" class="short inputlabel" label="steak"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{product.steak}}" on-keydown="_checkKey" class="short inputlabel" label="steak"></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{product.pains}}" on-keydown="_checkKey" class="short inputlabel" label="pains"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{product.pains}}" on-keydown="_checkKey" class="short inputlabel" label="pains"></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{product.truite}}" on-keydown="_checkKey" class="short inputlabel" label="truite"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{product.truite}}" on-keydown="_checkKey" class="short inputlabel" label="truite"></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{product.pork}}" on-keydown="_checkKey" class="short inputlabel" label="pork"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{product.pork}}" on-keydown="_checkKey" class="short inputlabel" label="pork"></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{product.bacon}}" on-keydown="_checkKey" class="short inputlabel" label="bacon"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{product.bacon}}" on-keydown="_checkKey" class="short inputlabel" label="bacon"></paper-input>
 
     </div>
 
@@ -25489,6 +25523,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
                 left = 10;
               }
               if(!this.edit) {
+                /*
                 $(this).find('.edit').css({
                   right : left+"px",
                   transition : "height 0.5s ease"                
@@ -25497,6 +25532,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
                 if(diffX > 50) {
                   this._selectEdit();
                 }
+                */
               }
 
             } else if(this.trackInfo.start.x < this.trackInfo.progress.x) {
@@ -25598,7 +25634,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
     <template is="dom-repeat" items="{{products}}" as="product" filter="{{_computeFilter(filterBy)}}" observe="isComplete" sort="_sort">
-      <product-item product="{{product}}"></product-item>
+      <product-item product="{{product}}" affichage="{{affichage}}"></product-item>
     </template>
 
   </template>
@@ -25659,6 +25695,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       width:23%;
       float:left;
       margin:1%;
+      transition: all 0.2s ease;
+    }
+
+    :host:hover {
+      box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
     }
 
     paper-icon-item {
@@ -25902,11 +25943,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <div class="editing" hidden="{{!edit}}">
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{planning.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{planning.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{planning.nb}}" on-keydown="_checkKey" class="short inputlabel" label="nombre en planning"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{planning.nb}}" on-keydown="_checkKey" class="short inputlabel" label="nombre en planning"></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{planning.nbMax}}" on-keydown="_checkKey" class="short inputlabel" label="nombre max"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{planning.nbMax}}" on-keydown="_checkKey" class="short inputlabel" label="nombre max"></paper-input>
 
     </div>
 
@@ -26468,6 +26509,21 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         margin-bottom: 5px;
       }
 
+      .product-item.edit {
+        display: none !important;
+      }
+
+      .returnback {
+        background: var(--light-primary-color);
+        color: var(--text-primary-color);
+        padding:0;
+      }
+
+      .returnback .icon {
+        height:45px;
+        width:45px;
+      }
+
       product-item .editing {
         display: none !important;
       }
@@ -26479,7 +26535,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     </style>
 
-    <paper-item on-tap="add" hidden="{{search}}">
+    <paper-item on-tap="add" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
       <paper-item-body two-line="">
         <div>Create an order</div>
         <div secondary=""></div>
@@ -26487,8 +26543,16 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <paper-ripple></paper-ripple>
     </paper-item>
 
+    <paper-item class="returnback" on-tap="unselect" hidden="{{_onlyhideList(search,selectPlanning,selectProduct)}}">
+      <paper-item-body two-line="">
+        <div><iron-icon class="icon" icon="icons:chevron-left"></iron-icon>Return list</div>
+        <div secondary=""></div>
+      </paper-item-body>
+      <paper-ripple></paper-ripple>
+    </paper-item>    
+
     <paper-item hidden="{{!search}}">
-      <paper-input on-tap="_dontListen" no-label-float="" value="{{search}}" class="short" label="Search"><div suffix=""><iron-icon icon="icons:search"></iron-icon></div></paper-input>
+      <paper-input on-tap="_dontListen" no-label-float="" value="{{search}}" class="short" label="Search"><div on-tap="resetSearch" suffix=""><iron-icon icon="icons:cancel"></iron-icon></div><div prefix=""><iron-icon icon="icons:search"></iron-icon></div></paper-input>
     </paper-item>
 
     <order-list orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-select="select" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder"></order-list>
@@ -26524,6 +26588,20 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           notify: true,
         },
       },
+      _onlyhide : function(elem1, elem2, elem3) {
+
+        if (elem1 || elem2 || elem3) {
+          return true;
+        }
+        return false;
+      },
+      _onlyhideList : function(elem1, elem2, elem3) {
+
+        if (elem1 || (!elem2 && !elem3)) {
+          return true;
+        }
+        return false;
+      },      
       resetSearch : function() {
         this.set("search", false);
       },
@@ -26532,10 +26610,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         console.log(this.search);
       },
       select : function(e) {
-
-        console.log("select");
         $(this).find('order-item.active').removeClass('active');
         $(this).find('order-item').addClass('hidden');
+      },
+      unselect : function(e) {
+        $(this).find('order-item.active').removeClass('active');
+        $(this).find('order-item.hidden').removeClass('hidden');
+        this.set('selectPlanning', false);
+        this.set('selectProduct', false);        
       },
       selectorder : function(e) {
 
@@ -26579,8 +26661,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           } else {
             this.set('selectPlanning', false);
             this.set('activeOrder', "");
-            $(this).find('order-item.active').removeClass('active');
-            $(this).find('order-item.hidden').removeClass('hidden');              
+            this.desselectOrder();            
           }
 
 
@@ -26596,10 +26677,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           this.set('selectschedule',  e.detail.schedule);
          
           this.set('selectPlanning', true);
-          $(this).find('order-item.active').removeClass('active');
-          $(this).find('order-item').addClass('hidden');       
+          this.desselectOrder();       
         }
 
+      },
+      desselectOrder : function() {
+        $(this).find('order-item.active').removeClass('active');
+        $(this).find('order-item').addClass('hidden');
       },
       changeOrder : function(e) {
 
@@ -26686,7 +26770,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <paper-ripple></paper-ripple>
     </paper-item>
 
-    <product-list products="{{products}}" filter-by="{{route}}" on-delete="delete"></product-list>
+    <product-list products="{{products}}" filter-by="{{route}}" affichage="{{affichage}}" on-delete="delete"></product-list>
     
   </template>
   <script>
@@ -26726,7 +26810,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       /* Rules below not implemented in browsers yet */
       -o-user-select: none;
       user-select: none;
+      transition: all 0.2s ease;
+    }
 
+    :host:hover {
+      box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
     }
 
     paper-icon-item .avatar {
@@ -26937,11 +27025,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     <div class="editing" hidden="{{!edit}}">
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{stock.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{stock.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{stock.nb}}" on-keydown="_checkKey" class="short inputlabel" label="nombre en stock"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{stock.nb}}" on-keydown="_checkKey" class="short inputlabel" label="nombre en stock"></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float="" value="{{stock.nbMax}}" on-keydown="_checkKey" class="short inputlabel" label="nombre max"></paper-input>
+        <paper-input on-tap="_dontListen" value="{{stock.nbMax}}" on-keydown="_checkKey" class="short inputlabel" label="nombre max"></paper-input>
 
     </div>
 
@@ -27769,19 +27857,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
           <div hidden="{{page}}" class="loader"><paper-spinner active=""></paper-spinner></div>
 
-          <item-data location="https://black-rhino.firebaseio.com/stocks" items="{{stocks}}" on-connected="_readyFirebaseStocks"></item-data>
+          <item-data location="{{_geturlstocks()}}" items="{{stocks}}" on-connected="_readyFirebaseStocks"></item-data>
 
           <stock-view stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'stock')}}" class="flex"></stock-view>
 
-          <item-data location="https://black-rhino.firebaseio.com/products" items="{{products}}" on-connected="_readyFirebaseProducts"></item-data>
+          <item-data location="{{_geturlproducts()}}" items="{{products}}" on-connected="_readyFirebaseProducts"></item-data>
           
           <product-view hidden="{{!_selectRoute(page, 'products')}}" class="flex" products="{{products}}"></product-view>
 
-          <item-data location="https://black-rhino.firebaseio.com/plannings" items="{{plannings}}" on-connected="_readyFirebaseOrders"></item-data>
+          <item-data location="{{_geturlplannings()}}" items="{{plannings}}" on-connected="_readyFirebaseOrders"></item-data>
 
           <planning-view plannings="{{plannings}}" hidden="{{!_selectRoute(page, 'planning')}}" class="flex" on-selectplanning="selectplanning"></planning-view>
 
-          <item-data location="https://black-rhino.firebaseio.com/orders" items="{{orders}}" on-connected="_readyFirebaseOrders"></item-data>
+          <item-data location="{{_geturlorder()}}" items="{{orders}}" on-connected="_readyFirebaseOrders"></item-data>
 
           <order-view search="{{searchSchedule}}" stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'order')}}" class="flex" products="{{products}}" orders="{{orders}}" plannings="{{plannings}}" on-selectproduct="_selectproduct" on-deleteitem="_deleteproduct" on-setschedule="_setschedule"></order-view>
 
@@ -27839,7 +27927,68 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           notify: true,
         }
       },
+      created: function() {
+        this.dev = false;
+        this.bdd = 'https://black-rhino.firebaseio.com';
+        this.bdd_dev = 'https://black-rhino-dev.firebaseio.com';
+      },
+      _getShiftDate : function() {
+        if (!this.shiftdate) {
+          var d = new Date();
+          var day = (d.getDate() < 10 ? "0"+d.getDate() : d.getDate());
+          var month = (d.getDay() < 10 ? "0"+d.getDay() : d.getDay());          
+          var year = (d.getFullYear() < 10 ? "0"+d.getFullYear() : d.getFullYear());
+          this.shiftdate = day+"-"+month+"-"+year;
+        }
+        return this.shiftdate;
+      },
+      _geturlorder : function() {
+        var shiftdate = this._getShiftDate();
+        var url = "";
+        if(this.dev) {
+          url = this.bdd_dev;
+        } else {
+          url = this.bdd;
+        }
+        return url+"/orders/"+shiftdate;
+      },
+      _geturlplannings : function() {
+
+        var url = "";
+        if(this.dev) {
+          url = this.bdd_dev;
+        } else {
+          url = this.bdd;
+        }
+
+        return url+"/plannings";
+      }, 
+      _geturlproducts : function() {
+
+        var url = "";
+        if(this.dev) {
+          url = this.bdd_dev;
+        } else {
+          url = this.bdd;
+        }
+
+        return url+"/products";
+      },
+      _geturlstocks : function() {
+        var url = "";
+
+        if(this.dev) {
+          url = this.bdd_dev;
+        } else {
+          url = this.bdd;
+        }
+
+        return url+"/stocks";
+      },  
       _readyFirebaseOrders : function() {
+
+        console.log("_readyFirebaseOrders");
+
         if(!this.page) {
           this.set('page','order');
         }
@@ -27882,10 +28031,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.closeDrawer(e);
 
         $(this).find('order-view').get(0).reset();
-        
-        //$(this).find('stock-view').get(0).reset();
-        //$(this).find('planning-view').get(0).reset();
-        
+        $(this).find('stock-view').get(0).reset();
+        $(this).find('planning-view').get(0).reset();
 
       },
       _readyCustomers : function() {
@@ -29429,7 +29576,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         --disabled-text-color: #bdbdbd;
         --divider-color: #B6B6B6;
 
-
         --default-font-family: 'Roboto', 'Noto', sans-serif;
 
         --alert-background:         #F44336;
@@ -29440,12 +29586,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         --valid-background:         #4caf50;
         --valid-color:              #fff;
 
-
         --drawer-menu-color: #292522;
         --drawer-text-color: #FFF;        
         --drawer-border-color: 1px solid #ccc;
         --drawer-toolbar-border-color: 1px solid rgba(0, 0, 0, 0.22);
-
 
         --paper-menu-background-color: #fff;
         --menu-link-color: #111111;

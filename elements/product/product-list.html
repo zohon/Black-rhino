@@ -30,7 +30,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <template is="dom-repeat" items="{{products}}" as="product" filter="{{_computeFilter(filterBy)}}" observe="isComplete" sort="_sort" observe="{{products.length}}">
-      <product-item product="{{product}}"></product-item>
+      <product-item product="{{product}}" affichage="{{affichage}}"></product-item>
     </template>
 
   </template>

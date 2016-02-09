@@ -26,6 +26,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       /* Rules below not implemented in browsers yet */
       -o-user-select: none;
       user-select: none;
+      transition: all 0.2s ease;
+    }
+    
+    :host.active,
+    :host:hover {
+      box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
     }
 
     :host.active {
@@ -205,7 +211,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         top: 0;
         height: 40px;
         line-height: 65px;
-        font-size: 25px;     
+        font-size: 25px;
+        display: none;   
     }
 
     .person {
@@ -283,9 +290,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
     
-  <div class$="[[_getClass(active, 'content')]]" class="content">
+  <div class$="[[_getClass(active, 'content')]]" class="content" on-tap="onTap">
 
-    <paper-icon-item tabindex="0" class="person" on-tap="onTap"  on-track="handleTrack" >
+    <paper-icon-item tabindex="0" class="person" on-track="handleTrack" >
 
         <div class="print" hidden="{{!order.schedule}}" item-icon on-tap="printMe"><iron-icon icon="icons:print"></iron-icon><paper-ripple></paper-ripple></div>
 
@@ -304,13 +311,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <div class="planned" hidden="{{!order.list.length}}" item-icon on-tap="selectplanned" ><iron-icon icon="icons:today"></iron-icon><paper-ripple></paper-ripple></div>
 
+      <div class="total">{{_getTotal(order.list.length)}}</div>
+
     </paper-icon-item>
 
     <div class="editing" hidden="{{!edit}}">
       <paper-input on-tap="_dontListen" no-label-float value="{{order.label}}" on-keydown="_checkKey" class="short" label="label" ></paper-input>
     </div>
 
-    <div class="listItemOrder" hidden="{{!order.list.length}}">
+    <div class="listItemOrder" hidden="{{!order.list.length}}" on-tap="_dontListen">
       <template  is="dom-repeat" items="{{order.list}}" as="item" >
       <order-item-product item="{{item}}" on-deleteitem="deleteItem" on-changeitem="getAllNeed"></order-item-product>
       </template>
@@ -339,6 +348,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }, 
       _getquery : function(label, adress) {
         return label+" "+adress;
+      },
+      _getTotal : function() {
+        console.log("_getTotal");
+        var total = 0;
+        
+        if(this.order && this.order.list) {
+          $.each(this.order.list, function(index, data) {
+            total += data.nb*data.value;
+          });
+
+          return total; 
+        }
+
       },
       deleteItem : function(e) {
         if(e.detail.nb <= 1) {

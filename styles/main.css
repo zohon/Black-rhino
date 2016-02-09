@@ -97,6 +97,10 @@ paper-toast {
     color:#000;
   }
 
+  .total {
+  display: block !important;
+  }
+
   #drawerToolbar.main-view, #mainToolbar.main-view {
     background: #FFF !important;
     border-bottom:1px solid #000 !important;

@@ -27,6 +27,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       -o-user-select: none;
       user-select: none;
       position: relative;
+      transition: all 0.2s ease;
+      border-radius: 5px;
+    }
+
+    :host:hover {
+      border-radius: 0px;
     }
 
     :host:hover .number {

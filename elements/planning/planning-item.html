@@ -31,6 +31,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       width:23%;
       float:left;
       margin:1%;
+      transition: all 0.2s ease;
+    }
+
+    :host:hover {
+      box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
     }
 
     paper-icon-item {
@@ -274,11 +279,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div class="editing" hidden="{{!edit}}">
 
-        <paper-input on-tap="_dontListen" no-label-float value="{{planning.label}}" on-keydown="_checkKey" class="short" label="label" ></paper-input>
+        <paper-input on-tap="_dontListen" value="{{planning.label}}" on-keydown="_checkKey" class="short" label="label" ></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float value="{{planning.nb}}" on-keydown="_checkKey" class="short inputlabel" label="nombre en planning" ></paper-input>
+        <paper-input on-tap="_dontListen" value="{{planning.nb}}" on-keydown="_checkKey" class="short inputlabel" label="nombre en planning" ></paper-input>
 
-        <paper-input on-tap="_dontListen" no-label-float value="{{planning.nbMax}}" on-keydown="_checkKey" class="short inputlabel" label="nombre max" ></paper-input>
+        <paper-input on-tap="_dontListen" value="{{planning.nbMax}}" on-keydown="_checkKey" class="short inputlabel" label="nombre max" ></paper-input>
 
     </div>
 

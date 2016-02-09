@@ -48,6 +48,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      <div class="orderProduct" on-tap="onTap">
        <span class="number">{{item.nb}}</span>
        <span>{{item.label}}</span>
+       <span class="value">{{_getTotal(item.value, item.nb)}}</span>
        <paper-ripple></paper-ripple>
      </div>
 
@@ -71,6 +72,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.select();
           }
         }
+      },
+      _getTotal : function(value, nb) {
+        return value*nb;
       },
       activate : function() {
         this.active = 'active';

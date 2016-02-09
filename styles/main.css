@@ -53,7 +53,20 @@ paper-toast {
 	left: -100% !important;
 }
 
-/*
+.orderProduct .value {
+  display: inline-block;
+  padding: 0 5px;
+  background: #eee;
+  color:#000;
+  border-radius:30%;
+}
+
+.person .print:hover {
+   color: #fff;
+   background: #000;
+   border-radius: 50%;
+}
+
 @media print {
 
   body * { visibility: hidden; }
@@ -70,6 +83,42 @@ paper-toast {
     visibility: visible;
   }
 
+  .person {
+    background: #FFF;
+  }
+
+  .orderProduct .value {
+    color:#333;
+    float:right;
+  }
+
+  .middle-container {
+    margin: 0 !important;
+    color:#000;
+  }
+
+  #drawerToolbar.main-view, #mainToolbar.main-view {
+    background: #FFF !important;
+    border-bottom:1px solid #000 !important;
+  }
+
+  .person .name {
+    font-size: 35px;
+  }
+
+  .content {
+    padding:0 !important;
+  }
+
+  .person .avatar {
+    display: none !important;
+  }
+
+  .person .print,
+  .person .planned {
+    display: none;
+  }
+
   order-item-product.order-item {
     display: block !important; 
     border: 1px solid #DDD;
@@ -79,4 +128,4 @@ paper-toast {
     font-size: 25px;
   }
 
-}*/
+}

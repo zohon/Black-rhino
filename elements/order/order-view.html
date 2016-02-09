@@ -77,7 +77,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-input on-tap="_dontListen" no-label-float value="{{search}}" class="short" label="Search" ><div suffix><iron-icon icon="icons:search" ></iron-icon></div></paper-input>
     </paper-item>
 
-    <order-list orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder" ></order-list>
+    <order-list orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-select="select" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder" ></order-list>
 
     <div class="productSelect" hidden="{{!selectProduct}}" style="display: inline-block; width:100%;">
         <hr />
@@ -116,6 +116,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ready : function() {
         console.log("searchSchedule");
         console.log(this.search);
+      },
+      select : function(e) {
+
+        console.log("select");
+        $(this).find('order-item.active').removeClass('active');
+        $(this).find('order-item').addClass('hidden');
       },
       selectorder : function(e) {
 

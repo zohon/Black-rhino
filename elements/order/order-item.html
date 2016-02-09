@@ -434,6 +434,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             var order = {
               product_id : datas.__firebaseKey__,
               label : datas.label,
+              value : datas.value,
               nb : 1,
             };
 
@@ -450,6 +451,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var order = {
             product_id : datas.__firebaseKey__,
             label : datas.label,
+            value : datas.value,
             nb : 1,
           };
 
@@ -520,11 +522,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           e.preventDefault();
           e.stopPropagation();
         }
+
+        this.fire('select', this.order);
+        $(this).addClass('active');
+        window.print();
+        /*
         window.open('print.html?'+$.param({
           label : this.order.label,
           schedule : this.order.schedule,
           items : JSON.stringify(this.order.list)
          }) ); 
+        */
       },
       select : function(e) {
         if(e) {

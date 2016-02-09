@@ -228,6 +228,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <paper-item-body two-line>
             <div class="name">{{product.label}}</div>
             <div secondary class="secondary">
+                <div hidden="{{!product.value}}">value : <span>{{product.value}}</span></div>
                 <div hidden="{{!product.pains}}">pains : <span>{{product.pains}}</span></div>
                 <div hidden="{{!product.steak}}">steak : <span>{{product.steak}}</span></div>
                 <div hidden="{{!product.truite}}">truite : <span>{{product.truite}}</span></div>
@@ -246,6 +247,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="editing" hidden="{{!edit}}">
 
         <paper-input on-tap="_dontListen" no-label-float value="{{product.label}}" on-keydown="_checkKey" class="short" label="label" ></paper-input>
+
+        <paper-input on-tap="_dontListen" no-label-float value="{{product.value}}" on-keydown="_checkKey" class="short" label="value" ></paper-input>
 
         <paper-input on-tap="_dontListen" no-label-float value="{{product.steak}}" on-keydown="_checkKey" class="short inputlabel" label="steak" ></paper-input>
 

@@ -53,14 +53,6 @@ paper-toast {
 	left: -100% !important;
 }
 
-.orderProduct .value {
-  display: inline-block;
-  padding: 0 5px;
-  background: #eee;
-  color:#000;
-  border-radius:30%;
-}
-
 .person .print:hover {
    color: #fff;
    background: #000;
@@ -88,8 +80,12 @@ paper-toast {
   }
 
   .orderProduct .value {
-    color:#333;
-    float:right;
+    color: #333;
+    justify-content: flex-end;
+    position: absolute;
+    right: 0;
+    top: 10px;
+    display: block;
   }
 
   .middle-container {

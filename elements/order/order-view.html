@@ -54,10 +54,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-bottom: 5px;
       }
 
-      .product-item.edit {
-        display: none !important;
-      }
-
       .returnback {
         background: var(--light-primary-color);
         color: var(--text-primary-color);
@@ -103,12 +99,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <order-list orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-select="select" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder" ></order-list>
 
     <div class="productSelect" hidden="{{!selectProduct}}" style="display: inline-block; width:100%;">
-        <hr />
         <product-list products="{{products}}" affichage="lite" filter-by="{{route}}" on-selectproduct="_selectproduct"></product-list>
     </div>
 
     <div class="planningSelect" hidden="{{!selectPlanning}}" style="display: inline-block; width:100%;">
-        <hr />
         <planning-list plannings="{{plannings}}" affichage="lite" filter-by="{{filterBy}}" on-selectplanning="_selectplanning" selectneeds="[[selectneeds]]" selectschedule="[[selectschedule]]"></product-list>
     </div>
 

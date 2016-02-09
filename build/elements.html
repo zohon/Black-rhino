@@ -24059,7 +24059,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       user-select: none;
       position: relative;
       transition: all 0.2s ease;
-      border-radius: 5px;
+      padding: 0px;
+      height: 35px;
     }
 
     :host:hover {
@@ -24070,21 +24071,34 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         background: var(--alert-background) !important;
     }
 
+    .orderProduct {
+      display: flex;
+      align-items:center;
+      height:100%;
+    }
+
+    .value {
+      padding: 7px;
+      background: #eee;
+      color:#000;
+      display: none;
+    }
+
     .number {
       background: var(--accent-color);
       color : var(--text-primary-color);
-      padding: 0px 5px;
+      padding: 7px;
     }
 
-    span {
-      padding:5px;
+    .label {
+      padding:0 15px;
     }
 
     </style>
     
      <div class="orderProduct" on-tap="onTap">
        <span class="number">{{item.nb}}</span>
-       <span>{{item.label}}</span>
+       <span class="label">{{item.label}}</span>
        <span class="value">{{_getTotal(item.value, item.nb)}}</span>
        <paper-ripple></paper-ripple>
      </div>
@@ -24204,7 +24218,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       user-select: none;
       transition: all 0.2s ease;
     }
-    
+
     :host.active,
     :host:hover {
       box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
@@ -24383,11 +24397,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     paper-icon-item .total {
         position: absolute;
-        right: 5px;
+        right: 15px;
         top: 0;
         height: 40px;
         line-height: 65px;
-        font-size: 25px;
+        font-size: 45px;
         display: none;   
     }
 
@@ -24436,10 +24450,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       order-item-product {
         display: inline-block;
-        border:1px solid #DDD;
         cursor: pointer;
-        margin-bottom: 5px;
-        padding: 5px;
+        padding: 0px;
       }
 
       order-item-product:hover {
@@ -24452,8 +24464,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       .listItemOrder {
         display: block;
-        padding:10px 10px 5px;
-        margin-bottom: 5px;
+        padding:10px 10px;
         background: var(--light-primary-color);
       }
 
@@ -24462,6 +24473,18 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         line-height: 40px;
         margin-right: 10px;
         font-size: 35px;        
+      }
+
+      .showInfo {
+        padding: 5px 5px;
+        border-right : 5px solid var(--alert-background);               
+        border-left : 5px solid var(--alert-background);
+        color : var(--alert-background);
+        cursor:pointer;
+      }
+      
+      .showInfo span{
+        margin-left: 5px;
       }
 
     </style>
@@ -24492,14 +24515,20 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </paper-icon-item>
 
     <div class="editing" hidden="{{!edit}}">
-      <paper-input on-tap="_dontListen" no-label-float="" value="{{order.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
+      <paper-input on-tap="_dontListen" value="{{order.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
+
+      <paper-input on-tap="_dontListen" value="{{order.infos}}" on-keydown="_checkKey" class="short" label="Infos"></paper-input>    
     </div>
+
+    <div class="showInfo" on-tap="_selectEdit" hidden="{{!order.infos}}"><iron-icon icon="icons:warning"></iron-icon><span>{{order.infos}}</span></div>
 
     <div class="listItemOrder" hidden="{{!order.list.length}}" on-tap="_dontListen">
       <template is="dom-repeat" items="{{order.list}}" as="item">
       <order-item-product item="{{item}}" on-deleteitem="deleteItem" on-changeitem="getAllNeed"></order-item-product>
       </template>
     </div>
+
+
 
   </div>
 
@@ -24534,7 +24563,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             total += data.nb*data.value;
           });
 
-          return total; 
+          return total+'€'; 
         }
 
       },
@@ -25311,17 +25340,17 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         <paper-input on-tap="_dontListen" value="{{product.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
 
-        <paper-input on-tap="_dontListen" value="{{product.value}}" on-keydown="_checkKey" class="short" label="value"></paper-input>
+        <paper-input on-tap="_dontListen" type="number" value="{{product.value}}" on-keydown="_checkKey" class="short" label="value"></paper-input>
 
-        <paper-input on-tap="_dontListen" value="{{product.steak}}" on-keydown="_checkKey" class="short inputlabel" label="steak"></paper-input>
+        <paper-input on-tap="_dontListen" type="number" value="{{product.steak}}" on-keydown="_checkKey" class="short inputlabel" label="steak"></paper-input>
 
-        <paper-input on-tap="_dontListen" value="{{product.pains}}" on-keydown="_checkKey" class="short inputlabel" label="pains"></paper-input>
+        <paper-input on-tap="_dontListen" type="number" value="{{product.pains}}" on-keydown="_checkKey" class="short inputlabel" label="pains"></paper-input>
 
-        <paper-input on-tap="_dontListen" value="{{product.truite}}" on-keydown="_checkKey" class="short inputlabel" label="truite"></paper-input>
+        <paper-input on-tap="_dontListen" type="number" value="{{product.truite}}" on-keydown="_checkKey" class="short inputlabel" label="truite"></paper-input>
 
-        <paper-input on-tap="_dontListen" value="{{product.pork}}" on-keydown="_checkKey" class="short inputlabel" label="pork"></paper-input>
+        <paper-input on-tap="_dontListen" type="number" value="{{product.pork}}" on-keydown="_checkKey" class="short inputlabel" label="pork"></paper-input>
 
-        <paper-input on-tap="_dontListen" value="{{product.bacon}}" on-keydown="_checkKey" class="short inputlabel" label="bacon"></paper-input>
+        <paper-input on-tap="_dontListen" type="number" value="{{product.bacon}}" on-keydown="_checkKey" class="short inputlabel" label="bacon"></paper-input>
 
     </div>
 
@@ -25945,9 +25974,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         <paper-input on-tap="_dontListen" value="{{planning.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
 
-        <paper-input on-tap="_dontListen" value="{{planning.nb}}" on-keydown="_checkKey" class="short inputlabel" label="nombre en planning"></paper-input>
+        <paper-input on-tap="_dontListen" type="number" value="{{planning.nb}}" on-keydown="_checkKey" class="short inputlabel" label="nombre en planning"></paper-input>
 
-        <paper-input on-tap="_dontListen" value="{{planning.nbMax}}" on-keydown="_checkKey" class="short inputlabel" label="nombre max"></paper-input>
+        <paper-input on-tap="_dontListen" type="number" value="{{planning.nbMax}}" on-keydown="_checkKey" class="short inputlabel" label="nombre max"></paper-input>
 
     </div>
 
@@ -26509,10 +26538,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         margin-bottom: 5px;
       }
 
-      .product-item.edit {
-        display: none !important;
-      }
-
       .returnback {
         background: var(--light-primary-color);
         color: var(--text-primary-color);
@@ -26558,12 +26583,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     <order-list orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-select="select" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder"></order-list>
 
     <div class="productSelect" hidden="{{!selectProduct}}" style="display: inline-block; width:100%;">
-        <hr>
         <product-list products="{{products}}" affichage="lite" filter-by="{{route}}" on-selectproduct="_selectproduct"></product-list>
     </div>
 
     <div class="planningSelect" hidden="{{!selectPlanning}}" style="display: inline-block; width:100%;">
-        <hr>
         <planning-list plannings="{{plannings}}" affichage="lite" filter-by="{{filterBy}}" on-selectplanning="_selectplanning" selectneeds="[[selectneeds]]" selectschedule="[[selectschedule]]">
     </planning-list></div>
 
@@ -27027,9 +27050,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         <paper-input on-tap="_dontListen" value="{{stock.label}}" on-keydown="_checkKey" class="short" label="label"></paper-input>
 
-        <paper-input on-tap="_dontListen" value="{{stock.nb}}" on-keydown="_checkKey" class="short inputlabel" label="nombre en stock"></paper-input>
+        <paper-input on-tap="_dontListen" type="number" value="{{stock.nb}}" on-keydown="_checkKey" class="short inputlabel" label="nombre en stock"></paper-input>
 
-        <paper-input on-tap="_dontListen" value="{{stock.nbMax}}" on-keydown="_checkKey" class="short inputlabel" label="nombre max"></paper-input>
+        <paper-input on-tap="_dontListen" type="number" value="{{stock.nbMax}}" on-keydown="_checkKey" class="short inputlabel" label="nombre max"></paper-input>
 
     </div>
 
@@ -27710,7 +27733,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         background: var(--dark-primary-color);
         color : var(--text-primary-color);
         padding: 5px 15px;
-        border-radius: 20px;
+        border-radius: 2px;
         margin-bottom: 5px;
       }
 
@@ -27928,7 +27951,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
       },
       created: function() {
-        this.dev = false;
+        this.dev = false; 
         this.bdd = 'https://black-rhino.firebaseio.com';
         this.bdd_dev = 'https://black-rhino-dev.firebaseio.com';
       },

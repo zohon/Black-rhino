@@ -28,7 +28,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       user-select: none;
       position: relative;
       transition: all 0.2s ease;
-      border-radius: 5px;
+      padding: 0px;
+      height: 35px;
     }
 
     :host:hover {
@@ -39,21 +40,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background: var(--alert-background) !important;
     }
 
+    .orderProduct {
+      display: flex;
+      align-items:center;
+      height:100%;
+    }
+
+    .value {
+      padding: 7px;
+      background: #eee;
+      color:#000;
+      display: none;
+    }
+
     .number {
       background: var(--accent-color);
       color : var(--text-primary-color);
-      padding: 0px 5px;
+      padding: 7px;
     }
 
-    span {
-      padding:5px;
+    .label {
+      padding:0 15px;
     }
 
     </style>
     
      <div class="orderProduct" on-tap="onTap">
        <span class="number">{{item.nb}}</span>
-       <span>{{item.label}}</span>
+       <span class="label">{{item.label}}</span>
        <span class="value">{{_getTotal(item.value, item.nb)}}</span>
        <paper-ripple></paper-ripple>
      </div>

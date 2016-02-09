@@ -28,7 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       user-select: none;
       transition: all 0.2s ease;
     }
-    
+
     :host.active,
     :host:hover {
       box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
@@ -207,11 +207,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     paper-icon-item .total {
         position: absolute;
-        right: 5px;
+        right: 15px;
         top: 0;
         height: 40px;
         line-height: 65px;
-        font-size: 25px;
+        font-size: 45px;
         display: none;   
     }
 
@@ -260,10 +260,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       order-item-product {
         display: inline-block;
-        border:1px solid #DDD;
         cursor: pointer;
-        margin-bottom: 5px;
-        padding: 5px;
+        padding: 0px;
       }
 
       order-item-product:hover {
@@ -276,8 +274,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .listItemOrder {
         display: block;
-        padding:10px 10px 5px;
-        margin-bottom: 5px;
+        padding:10px 10px;
         background: var(--light-primary-color);
       }
 
@@ -286,6 +283,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         line-height: 40px;
         margin-right: 10px;
         font-size: 35px;        
+      }
+
+      .showInfo {
+        padding: 5px 5px;
+        border-right : 5px solid var(--alert-background);               
+        border-left : 5px solid var(--alert-background);
+        color : var(--alert-background);
+        cursor:pointer;
+      }
+      
+      .showInfo span{
+        margin-left: 5px;
       }
 
     </style>
@@ -316,14 +325,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </paper-icon-item>
 
     <div class="editing" hidden="{{!edit}}">
-      <paper-input on-tap="_dontListen" no-label-float value="{{order.label}}" on-keydown="_checkKey" class="short" label="label" ></paper-input>
+      <paper-input on-tap="_dontListen" value="{{order.label}}" on-keydown="_checkKey" class="short" label="label" ></paper-input>
+
+      <paper-input on-tap="_dontListen" value="{{order.infos}}" on-keydown="_checkKey" class="short" label="Infos" ></paper-input>    
     </div>
+
+    <div class="showInfo" on-tap="_selectEdit" hidden="{{!order.infos}}"><iron-icon icon="icons:warning"></iron-icon><span>{{order.infos}}</span></div>
 
     <div class="listItemOrder" hidden="{{!order.list.length}}" on-tap="_dontListen">
       <template  is="dom-repeat" items="{{order.list}}" as="item" >
       <order-item-product item="{{item}}" on-deleteitem="deleteItem" on-changeitem="getAllNeed"></order-item-product>
       </template>
     </div>
+
+
 
   </div>
 
@@ -358,7 +373,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             total += data.nb*data.value;
           });
 
-          return total; 
+          return total+'€'; 
         }
 
       },

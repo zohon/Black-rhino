@@ -95,6 +95,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-size: 20px;
         z-index: 0;
         box-shadow: 0 1px 5px rgba(0,0,0,0.23),0 1px 0px rgba(0,0,0,0.16);
+        z-index: 100;
     }
     
     .active .edit {
@@ -238,13 +239,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       }
 
-      paper-input {
-        margin-right: 10px;
-      }
-
       .editing {
-        padding: 15px;
-        background: #FFF;
+        padding: 5px 15px;
+        background: #423B36;
       }
 
       .customers {
@@ -693,7 +690,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               var percent = diffX/$(this).width();
               var left = (150*percent);
 
-              if(left > 10) {
+              if(left >= 10) {
                 left = 10;
               }
               if(!this.edit) {
@@ -712,7 +709,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               var percent = diffX/$(this).width();
               var left = -50+(150*percent);
 
-              if(left > 10) {
+              if(left >= 10) {
                 left = 10;
               }
 

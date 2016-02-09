@@ -24264,6 +24264,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         font-size: 20px;
         z-index: 0;
         box-shadow: 0 1px 5px rgba(0,0,0,0.23),0 1px 0px rgba(0,0,0,0.16);
+        z-index: 100;
     }
     
     .active .edit {
@@ -24407,13 +24408,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       }
 
-      paper-input {
-        margin-right: 10px;
-      }
-
       .editing {
-        padding: 15px;
-        background: #FFF;
+        padding: 5px 15px;
+        background: #423B36;
       }
 
       .customers {
@@ -24862,7 +24859,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
               var percent = diffX/$(this).width();
               var left = (150*percent);
 
-              if(left > 10) {
+              if(left >= 10) {
                 left = 10;
               }
               if(!this.edit) {
@@ -24881,7 +24878,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
               var percent = diffX/$(this).width();
               var left = -50+(150*percent);
 
-              if(left > 10) {
+              if(left >= 10) {
                 left = 10;
               }
 

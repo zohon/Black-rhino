@@ -30,14 +30,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       transition: all 0.2s ease;
       padding: 0px;
       height: 35px;
+      border-radius: 0 10px 0 0;
     }
 
     :host:hover {
-      border-radius: 0px;
+
     }
 
     :host:hover .number {
-        background: var(--alert-background) !important;
+      background: var(--alert-background) !important;
+      transition: all 0.2s ease;
     }
 
     .orderProduct {
@@ -60,7 +62,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     .label {
-      padding:0 15px;
+      padding:0 10px;
     }
 
     </style>
@@ -104,7 +106,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.edit = false;
       },
       associate : function(data) {
-        if(this.item.product_id == data.__firebaseKey__) {       
+        if(this.item.__firebaseKey__ == data.__firebaseKey__) {       
           this.set('item.nb', parseInt(this.item.nb)+1);
         }
       },

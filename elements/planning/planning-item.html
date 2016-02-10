@@ -253,8 +253,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background : var(--light-primary-color);
       }     
 
-      .error {
-        opacity : 0.4;
+      .error .secondary {
+        background : var(--alert-background);
+        color : var(--alert-color);
       }
 
       :host.active {
@@ -268,9 +269,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-icon-item tabindex="0" class="person"  on-track="handleTrack" >
 
         <div class="infos">
-          <div class="label" on-tap="select" >{{planning.label}}</div>
-          <div class="secondary" on-tap="onTap">{{planning.nb}}
-          </div>
+          <div class="label" on-tap="select" ><span>{{planning.hour}}</span>h<span>{{planning.min}}</span></div>
+          <div class="secondary" on-tap="onTap">{{planning.nb}}</div>
         </div>
 
       <div class="delete" item-icon><iron-icon icon="icons:delete"></iron-icon><paper-ripple></paper-ripple></div>
@@ -279,11 +279,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div class="editing" hidden="{{!edit}}">
 
-        <paper-input on-tap="_dontListen" value="{{planning.label}}" on-keydown="_checkKey" class="short" label="label" ></paper-input>
+        <paper-input on-tap="_dontListen" value="{{planning.hour}}" on-keydown="_checkKey" class="short" label="Hour" ></paper-input>        
 
-        <paper-input on-tap="_dontListen" type="number" value="{{planning.nb}}" on-keydown="_checkKey" class="short inputlabel" label="nombre en planning" ></paper-input>
+        <paper-input on-tap="_dontListen" value="{{planning.min}}" on-keydown="_checkKey" class="short" label="Min" ></paper-input>    
 
-        <paper-input on-tap="_dontListen" type="number" value="{{planning.nbMax}}" on-keydown="_checkKey" class="short inputlabel" label="nombre max" ></paper-input>
+        <paper-input on-tap="_dontListen" type="number" value="{{planning.nb}}" on-keydown="_checkKey" class="short" label="nombre en planning" ></paper-input>
+
+        <paper-input on-tap="_dontListen" type="number" value="{{planning.nbMax}}" on-keydown="_checkKey" class="short" label="nombre max" ></paper-input>
 
     </div>
 
@@ -331,7 +333,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             if(!this.selectschedule && $(this).hasClass('active')) {
               $(this).removeClass('active');
-            } else if(this.selectschedule == this.planning.label) {
+            } else if(this.selectschedule == this.planning.hour*60+this.planning.min) {
                 $('planning-item.active').removeClass('active');
                 $(this).addClass('active');
             }
@@ -342,17 +344,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },   
       setschedule : function(datas) {
 
-        if(datas.old == this.planning.label) {
+        if(datas.old == this.planning.hour+"h"+this.planning.min) {
           this.set('planning.nb',  parseInt(this.planning.nb) + parseInt(datas.needs));
         }
 
-        if(datas.label == this.planning.label) {
+        if(datas.label == this.planning.hour+"h"+this.planning.min) {
           this.set('planning.nb',  parseInt(this.planning.nb) - parseInt(datas.needs));
         }
 
-      },    
-      _getquery : function(label, adress) {
-        return label+" "+adress;
       },
       observeChange : function(datas) {
 
@@ -361,10 +360,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if(this.planning.creationDate) {
             var diffDate = new Date().getTime() - this.planning.creationDate;
           
-            if(!this.planning.label && diffDate < 1000 ) {
+            if(!this.planning.hour && diffDate < 1000 ) {
 
               setTimeout(_.bind(function() {
-                if(!this.planning.label) {
+                if(!this.planning.hour) {
                   this._selectEdit();
                 }
               },this), 100);
@@ -380,7 +379,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         if(!this.affichage || this.affichage != 'lite') {
 
-            if(this.planning.label) {
+            if(this.planning.hour) {
               if(this.active) {
                 this.desactivate();
               } else {
@@ -388,7 +387,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this._selectEdit();
               }
             }
-
+ 
         } else {
           this.select();
         }

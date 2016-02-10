@@ -8,9 +8,9 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<link rel="import" href="planning-item.html">
+<link rel="import" href="production-item.html">
 
-<dom-module id="planning-list">
+<dom-module id="production-list">
 
   <template>
 
@@ -24,49 +24,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         -o-user-select: none;
         user-select: none;
       }
-      planning-item {
+      stock-item {
         margin-bottom: 10px;
       }
     </style>
 
-    <template is="dom-repeat" items="{{plannings}}" as="planning" filter="{{_computeFilter(filter)}}" observe="isComplete" sort="_sort" observe="{{plannings.length}}">
-      <planning-item planning="{{planning}}" affichage="{{affichage}}" selectneeds="[[selectneeds]]" selectschedule="[[selectschedule]]"></planning-item>
+    <template is="dom-repeat" items="{{productions}}" as="production" filter="{{_computeFilter(filterBy)}}" observe="isComplete" sort="_sort" observe="{{stocks.length}}">
+      <production-item production="{{production}}"></production-item>
     </template>
 
   </template>
   <script>
     Polymer({
-      is: 'planning-list',
+      is: 'production-list',
       properties: {
-        tables: Array,
-        filter: {
+        productions: Array,
+        filterBy: {
           type: String,
           value: 'all'
-        },
-        affichage : {
-          type : String,
-          value: false,
-        },
-        selectneed : {
-          type : Number,
-          value: 0,
-        },
-        selectschedule : {
-          type : String,
-          value: false,
-        },        
+        }        
       },
       _sort : function(a, b) {
-        if (a.hour*60+a.min === b.hour*60+b.min) return 0;
-        return a.hour*60+a.min < b.hour*60+b.min ? -1 : 1;
-      },
-      setschedule : function(datas) {
-        _.each($(this).find('planning-item'), function(view, index) {
-          view.setschedule(datas);
-        });        
-      },         
+        if (a.label === b.label) return 0;
+        return a.label < b.label ? -1 : 1;
+      },      
       _computeFilter: function(filterBy) {
-
         if (filterBy) {
 
           // If filterBy is 'all', return a filter that always returns
@@ -77,10 +59,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             };
           }
 
+          // Handle 'completed', or its inverse, 'active'
+          var ifComplete = (filterBy === 'completed');
           return function(item) {
-            return parseInt(item.nb) >= parseInt(filterBy);
+            return item.isComplete === ifComplete;
           };
-
         }
       }      
     });

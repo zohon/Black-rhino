@@ -24,6 +24,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="product/product-view.html">
 <link rel="import" href="stock/stock-view.html">
 <link rel="import" href="planning/planning-view.html">
+<link rel="import" href="production/production-view.html">
+<link rel="import" href="payement/payement-view.html">
 
 <dom-module id="main-view">
   <template >
@@ -54,6 +56,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-family: 'ostrich', sans-serif !important;
         max-height: 50px;
         font-size: 35px;
+      }
+
+      paper-toolbar .title {
+        font-family: 'ostrich', sans-serif !important;
+        font-size: 35px !important;
+        margin:0 !important;
       }
 
       #drawerToolbar .logo img{
@@ -286,13 +294,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div drawer class="drawer">
 
         <!-- Drawer Toolbar -->
-        <paper-toolbar id="drawerToolbar">
+        <paper-toolbar id="drawerToolbar"><span class="title">{{shiftdate}}</span></paper-toolbar>
         <!--
          <div class='logo'>
           <img src="../images/touch/icon-128x128.png">
           </div>
         -->
-        </paper-toolbar>
+        
 
         <!-- Drawer Content -->
         <paper-menu class="list" attr-for-selected="data-route" selected="{{page}}">
@@ -321,7 +329,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-ripple></paper-ripple>
           </a>
 
+          <a data-route="production" tabindex="-1" on-tap="closeDrawer" >
+            <iron-icon icon="social:whatshot"></iron-icon>
+            <span>Production</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
+          <a data-route="payement" tabindex="-1" on-tap="closeDrawer" >
+            <iron-icon icon="editor:attach-money"></iron-icon>
+            <span>Payement</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
           <hr />
+
+          <a tabindex="-1" class="export" on-tap="export" >
+            <iron-icon icon="icons:cloud-download"></iron-icon>
+            <span>Export</span>
+            <paper-ripple></paper-ripple>
+          </a>   
 
           <a tabindex="-1" class="reset" on-tap="reset" >
             <iron-icon icon="icons:block"></iron-icon>
@@ -367,13 +393,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <item-data location="{{_geturlorder()}}" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
 
-          <order-view  search="{{searchSchedule}}" stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'order')}}" class="flex" products="{{products}}" orders="{{orders}}" plannings="{{plannings}}" on-selectproduct="_selectproduct" on-deleteitem="_deleteproduct" on-setschedule="_setschedule" ></order-view>
+          <order-view  search="{{searchSchedule}}" stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'order')}}" class="flex" products="{{products}}" orders="{{orders}}" plannings="{{plannings}}" on-selectproduct="_selectproduct" on-deleteitem="_deleteproduct" on-setschedule="_setschedule" on-selectorderpayement="_selectorderpayement"></order-view>
+
+          <production-view id="productionView" hidden="{{!_selectRoute(page, 'production')}}" class="flex" orders="{{orders}}" plannings="{{plannings}}"></production-view>
+
+          <payement-view id="payementView" hidden="{{!_selectRoute(page, 'payement')}}" class="flex" orders="{{orders}}" ></payement-view>
 
         </div>
 
         <div class="MiniStock" hidden="{{!stocks.length}}">
 
-          <template  is="dom-repeat" items="{{stocks}}" as="stock"  hidden="{{!stocks.length}}">
+          <template is="dom-repeat" items="{{stocks}}" as="stock"  hidden="{{!stocks.length}}">
               <div class$="{{ _getStockClass(stock.nb, stock.nbMax, 'item') }}" class="item" hidden="{{!stock.label}}"><b class="title">{{stock.label}}</b>&nbsp;<span>{{ stock.nb }}</span></div>
           </template>
 
@@ -529,7 +559,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         $(this).find('order-view').get(0).reset();
         $(this).find('stock-view').get(0).reset();
         $(this).find('planning-view').get(0).reset();
+      },
+      export : function(e) {
 
+        if(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+
+        this.closeDrawer(e);
+
+        this.JSONToCSVConvertor(this.orders, "Orders "+this.shiftdate, true);
       },
       _readyCustomers : function() {
         this._calcTotal();
@@ -580,10 +620,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.total = this.infoTotal.total;
         this.paid = this.infoTotal.paid;
       },
-      _changePage : function(value) {
-        if(value == 'places') {
-          $('#map').trigger('resize');
+      _changePage : function(page) {
+
+        switch(page) {
+            case 'production':
+              $(this).find('#productionView').get(0).loadProduction();
+              console.log("_changePage "+page);
+              break;
         }
+        
       },
       _setschedule : function(e) {
         $(this).find('planning-view').get(0).setschedule(e.detail);
@@ -720,8 +765,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
       _selectproduct : function(e) {
-
         this.gestionStock(e.detail, 'add');
+      },
+      _selectorderpayement : function(e) {
+        console.log("_selectorderpayement");
+        console.log(e.detail);
+        $(this).find('#payementView').get(0)._setOrder(e.detail);
+        this.set('page', 'payement');
       },
       _deleteproduct : function(e) {
         if(product = _.findWhere(this.products, {__firebaseKey__ : e.detail.product_id})) {
@@ -760,7 +810,107 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (drawerPanel.narrow) {
           drawerPanel.closeDrawer();
         }
-      }      
+      },
+      timeConverter : function(UNIX_timestamp){
+        var a = new Date(UNIX_timestamp);
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var year = a.getFullYear();
+        var month = months[a.getMonth()];
+        var date = a.getDate();
+        var hour = a.getHours();
+        var min = a.getMinutes();
+        var sec = a.getSeconds();
+        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+        return time;
+      },
+      JSONToCSVConvertor : function(JSONData, ReportTitle, ShowLabel) {
+        //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+        var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+        
+        var CSV = '';    
+        //Set Report title in first row or line
+        
+        CSV += ReportTitle + '\r\n\n';
+
+        //This condition will generate the Label/Header
+        if (ShowLabel) {
+            var row = "";
+            
+            //This loop will extract the label from 1st index of on array
+            for (var index in arrData[0]) {
+                
+                //Now convert each value to string and comma-seprated
+                row += index + ',';
+            }
+
+            row = row.slice(0, -1);
+            
+            //append Label row with line break
+            CSV += row + '\r\n';
+        }
+        
+        //1st loop is to extract each row
+        for (var i = 0; i < arrData.length; i++) {
+            var row = "";
+            
+            //2nd loop will extract each column and convert it in string comma-seprated
+            for (var index in arrData[i]) {
+
+              if(index == 'list') {
+
+                var text = "";
+                _.each(arrData[i][index], function(data, index) {
+                  text += "- "+data.label + " ("+data.nb+") ";
+                });
+
+                row += '"' + text + '",';
+              } else if(index == 'creationDate') {
+                row += '"' + this.timeConverter(arrData[i][index]) + '",';
+              } else if(index != '__firebaseKey__') {
+                row += '"' + arrData[i][index] + '",';
+              }
+
+
+            }
+
+            row.slice(0, row.length - 1);
+            console.log(row);
+            //add a line break after each row
+            CSV += row + '\r\n';
+        }
+
+        if (CSV == '') {        
+            alert("Invalid data");
+            return;
+        }   
+        
+        //Generate a file name
+        var fileName = "";
+        //this will remove the blank-spaces from the title and replace it with an underscore
+        fileName += ReportTitle.replace(/ /g,"_");   
+        
+        //Initialize file format you want csv or xls
+        var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+        
+        // Now the little tricky part.
+        // you can use either>> window.open(uri);
+        // but this will not work in some browsers
+        // or you will not get the correct file extension    
+        
+        //this trick will generate a temp <a /> tag
+        var link = document.createElement("a");    
+        link.href = uri;
+        
+        //set the visibility hidden so it will not effect on your web-layout
+        link.style = "visibility:hidden";
+        link.download = fileName + ".csv";
+        
+        //this part will append the anchor tag and remove it after automatic click
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     });
   </script>
 </dom-module>

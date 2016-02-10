@@ -1,0 +1,166 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="production-list.html">
+
+<dom-module id="production-view">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        -webkit-user-select: none; /* Chrome/Safari */        
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* IE10+ */
+        /* Rules below not implemented in browsers yet */
+        -o-user-select: none;
+        user-select: none;
+              
+      }
+      paper-fab {
+          position: fixed;
+          bottom:15px;
+          right:15px;
+      }
+
+      paper-item {
+        background: var(--accent-color);
+        color: var(--text-primary-color);
+        cursor: pointer;
+        margin-bottom: 5px;
+      }
+
+      paper-slider {
+        width:100%;
+        --paper-slider-active-color : var(--accent-color);
+        --paper-slider-knob-color : var(--accent-color);
+        --paper-slider-pin-color: var(--accent-color);
+      }
+
+      .showSchedule {
+        font-size: 25px;
+        color: #FFF;
+        padding:5px 15px;
+        background: var(--accent-color);
+      }
+
+ 
+
+    </style>
+
+    <div class="showSchedule"><span>{{schedule.hour}}</span><span hidden="{{!schedule}}">h</span><span>{{schedule.min}}</span></div>
+
+    <paper-slider id="ratings" snaps on-immediate-value-change="getSchedule" on-change="getSchedule" value="{{timer}}" max-markers="{{plannings.length}}" step="10" value="0"></paper-slider>
+
+    <production-list productions="{{productions}}" filter-by="{{route}}" ></production-list>
+    
+  </template>
+  <script>
+    Polymer({
+      is: 'production-view',
+      properties: {
+        productions: Array,
+        orders : Array,
+        timer : 0
+      },
+      getSchedule : function() {
+        if(this.timer !== undefined) {
+
+          var sortPlanning = _.sortBy(this.plannings, function(data){ 
+            return data.hour*60+data.min;
+          });
+          var newSchedule = sortPlanning[(this.timer/10)];
+
+          if(this.schedule != newSchedule) {
+            this.schedule = newSchedule;
+            this.loadProduction();
+          }
+
+        }
+      },
+      loadProduction : function(schedule) {
+
+        if(schedule) {
+          this.schedule = schedule;
+        } else {
+          this.getSchedule();
+        }
+        this.getProduction(this.orders);
+      },
+      getProduction : function(orders) {
+        if(this.schedule) {
+          var result = _.where(orders, {
+            schedule: this.schedule.hour+"h"+this.schedule.min
+          });
+          this.parseProduction(result);
+        }
+      },
+      parseProduction : function(prod) {
+        console.log("parseProduction");
+
+        var newProduction = [];
+        var allList = [];
+        _.each(prod, _.bind(function(data, index) {
+          if(data && data.list) {
+            allList = _.union(allList, data.list);
+          }
+        },this));
+
+        console.log(allList);
+
+        newProduction = this.parseList(allList);
+        this.set('productions',newProduction);
+      },
+      parseList : function(list) {
+
+        this.listneeds = ['steak','pains','bacon'];
+
+        var facticeProduction = [];
+
+        _.each(this.listneeds, _.bind(function(itemNeed) {
+
+          //var resultNeed = _.pluck(list, itemNeed);
+          var resultNeed =_.map(list, function(data, key){
+            if(data[itemNeed]) {
+              return data[itemNeed] * data.nb;
+            }
+          });
+
+          if(resultNeed.length > 0 && resultNeed[0]) {
+            var sum = _.reduce(resultNeed, function(memo, num){ 
+
+              if(!memo) {
+                memo = 0;
+              }
+
+              if(!num) {
+                num = 0;
+              }
+
+              return parseFloat(memo) + parseFloat(num); 
+
+            });
+
+            facticeProduction.push({
+              label : itemNeed,
+              nb : sum
+            });
+
+          }
+        },this));
+
+        return facticeProduction;
+
+      }
+    });
+  </script>
+</dom-module>

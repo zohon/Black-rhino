@@ -8,9 +8,9 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="planning-list.html">
+<link rel="import" href="payement-list.html">
 
-<dom-module id="planning-view">
+<dom-module id="payement-view">
 
   <template>
 
@@ -38,43 +38,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-bottom: 5px;
       }
 
+      paper-slider {
+        width:100%;
+        --paper-slider-active-color : var(--accent-color);
+        --paper-slider-knob-color : var(--accent-color);
+        --paper-slider-pin-color: var(--accent-color);
+      }
+
+      .showSchedule {
+        font-size: 25px;
+        color: #FFF;
+        padding:5px 15px;
+        background: var(--accent-color);
+      }
+
     </style>
-
-    <paper-item on-click="add">
-      <paper-item-body two-line>
-        <div>Create an planning item</div>
-        <div secondary></div>
-      </paper-item-body>
-      <paper-ripple></paper-ripple>
-    </paper-item>
-
-    <planning-list plannings="{{plannings}}" filter-by="{{route}}" on-delete="delete"></planning-list>
-    
+    <h2>{{order.label}}</h2>
+    <payement-list payement="{{this.order.list}}" filter-by="{{route}}" ></payement-list>
   </template>
   <script>
     Polymer({
-      is: 'planning-view',
+      is: 'payement-view',
       properties: {
-        plannings: Array,
-        route: String,
+        payements: Array,
+        order : Object,
+        timer : 0
       },
-      add: function(e) {
-        this.push('plannings', {
-          creationDate : new Date().getTime(),
-          nb :0,
-          nbMax :0,
-        });
-      },
-      setschedule : function(datas) {
-        $(this).find('planning-list').get(0).setschedule(datas);
-      },
-      delete: function(e) {
-        this.arrayDelete('plannings', e.detail.planning);
-      },
-      reset:function() {
-        _.each(this.plannings, _.bind(function(planning, index) {
-          this.set('plannings.'+index+'.nb', planning.nbMax);
-        }, this));
+      _setOrder : function(order) {
+        console.log("_setOrder");
+        this.set('order', order);
+        console.log(this.order.list);
       }
     });
   </script>

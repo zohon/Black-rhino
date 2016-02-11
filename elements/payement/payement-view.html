@@ -106,6 +106,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       .listPayement paper-button{
         margin:0;
+        font-size:15px;
       }
       .listInput {
         opacity: 0;
@@ -170,7 +171,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="listPayement"  hidden="{{!order.list.length}}">
           <paper-button raised on-click="selectmoney" id="buttonmoney"><span class="infototal" hidden="{{!order.money}}">{{order.money}}</span><iron-icon icon="editor:attach-money"></iron-icon>Money</paper-button>
           <paper-button raised on-click="selectticket" id="buttonticket"><span class="infototal" hidden="{{!order.ticket}}">{{order.ticket}}</span><iron-icon icon="image:style"></iron-icon>Ticket</paper-button>
-          <paper-button raised on-click="selectcb" id="buttoncb"><span class="infototal" hidden="{{!order.cb}}">{{order.cb}}</span><iron-icon icon="icons:credit-card"></iron-icon>Credit card</paper-button>
+          <paper-button raised on-click="selectcb" id="buttoncb"><span class="infototal" hidden="{{!order.cb}}">{{order.cb}}</span><iron-icon icon="icons:credit-card"></iron-icon>Credit&nbsp;card</paper-button>
         </div>
 
         <div class="listInput">

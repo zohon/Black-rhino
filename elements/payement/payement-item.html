@@ -78,7 +78,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     .name {
-      font-size: 20px;
+      font-size: 15px;
     }
 
     .value {
@@ -90,14 +90,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
   <div class="content" >
     <paper-item tabindex="0" class="person"  on-track="handleTrack" >
-        <div class="box" on-tap="check" item-icon>{{payed}}</div>
+        <div class="box" on-tap="check" item-icon><span>{{payed}}</span><paper-ripple></paper-ripple></div>
         <paper-item-body two-line>
           <div class="name">
             <span>{{payement.label}}</span>
             <div class="value" hidde="{{!payement.value}}"><span>{{payement.value}}</span>€</div>
           </div>
         </paper-item-body>
-        <div class="box right" on-tap="uncheck" item-icon>{{payement.nb}}</div>
+        <div class="box right" on-tap="uncheck" item-icon><span>{{payement.nb}}</span><paper-ripple></paper-ripple></div>
     </paper-item>
   </div>
 

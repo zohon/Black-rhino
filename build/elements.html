@@ -24815,15 +24815,18 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         /* Rules below not implemented in browsers yet */
         -o-user-select: none;
         user-select: none;  
+
       }
 
       .content {
         padding: 5px;
         margin-bottom: 10px;
+        box-shadow: 0 1px 3px -1px;
+        transition: all 0.3s ease;
       }
 
       .content.active {
-        /*box-shadow: 0 2px 6px -2px #333;*/
+        box-shadow: 0px 2px 5px -1px;
       };
 
       paper-fab {
@@ -24858,16 +24861,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         margin: 0;
         padding: 0 5px;
         font-size: 45px;
-        margin-bottom: 10px;
         text-transform: uppercase;
         font-weight: lighter;
         color: var(--default-primary-color);
-        border-bottom: 1px dotted var(--default-primary-color);   
+          
       }
 
       h2 .edit {
-        height:35px;
-        width:35px;
+        height:40px;
+        width:40px;
         float:right;
         cursor: pointer;
       }
@@ -24880,6 +24882,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         color: var(--valid-background);
         height:35px;
         width:35px;        
+      }
+
+      .data {
+        border-top: 1px dotted var(--default-primary-color);
+        margin-top: 5px;
+        padding-top: 5px;
       }
 
       .listPayement {
@@ -24939,7 +24947,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       <iron-icon class="done" icon="icons:check-circle" hidden="{{_getTotalRest(order.list.length, order.*)}}"></iron-icon>
       <span>{{order.label}}</span><span class="schedule">{{order.schedule}}</span><iron-icon icon="image:edit" on-tap="toggle" class="edit"></iron-icon></h2>
 
-      <div hidden="{{!editing}}">
+      <div hidden="{{!editing}}" class="data">
         <payement-list payements="{{order.list}}"></payement-list>
 
         <div hidden="{{order.list.length}}">no command</div>

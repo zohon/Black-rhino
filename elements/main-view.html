@@ -25,7 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="stock/stock-view.html">
 <link rel="import" href="planning/planning-view.html">
 <link rel="import" href="production/production-view.html">
-<link rel="import" href="payement/payement-view.html">
+<link rel="import" href="payement/payement-mainview.html">
 
 <dom-module id="main-view">
   <template >
@@ -38,7 +38,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       #drawerToolbar, #mainToolbar {
         color: var(--drawer-text-color);
         background-color: var(--drawer-menu-color);
-
       }
 
       #mainToolbar .app-name {
@@ -93,7 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
         font-weight: 400;
-        min-height: 60px;
+        min-height: 55px;
         padding: 0 15px;
         transition : all 0.5s ease;
         position: relative;
@@ -106,8 +105,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       paper-menu iron-icon {
-        margin-right: 33px;
-        opacity: 0.54;
+        margin-right: 20px;
+        opacity: 1;
       }
 
       paper-menu a.iron-selected {
@@ -397,7 +396,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <production-view id="productionView" hidden="{{!_selectRoute(page, 'production')}}" class="flex" orders="{{orders}}" plannings="{{plannings}}"></production-view>
 
-          <payement-view id="payementView" hidden="{{!_selectRoute(page, 'payement')}}" class="flex" orders="{{orders}}" ></payement-view>
+          <payement-mainview id="payementView" orders="{{orders}}" hidden="{{!_selectRoute(page, 'payement')}}" class="flex"></payement-mainview>
 
         </div>
 
@@ -454,7 +453,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
       created: function() {
-        this.dev = false; 
+        this.dev = false;
+        if(window.location.href.indexOf('localhost') >= 0) {
+          this.dev = true;
+        }
         this.bdd = 'https://black-rhino.firebaseio.com';
         this.bdd_dev = 'https://black-rhino-dev.firebaseio.com';
       },
@@ -468,6 +470,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         return this.shiftdate;
       },
+      _geturlorderpayement : function(orderpayementid) {
+        console.log("_geturlorderpayement");
+        console.log(this._geturlorder()+"/"+orderpayementid);
+        return this._geturlorder()+"/"+orderpayementid;
+      },      
       _geturlorder : function() {
         var shiftdate = this._getShiftDate();
         var url = "";
@@ -769,8 +776,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       _selectorderpayement : function(e) {
         console.log("_selectorderpayement");
-        console.log(e.detail);
-        $(this).find('#payementView').get(0)._setOrder(e.detail);
+        this.set('orderpayement', e.detail);
         this.set('page', 'payement');
       },
       _deleteproduct : function(e) {

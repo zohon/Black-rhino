@@ -20,6 +20,7 @@
     "test-fixture": "PolymerElements/test-fixture#^1.0.0"
   },
   "resolutions": {
-    "polymer": "master"
+    "polymer": "master",
+    "paper-styles": "^1.0.0"
   }
 }

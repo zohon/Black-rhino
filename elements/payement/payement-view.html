@@ -8,6 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="payement-list.html">
 
 <dom-module id="payement-view">
@@ -22,9 +23,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         -ms-user-select: none; /* IE10+ */
         /* Rules below not implemented in browsers yet */
         -o-user-select: none;
-        user-select: none;
-              
+        user-select: none;  
       }
+
+      .content {
+        padding: 5px;
+        margin-bottom: 10px;
+      }
+
+      .content.active {
+        /*box-shadow: 0 2px 6px -2px #333;*/
+      };
+
       paper-fab {
           position: fixed;
           bottom:15px;
@@ -52,23 +62,228 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background: var(--accent-color);
       }
 
+      h2 {
+        font-family: 'ostrich', sans-serif !important;
+        margin: 0;
+        padding: 0 5px;
+        font-size: 45px;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        font-weight: lighter;
+        color: var(--default-primary-color);
+        border-bottom: 1px dotted var(--default-primary-color);   
+      }
+
+      h2 .edit {
+        height:35px;
+        width:35px;
+        float:right;
+        cursor: pointer;
+      }
+
+      h2 .edit:hover {
+        color: var(--accent-color);
+      }
+
+      h2 .done {
+        color: var(--valid-background);
+        height:35px;
+        width:35px;        
+      }
+
+      .listPayement {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+      }
+      .listPayement paper-button{
+        margin:0;
+      }
+      .listInput {
+        opacity: 0;
+        display: flex;
+        justify-content: space-between;
+        height:5px;
+      }
+      .listInput paper-input{
+        width:30%;
+      }
+
+      paper-button[active] {
+        background-color: var(--accent-color);
+        color : var(--accent-text-color);
+      }
+
+      .infototal {
+        color: var(--accent-color);
+        margin-right: 5px;
+      }
+
+      paper-button[active] .infototal {
+        color: var(--accent-text-color);
+      }
+
+      .infos {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .total {
+
+      }
+      .reste {
+
+      }
+
+      h2 .schedule {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        font-size: 20px;
+        margin-left: 15px;
+      }
+
     </style>
-    <h2>{{order.label}}</h2>
-    <payement-list payement="{{this.order.list}}" filter-by="{{route}}" ></payement-list>
+
+    <div hidden="{{!order.label}}" class$="{{classinfo(editing, 'content')}}" class="content" >
+      <h2>
+      <iron-icon class="done" icon="icons:check-circle" hidden="{{_getTotalRest(order.list.length, order.*)}}"></iron-icon>
+      <span>{{order.label}}</span><span class="schedule">{{order.schedule}}</span><iron-icon icon="image:edit" on-tap="toggle" class="edit"></iron-icon></h2>
+
+      <div hidden="{{!editing}}">
+        <payement-list payements="{{order.list}}" ></payement-list>
+
+        <div hidden="{{order.list.length}}">no command</div>
+
+        <div class="infos" hidden="{{!order.list.length}}">
+          <div class="total">Total&nbsp;:&nbsp;<span>{{_getTotal(order.list.length)}}</span><span hidden="{{!order.list.length}}" >€</span></div>  
+
+          <div class="reste">Reste&nbsp;:&nbsp;<span>{{_getTotalRest(order.list.length, order.*)}}</span><span hidden="{{!order.list.length}}" >€</span></div>
+        </div>
+
+        <div class="listPayement"  hidden="{{!order.list.length}}">
+          <paper-button raised on-click="selectmoney" id="buttonmoney"><span class="infototal" hidden="{{!order.money}}">{{order.money}}</span><iron-icon icon="editor:attach-money"></iron-icon>Money</paper-button>
+          <paper-button raised on-click="selectticket" id="buttonticket"><span class="infototal" hidden="{{!order.ticket}}">{{order.ticket}}</span><iron-icon icon="image:style"></iron-icon>Ticket</paper-button>
+          <paper-button raised on-click="selectcb" id="buttoncb"><span class="infototal" hidden="{{!order.cb}}">{{order.cb}}</span><iron-icon icon="icons:credit-card"></iron-icon>Credit card</paper-button>
+        </div>
+
+        <div class="listInput">
+          <paper-input type="number" id="inputmoney" value="{{addmoney}}" on-change="addtomoney" class="short" label="money" ></paper-input>
+          <paper-input type="number" id="inputticket" value="{{addticket}}" on-change="addtoticket" class="short" label="ticket" ></paper-input>
+          <paper-input type="number" id="inputcb" value="{{addcb}}" on-change="addtocb" class="short" label="credit card" ></paper-input>
+        </div>
+
+      </div>
+
+    </div>
   </template>
   <script>
     Polymer({
       is: 'payement-view',
       properties: {
         payements: Array,
-        order : Object,
+        order : {
+          type :Object,
+          observer: 'changeOrder'
+        },
+        editing : false,
         timer : 0
       },
-      _setOrder : function(order) {
-        console.log("_setOrder");
-        this.set('order', order);
-        console.log(this.order.list);
-      }
+      ready : function() {
+
+        this.set('editing', false);
+
+      },
+      classinfo : function(editing, classes) {
+        return (editing ? 'active ' : '')+classes;
+      },
+      changeOrder : function() {
+
+      },
+      toggle : function() {
+        if(this.editing) {
+          this.set('editing', false);
+        } else {
+          this.set('editing', true);
+        }
+      },
+      addtomoney: function() {
+        var val = 0;
+
+        if(this.order.money) {
+          val = parseFloat(this.order.money)+parseFloat(this.addmoney);
+        } else {
+          val = this.addmoney;
+        }
+
+        this.set('order.money', val);
+        this.set('addmoney', '');
+        $(this).find('paper-button').removeAttr('active');
+      },
+      addtoticket: function() {
+        var val = 0;
+
+        if(this.order.ticket) {
+          val = parseFloat(this.order.ticket)+parseFloat(this.addticket);
+        } else {
+          val = this.addticket;
+        }
+
+        this.set('order.ticket', val);
+        this.set('addticket', '');
+        $(this).find('paper-button').removeAttr('active');
+      },        
+      addtocb: function() {
+        var val = 0;
+
+        if(this.order.cb) {
+          val = parseFloat(this.order.cb)+parseFloat(this.addcb);
+        } else {
+          val = this.addcb;
+        }
+
+        this.set('order.cb', val);
+        this.set('addcb', '');
+        $(this).find('paper-button').removeAttr('active');
+      },
+      _getTotalRest : function(nborder, order) {
+        var total = this._getTotal();
+
+        var money = (this.order.money ? parseFloat(this.order.money) : 0);
+        var ticket = (this.order.ticket ? parseFloat(this.order.ticket) : 0);
+        var cb = (this.order.cb ? parseFloat(this.order.cb) : 0);
+        var alreadypayed= money+ticket+cb;
+
+
+        this.fire('payementchange', this.order);
+
+
+        return total-alreadypayed;
+
+      },      
+      _getTotal : function() {
+        var total = 0;
+        
+        if(this.order && this.order.list) {
+          _.each(this.order.list, function(data, index) {
+            total += data.nb*data.value;
+          });
+          return total;
+        }
+      },
+      selectmoney : function() {
+        $(this).find('#inputmoney').focus();
+        $(this).find('paper-button').removeAttr('active');
+        $(this).find('#buttonmoney').attr('active', true);
+      },      
+      selectcb : function() {
+        $(this).find('#inputcb').focus();
+        $(this).find('paper-button').removeAttr('active');        
+        $(this).find('#buttoncb').attr('active', true);
+      },
+      selectticket : function() {
+        $(this).find('#inputticket').focus();
+        $(this).find('paper-button').removeAttr('active');
+        $(this).find('#buttonticket').attr('active', true);
+      }       
     });
   </script>
 </dom-module>

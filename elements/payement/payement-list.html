@@ -25,12 +25,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         user-select: none;
       }
       stock-item {
-        margin-bottom: 10px;
+        margin: 10px 0;
       }
     </style>
 
-    <template is="dom-repeat" items="{{payements}}" as="payement" filter="{{_computeFilter(filterBy)}}" observe="isComplete" sort="_sort" observe="{{stocks.length}}">
-      <payement-item payement="{{payement}}"></payement-item>
+    <template is="dom-repeat" items="{{payements}}" as="payement" >
+       <payement-item payement="{{payement}}" ></payement-item>
     </template>
 
   </template>

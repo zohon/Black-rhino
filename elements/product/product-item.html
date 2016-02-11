@@ -8,7 +8,6 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
-
 <dom-module id="product-item">
 
   <template>
@@ -377,7 +376,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
       _getAvatar : function(name) {
-        if(name) {
+
+        /*if(color) {
+          $(this).find('paper-icon-item .avatar').css('background', his.product.color);
+        } else*/ if(name) {
 
           var hash  = 0;
           for (var i = 0; i < name.length; i++) {
@@ -388,9 +390,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var color =  "00000".substring(0, 6 - c.length) + c;
           this.colorAvatar = "#"+color;
           $(this).find('paper-icon-item .avatar').css('background', this.colorAvatar);
-    
-          return name.charAt(0);
         }
+
+        return name.charAt(0);
+
       },
       _checkKey: function(e) {
         if (e.keyCode === 13) {
@@ -505,7 +508,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 });   
               */ 
               if(diffY > 100) {
-          
                 console.log('slide top');                
               }
             } else if(this.trackInfo.start.y < this.trackInfo.progress.y) {
@@ -515,7 +517,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 });
 */
               if(diffY > 100) {
-                 
                 console.log('slide bottom');
               }
             }

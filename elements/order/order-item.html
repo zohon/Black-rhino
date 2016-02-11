@@ -381,10 +381,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       _plannedListen : function(data1, data2) {
 
-        console.log("_plannedListen");
-        console.log(data1);
-        console.log(data2);
-
         if (data1 && data2) {
           return true;
         } else {
@@ -393,7 +389,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
       _getTotal : function() {
-        console.log("_getTotal");
         var total = 0;
         
         if(this.order && this.order.list) {
@@ -482,8 +477,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return totalNeed;
       },
       associateProduct : function(datas) {
-
-        console.log("associateProduct");
 
         if(this.order.list) {
 

@@ -40,49 +40,65 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       box-shadow: 0 5px 5px -7px #000;
     }
 
-    paper-item .avatar {
-      background: var(--light-primary-color);
-      width: 48px;
-      height: 48px;
-      margin-right: 10px;      
+    paper-item:focus:before {
+      display: none;
     }
 
-    paper-item .avatar {
+    paper-item .box {
+      width: 48px;
+      height: 48px;
+      margin-right: 10px; 
+
       display: flex;
       border-radius: 0;
       overflow: hidden;
-      background: #ccc;
+      background: var(--accent-color);
+      color: var(--accent-text-color) !important;
 
       justify-content:center;
       align-items:center;
 
       text-transform: uppercase;
-      color:#FFF;
+      
       font-size: 25px;
       transition : all 0.4s ease;
+      cursor: pointer;
     }
-    .active paper-item .avatar {
+
+    .active paper-item .box {
         background: var(--accent-color);
     }
 
+    paper-item .box.right {
+      position: absolute;
+      right: 0;
+      margin:0;
+      background: var(--default-primary-color);
+      color : var(--text-primary-color);
+    }
+
     .name {
-      font-size: 30px;
+      font-size: 20px;
+    }
+
+    .value {
+      display: inline-block;
+      color: var(--disabled-text-color);
     }
 
     </style>
     
-  <div class="content">
-
-    <paper-item tabindex="0" class="person" on-tap="onTap"  on-track="handleTrack" >
-
-        <div class="avatar" item-icon>{{payement.nb}}</div>
-
-          <paper-item-body two-line>
-            <div class="name">{{payement.label}}</div>
-          </paper-item-body>
-
+  <div class="content" >
+    <paper-item tabindex="0" class="person"  on-track="handleTrack" >
+        <div class="box" on-tap="check" item-icon>{{payed}}</div>
+        <paper-item-body two-line>
+          <div class="name">
+            <span>{{payement.label}}</span>
+            <div class="value" hidde="{{!payement.value}}"><span>{{payement.value}}</span>€</div>
+          </div>
+        </paper-item-body>
+        <div class="box right" on-tap="uncheck" item-icon>{{payement.nb}}</div>
     </paper-item>
-
   </div>
 
   </template>
@@ -93,9 +109,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         payement: {
           type : Object,
           //observer : "observeChange"
-        },
+        }
       },
-
+      ready : function() {
+        if(!this.payed && this.payement.nb) {
+          this.set('payed',this.payement.nb);
+        }
+      },
+      check : function() {
+        this.set('payed', parseFloat(this.payed)-1);
+      },
+      uncheck : function() {
+        this.set('payed', parseFloat(this.payed)+1);
+      },      
       _getAvatar : function(name) {
         if(name) {
 

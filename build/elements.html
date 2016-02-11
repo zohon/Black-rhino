@@ -19779,21 +19779,16 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     }
 
     paper-icon-item .avatar {
-      background: var(--light-primary-color);
-    }
-
-    paper-icon-item .avatar {
+      font-family: 'ostrich', sans-serif;
       display: inline-block;
-      width: 40px;
+      width: 25px;
       height: 40px;
-      border-radius: 50%;
       overflow: hidden;
-      background: #ccc;
       line-height: 40px;
       text-align: center;
       text-transform: uppercase;
-      color:#FFF;
-      font-size: 20px;
+      color: var(--light-primary-color);
+      font-size: 50px;
       transition : all 0.4s ease;
     }
     .active paper-icon-item .avatar {
@@ -20406,7 +20401,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           var c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
           var color =  "00000".substring(0, 6 - c.length) + c;
           this.colorAvatar = "#"+color;
-          $(this).find('paper-icon-item .avatar').css('background', this.colorAvatar);
+          //$(this).find('paper-icon-item .avatar').css('background', this.colorAvatar);
     
           return name.charAt(0);
         }
@@ -24201,12 +24196,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       font-size: 25px;
       transition : all 0.4s ease;
     }
+
+
     .active paper-item .avatar {
         background: var(--accent-color);
     }
 
     .name {
-      font-size: 30px;
+      font-size: 45px;
+      font-family: 'ostrich', sans-serif;
     }
 
     </style>

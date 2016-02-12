@@ -22132,9 +22132,18 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         width: 100%;
       }
 
+      .actionList {
+        transition: all 0.2s ease;
+      }
+
+      .actionList.active,
+      .actionList:hover {
+        box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.2);
+      }
+
     </style>
 
-    <paper-item on-tap="add" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
+    <paper-item on-tap="add" class="actionList" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
       <paper-item-body two-line="">
         <div>Create an order</div>
         <div secondary=""></div>
@@ -24362,13 +24371,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
  
 
     </style>
+    <div on-track="handleTrack">
+      <div class="showSchedule"><span>{{schedule.hour}}</span><span hidden="{{!schedule}}">h</span><span>{{schedule.min}}</span></div>
 
-    <div class="showSchedule"><span>{{schedule.hour}}</span><span hidden="{{!schedule}}">h</span><span>{{schedule.min}}</span></div>
+      <paper-slider id="ratings" snaps="" on-immediate-value-change="getSchedule" on-change="getSchedule" value="{{timer}}" max="{{_getMarkerMax(plannings.length)}}" max-markers="10" step="10"></paper-slider>
 
-    <paper-slider id="ratings" snaps="" on-immediate-value-change="getSchedule" on-change="getSchedule" value="{{timer}}" max-markers="{{plannings.length}}" step="10"></paper-slider>
-
-    <production-list productions="{{productions}}" filter-by="{{route}}"></production-list>
-    
+      <production-list productions="{{productions}}" filter-by="{{route}}"></production-list>
+    </div>
   </template>
   <script>
     Polymer({
@@ -24377,6 +24386,43 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         productions: Array,
         orders : Array,
         timer : 0
+      },
+      _getMarker : function(length) {
+        console.log("_getMarker");
+        console.log(length);
+        return (length-1);
+      },      
+      _getMarkerMax : function(length) {
+        console.log("_getMarkerMax");
+        return (length-1)*10;
+      },
+      setTimer : function(action) {
+
+        switch(action) {
+            case 'next':
+
+              console.log("next");
+              console.log(this.timer);
+              console.log(this.plannings.length*10);
+                if(this.timer+10 >= this.plannings.length*10) {
+                  this.set('timer', 0);
+                } else {
+                  this.set('timer', this.timer+10);
+                }
+              break;
+            case 'prev':
+              console.log("prev");
+              console.log(this.timer);
+                if(this.timer-10 < 0) {
+                  this.set('timer', this.plannings.length*10);
+                } else {
+                  this.set('timer', this.timer-10);
+                }
+              break;
+        }
+
+        this.getSchedule();
+
       },
       getSchedule : function() {
         if(this.timer !== undefined) {
@@ -24462,7 +24508,113 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         return facticeProduction;
 
-      }
+      },
+      handleTrack: function(e) {
+
+        if(!this.trackInfo) {
+            this.trackInfo = {};
+        }
+
+        var message;
+
+        switch(e.detail.state) {
+          case 'start':
+            message = 'Tracking started!';
+
+            this.trackInfo.start = {
+              x : e.detail.x,
+              y : e.detail.y,
+            };
+            this.action = false;
+            break;
+          case 'track':
+            message = 'Tracking in progress... ' +
+              e.detail.x + ', ' + e.detail.y;
+            this.trackInfo.progress = {
+              x : e.detail.x,
+              y : e.detail.y,
+            };
+
+            break;
+          case 'end':
+            message = 'Tracking ended!';
+            this.trackInfo.end = {
+              x : e.detail.x,
+              y : e.detail.y,
+            };
+
+
+            break;
+        }
+
+        this.calcTrack(e);
+
+      },
+      calcTrack : function(e) {
+
+        if(this.onDestroy) {
+          return false;
+        }
+
+        if(this.trackInfo && this.trackInfo.start && this.trackInfo.progress) {
+
+
+          var diffY = Math.abs(this.trackInfo.progress.y - this.trackInfo.start.y);
+          var diffX = Math.abs(this.trackInfo.progress.x - this.trackInfo.start.x);
+
+          if(diffY < diffX) {
+
+            if(this.trackInfo.start.x > this.trackInfo.progress.x) {
+
+              if(diffX > 50 && !this.action) {
+                this.setTimer("prev");
+                this.action = true;
+              }
+              
+
+            } else if(this.trackInfo.start.x < this.trackInfo.progress.x) {
+
+              if(diffX > 50 && !this.action) {
+                this.setTimer("next");
+                this.action = true;
+              }
+            }
+
+          } else {
+
+            if(this.trackInfo.start.y > this.trackInfo.progress.y) { // slide top
+              /*
+                $(this).css({
+                  'margin-top' : diffY,
+                });   
+              */ 
+              if(diffY > 100) {
+              
+              }
+            } else if(this.trackInfo.start.y < this.trackInfo.progress.y) { // slide bottom
+/*
+                $(this).css({
+                  'margin-bottom' : diffY,
+                });
+*/
+              if(diffY > 100) {
+
+              }
+            }
+
+          }
+        }
+
+        if(e.detail.state == 'end' && !this.onDestroy) {
+            this.trackInfo = {};
+            $(this).find('.delete').css({
+                left : "-45px",
+                transition : "all 0.5s ease"
+            });
+        }
+
+      }      
+
     });
   </script>
 </dom-module>
@@ -25238,18 +25390,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .content {
         padding: 15px 15px 0;
         padding-bottom: 75px;
-      }
-
-      todo-list {
-        margin: 0 auto 32px;
-      }
-
-      todo-list, todo-input {
-        max-width: 1000px;
-      }
-
-      todo-input {
-        margin: 0 auto;
       }
 
       .drawer {

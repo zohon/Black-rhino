@@ -74,9 +74,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 100%;
       }
 
+      .actionList {
+        transition: all 0.2s ease;
+      }
+
+      .actionList.active,
+      .actionList:hover {
+        box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.2);
+      }
+
     </style>
 
-    <paper-item on-tap="add" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
+    <paper-item on-tap="add" class="actionList" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
       <paper-item-body two-line>
         <div>Create an order</div>
         <div secondary></div>
@@ -84,7 +93,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-ripple></paper-ripple>
     </paper-item>
 
-    <paper-item class="returnback" on-tap="unselect" hidden="{{_onlyhideList(search,selectPlanning,selectProduct)}}">
+    <paper-item class="returnback" class="actionList" on-tap="unselect" hidden="{{_onlyhideList(search,selectPlanning,selectProduct)}}">
       <paper-item-body two-line>
         <div><iron-icon class="icon" icon="icons:chevron-left" ></iron-icon>Return list</div>
         <div secondary></div>

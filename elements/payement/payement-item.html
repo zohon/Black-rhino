@@ -108,36 +108,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       properties: {
         payement: {
           type : Object,
-          //observer : "observeChange"
+          observer : "_getPayed"
         }
       },
       ready : function() {
+
+      },
+      _getPayed : function() {
         if(!this.payed && this.payement.nb) {
           this.set('payed',this.payement.nb);
         }
       },
       check : function() {
         this.set('payed', parseFloat(this.payed)-1);
+        this.fire('addencour', this.payement.value);
       },
       uncheck : function() {
         this.set('payed', parseFloat(this.payed)+1);
-      },      
-      _getAvatar : function(name) {
-        if(name) {
-
-          var hash  = 0;
-          for (var i = 0; i < name.length; i++) {
-             hash  = name.charCodeAt(i) + ((hash  << 5) - hash );
-          }
-
-          var c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
-          var color =  "00000".substring(0, 6 - c.length) + c;
-          this.colorAvatar = "#"+color;
-          $(this).find('paper-icon-item .avatar').css('background', this.colorAvatar);
-    
-          return name.charAt(0);
-        }
-      },      
+        this.fire('removeencour', this.payement.value);
+      }    
     });
   </script>
 </dom-module>

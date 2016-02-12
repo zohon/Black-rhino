@@ -53,13 +53,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background: var(--accent-color);
       }
 
+      .infos {
+        color:var(--alert-color);
+        background: var(--alert-background);
+        padding: 5px;
+        margin-bottom: 10px;
+      }
  
 
     </style>
     <div on-track="handleTrack">
       <div class="showSchedule"><span>{{schedule.hour}}</span><span hidden="{{!schedule}}">h</span><span>{{schedule.min}}</span></div>
 
-      <paper-slider id="ratings" snaps on-immediate-value-change="getSchedule" on-change="getSchedule" value="{{timer}}" max="{{_getMarkerMax(plannings.length)}}" max-markers="10" step="10" value="0"></paper-slider>
+      <paper-slider id="ratings" snaps on-immediate-value-change="getSchedule" on-change="getSchedule" value="{{timer}}" max="[[_getMarkerMax(plannings.length)]]" step="10" value="0"></paper-slider>
+
+      <div class="infos" hidden="{{!infos.length}}">
+        <template is="dom-repeat" items="{{infos}}" as="info" ><div>{{info.text}}</div></template>
+      </div>
 
       <production-list productions="{{productions}}" filter-by="{{route}}" ></production-list>
     </div>
@@ -75,7 +85,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _getMarker : function(length) {
         console.log("_getMarker");
         console.log(length);
-        return (length-1);
+        return length;
       },      
       _getMarkerMax : function(length) {
         console.log("_getMarkerMax");
@@ -138,37 +148,60 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var result = _.where(orders, {
             schedule: this.schedule.hour+"h"+this.schedule.min
           });
+
+          console.log("getProduction");
+          console.log(orders);
+          console.log(result);
+
           this.parseProduction(result);
         }
       },
       parseProduction : function(prod) {
         var newProduction = [];
         var allList = [];
+        var infos = [];
+
         _.each(prod, _.bind(function(data, index) {
+
+          if(data.infos) {
+            infos.push({
+              label : data.label,
+              text : data.infos
+            });
+          }
+
           if(data && data.list) {
             allList = _.union(allList, data.list);
           }
         },this));
+        console.log("allList");
+        console.log(allList);
 
         newProduction = this.parseList(allList);
+        console.log(newProduction);
+
+        this.set('infos', infos);
         this.set('productions',newProduction);
       },
       parseList : function(list) {
+        console.log("parseList");
+        this.listneeds = ['steak','pains','bacon', 'inter'];
 
-        this.listneeds = ['steak','pains','bacon'];
-
+        var infos = "";
         var facticeProduction = [];
 
         _.each(this.listneeds, _.bind(function(itemNeed) {
+
 
           //var resultNeed = _.pluck(list, itemNeed);
           var resultNeed =_.map(list, function(data, key){
             if(data[itemNeed]) {
               return data[itemNeed] * data.nb;
             }
+            return 0;
           });
 
-          if(resultNeed.length > 0 && resultNeed[0]) {
+          if(resultNeed.length > 0 && resultNeed[0] != undefined) {
             var sum = _.reduce(resultNeed, function(memo, num){ 
 
               if(!memo) {
@@ -183,12 +216,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             });
 
+
             facticeProduction.push({
               label : itemNeed,
               nb : sum
             });
 
           }
+
         },this));
 
         return facticeProduction;

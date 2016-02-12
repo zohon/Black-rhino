@@ -306,13 +306,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
     
-  <div class$="[[_getClass(active, 'content')]]" class="content" on-tap="onTap">
+  <div class$="[[_getClass(active, 'content')]]" class="content" on-click="onTap">
 
     <paper-icon-item tabindex="0" class="person" on-track="handleTrack" >
 
-        <div class="print" hidden="{{!order.schedule}}" item-icon on-tap="printMe"><iron-icon icon="icons:print"></iron-icon><paper-ripple></paper-ripple></div>
+        <div class="print" hidden="{{!order.schedule}}" item-icon on-click="printMe"><iron-icon icon="icons:print"></iron-icon><paper-ripple></paper-ripple></div>
 
-        <div class="schedule" hidden="{{!order.schedule}}" on-tap="selectplanned" item-icon>{{ order.schedule }}</div>
+        <div class="schedule" hidden="{{!order.schedule}}" on-click="selectplanned" item-icon>{{ order.schedule }}</div>
         <div class="avatar" hidden="{{order.schedule}}" item-icon>{{_getAvatar(order.label)}}</div>
 
           <paper-item-body two-line>
@@ -321,13 +321,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <div class="delete" item-icon><iron-icon icon="icons:delete"></iron-icon><paper-ripple></paper-ripple></div>
 
-      <div class="edit" item-icon on-tap="_selectEdit"><iron-icon icon="editor:mode-edit"></iron-icon><paper-ripple></paper-ripple></div>
+      <div class="edit" item-icon on-click="_selectEdit"><iron-icon icon="editor:mode-edit"></iron-icon><paper-ripple></paper-ripple></div>
 
-      <div class="select" item-icon on-tap="select" hidden="{{edit}}"><iron-icon icon="icons:check"></iron-icon><paper-ripple></paper-ripple></div>
+      <div class="select" item-icon on-click="select" hidden="{{edit}}"><iron-icon icon="icons:check"></iron-icon><paper-ripple></paper-ripple></div>
 
-      <div class="planned" hidden="{{_plannedListen(order.list.length,order.schedule)}}" item-icon on-tap="selectplanned" ><iron-icon icon="icons:today"></iron-icon><paper-ripple></paper-ripple></div>
+      <div class="planned" hidden="{{_plannedListen(order.list.length,order.schedule)}}" item-icon on-click="selectplanned" ><iron-icon icon="icons:today"></iron-icon><paper-ripple></paper-ripple></div>
 
-      <div class="planned" hidden="{{!order.schedule}}" item-icon on-tap="selectpayement" ><iron-icon icon="editor:attach-money"></iron-icon><paper-ripple></paper-ripple></div>
+      <div class="planned" hidden="{{!order.schedule}}" item-icon on-click="selectpayement" ><iron-icon icon="editor:attach-money"></iron-icon><paper-ripple></paper-ripple></div>
 
 
       <div class="total">{{_getTotal(order.list.length)}}</div>
@@ -335,14 +335,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </paper-icon-item>
 
     <div class="editing" hidden="{{!edit}}">
-      <paper-input on-tap="_dontListen" value="{{order.label}}" on-keydown="_checkKey" class="short" label="label" ><div suffix><iron-icon icon="icons:done" on-tap="desactivate"></iron-icon></div></paper-input>
+      <paper-input on-click="_dontListen" value="{{order.label}}" on-keydown="_checkKey" class="short" label="label" ><div suffix><iron-icon icon="icons:done" on-click="desactivate"></iron-icon></div></paper-input>
 
-      <paper-input on-tap="_dontListen" value="{{order.infos}}" on-keydown="_checkKey" class="short" label="Infos" ><div suffix><iron-icon icon="icons:done" on-tap="desactivate" ></iron-icon></div></paper-input>    
+      <paper-input on-click="_dontListen" value="{{order.infos}}" on-keydown="_checkKey" class="short" label="Infos" ><div suffix><iron-icon icon="icons:done" on-click="desactivate" ></iron-icon></div></paper-input>    
     </div>
 
-    <div class="showInfo" on-tap="_selectEdit" hidden="{{!order.infos}}"><iron-icon icon="icons:warning"></iron-icon><span>{{order.infos}}</span></div>
+    <div class="showInfo" on-click="_selectEdit" hidden="{{!order.infos}}"><iron-icon icon="icons:warning"></iron-icon><span>{{order.infos}}</span></div>
 
-    <div class="listItemOrder" hidden="{{!order.list.length}}" on-tap="_dontListen">
+    <div class="listItemOrder" hidden="{{!order.list.length}}" on-click="_dontListen">
       <template  is="dom-repeat" items="{{order.list}}" as="item" >
       <order-item-product item="{{item}}" on-deleteitem="deleteItem" on-changeitem="getAllNeed"></order-item-product>
       </template>

@@ -83,6 +83,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.2);
       }
 
+      product-list {
+              padding: 0;
+        margin: 0;
+        list-style: none;
+        
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        
+        -webkit-flex-flow: row wrap;
+        justify-content: space-between;
+      }
+
     </style>
 
     <paper-item on-tap="add" class="actionList" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
@@ -108,7 +123,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <order-list orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-selectitem="selectitem" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder" ></order-list>
 
     <div class="productSelect" hidden="{{!selectProduct}}" style="display: inline-block; width:100%;">
-        <product-list products="{{products}}" affichage="lite" filter-by="{{route}}" on-selectproduct="_selectproduct"></product-list>
+        <product-list products="{{products}}" affichage="lite" sort="color" filter-by="{{route}}" on-selectproduct="_selectproduct"></product-list>
     </div>
 
     <div class="planningSelect" hidden="{{!selectPlanning}}" style="display: inline-block; width:100%;">

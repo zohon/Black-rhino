@@ -30,7 +30,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <template is="dom-repeat" items="{{products}}" as="product" filter="{{_computeFilter(filterBy)}}" observe="isComplete" sort="_sort" observe="{{products.length}}">
-      <product-item product="{{product}}" affichage="{{affichage}}"></product-item>
+      <product-item product="{{product}}" affichage="{{affichage}}" class$="[[affichage]]"></product-item>
     </template>
 
   </template>
@@ -45,8 +45,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }        
       },
       _sort : function(a, b) {
-        if (a.label === b.label) return 0;
-        return a.label < b.label ? -1 : 1;
+        if (a.color === b.color) resultColor = 0;
+        resultColor = a.color < b.color ? -1 : 1;
+        return resultColor;
       },      
       _computeFilter: function(filterBy) {
         if (filterBy) {

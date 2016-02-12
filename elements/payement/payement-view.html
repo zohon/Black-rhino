@@ -104,10 +104,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         justify-content: space-between;
         margin-top: 5px;
       }
-      .listPayement paper-button{
-        margin:0;
-        font-size:15px;
+
+      .listPayement .text {
+        display: none;
       }
+
+      .listPayement paper-button{
+        font-size: 13px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
       .listInput {
         opacity: 0;
         display: flex;
@@ -126,6 +134,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .infototal {
         color: var(--accent-color);
         margin-right: 5px;
+        font-size: 15px;
       }
 
       paper-button[active] .infototal {
@@ -148,36 +157,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-family: 'Roboto', 'Noto', sans-serif;
         font-size: 20px;
         margin-left: 15px;
+        float:right;
+        padding: 10px 0;
+      }
+
+      .encours {
+        color: var(--accent-color);
       }
 
     </style>
 
     <div hidden="{{!order.label}}" class$="{{classinfo(editing, 'content')}}" class="content" >
-      <h2>
-      <iron-icon class="done" icon="icons:check-circle" hidden="{{_getTotalRest(order.list.length, order.*)}}"></iron-icon>
-      <span>{{order.label}}</span><span class="schedule">{{order.schedule}}</span><iron-icon icon="image:edit" on-tap="toggle" class="edit"></iron-icon></h2>
+      <h2 on-tap="toggle">
+      <iron-icon class="done" icon="icons:check-circle" hidden="{{!_getTotalRestdone(order.list.length, order.*)}}"></iron-icon>
+      <span>{{order.label}}</span><span class="schedule">{{order.schedule}}</span><span></span></h2>
 
       <div hidden="{{!editing}}" class="data">
-        <payement-list payements="{{order.list}}" ></payement-list>
+
+        <payement-list payements="{{order.list}}" on-addencour="_addencour" on-removeencour="_removeencour"></payement-list>
 
         <div hidden="{{order.list.length}}">no command</div>
 
         <div class="infos" hidden="{{!order.list.length}}">
-          <div class="total">Total&nbsp;:&nbsp;<span>{{_getTotal(order.list.length)}}</span><span hidden="{{!order.list.length}}" >€</span></div>  
+          <div class="total" on-click="resetpayement">Total&nbsp;:&nbsp;<span>{{_getTotal(order.list.length)}}</span><span hidden="{{!order.list.length}}" >€</span></div>  
+
+          <div class="encours" on-click="resetencours" ><span>{{encours}}</span><span hidden="{{!encours}}" >€</span></div>  
 
           <div class="reste">Reste&nbsp;:&nbsp;<span>{{_getTotalRest(order.list.length, order.*)}}</span><span hidden="{{!order.list.length}}" >€</span></div>
         </div>
 
         <div class="listPayement"  hidden="{{!order.list.length}}">
-          <paper-button raised on-click="selectmoney" id="buttonmoney"><span class="infototal" hidden="{{!order.money}}">{{order.money}}</span><iron-icon icon="editor:attach-money"></iron-icon>Money</paper-button>
-          <paper-button raised on-click="selectticket" id="buttonticket"><span class="infototal" hidden="{{!order.ticket}}">{{order.ticket}}</span><iron-icon icon="image:style"></iron-icon>Ticket</paper-button>
-          <paper-button raised on-click="selectcb" id="buttoncb"><span class="infototal" hidden="{{!order.cb}}">{{order.cb}}</span><iron-icon icon="icons:credit-card"></iron-icon>Credit&nbsp;card</paper-button>
+          <paper-button raised on-click="selectmoney" id="buttonmoney"><span class="infototal" hidden="{{!order.money}}">{{order.money}}</span><iron-icon icon="editor:attach-money"></iron-icon><span class="text">Money</span></paper-button>
+          <paper-button raised on-click="selectticket" id="buttonticket"><span class="infototal" hidden="{{!order.ticket}}">{{order.ticket}}</span><iron-icon icon="image:style"></iron-icon><span class="text">Ticket</paper-button>
+          <paper-button raised on-click="selectcb" id="buttoncb"><span class="infototal" hidden="{{!order.cb}}">{{order.cb}}</span><iron-icon icon="icons:credit-card"></iron-icon><span class="text">Credit&nbsp;card</span></paper-button>
+          <paper-button raised on-click="selectfree" id="buttonfree"><span class="infototal" hidden="{{!order.free}}">{{order.free}}</span><iron-icon icon="editor:money-off"></iron-icon><span class="text">Free</span></paper-button>
         </div>
 
         <div class="listInput">
           <paper-input type="number" id="inputmoney" value="{{addmoney}}" on-change="addtomoney" class="short" label="money" ></paper-input>
           <paper-input type="number" id="inputticket" value="{{addticket}}" on-change="addtoticket" class="short" label="ticket" ></paper-input>
           <paper-input type="number" id="inputcb" value="{{addcb}}" on-change="addtocb" class="short" label="credit card" ></paper-input>
+          <paper-input type="number" id="inputfree" value="{{addfree}}" on-change="addtofree" class="short" label="free" ></paper-input>          
         </div>
 
       </div>
@@ -194,12 +214,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: 'changeOrder'
         },
         editing : false,
-        timer : 0
+        timer : 0,
+        encours : 0,
       },
       ready : function() {
-
         this.set('editing', false);
-
+        this.set('encours', 0);
+      },
+      _addencour : function(e) {
+        console.log("addencour");
+        this.set('encours', parseFloat(this.encours)+parseFloat(e.detail));
+      },      
+      _removeencour : function(e) {
+        console.log("removeencour");
+        this.set('encours', parseFloat(this.encours)-parseFloat(e.detail));        
       },
       classinfo : function(editing, classes) {
         return (editing ? 'active ' : '')+classes;
@@ -214,6 +242,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.set('editing', true);
         }
       },
+      resetpayement : function() {
+        this.set('order.money', 0);
+        this.set('order.ticket', 0);
+        this.set('order.cb', 0);
+        this.set('order.free', 0);
+      },
+      resetencours : function() {
+          this.set('encours', 0);
+      },
+      checkEncours : function(value) {
+
+        if(value > this.encours) {
+          this.set('encours',0);
+        } else {
+          this.set('encours', parseFloat(this.encours)-parseFloat(value));
+        }
+
+      },      
       addtomoney: function() {
         var val = 0;
 
@@ -223,9 +269,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           val = this.addmoney;
         }
 
+        this.checkEncours(this.addmoney);
         this.set('order.money', val);
         this.set('addmoney', '');
         $(this).find('paper-button').removeAttr('active');
+
       },
       addtoticket: function() {
         var val = 0;
@@ -236,9 +284,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           val = this.addticket;
         }
 
+        this.checkEncours(this.addticket);
         this.set('order.ticket', val);
         this.set('addticket', '');
         $(this).find('paper-button').removeAttr('active');
+
       },        
       addtocb: function() {
         var val = 0;
@@ -248,10 +298,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           val = this.addcb;
         }
-
+        this.checkEncours(this.addcb);
         this.set('order.cb', val);
         this.set('addcb', '');
+        $(this).find('paper-button').removeAttr('active');       
+      },
+      addtofree: function() {
+        var val = 0;
+
+        if(this.order.free) {
+          val = parseFloat(this.order.free)+parseFloat(this.addfree);
+        } else {
+          val = this.addfree;
+        }
+
+        this.checkEncours(this.addfree);
+        this.set('order.free', val);
+        this.set('addfree', '');
         $(this).find('paper-button').removeAttr('active');
+      },      
+      _getTotalRestdone : function(nborder, order) {
+
+        if(this._getTotalRest(nborder, order) <= 0 ) {
+          return true;
+        } else {
+          return false;
+        }
+
       },
       _getTotalRest : function(nborder, order) {
         var total = this._getTotal();
@@ -259,7 +332,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var money = (this.order.money ? parseFloat(this.order.money) : 0);
         var ticket = (this.order.ticket ? parseFloat(this.order.ticket) : 0);
         var cb = (this.order.cb ? parseFloat(this.order.cb) : 0);
-        var alreadypayed= money+ticket+cb;
+        var free = (this.order.free ? parseFloat(this.order.free) : 0);        
+        var alreadypayed= money+ticket+cb+free;
 
 
         this.fire('payementchange', this.order);
@@ -292,7 +366,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         $(this).find('#inputticket').focus();
         $(this).find('paper-button').removeAttr('active');
         $(this).find('#buttonticket').attr('active', true);
-      }       
+      },
+      selectfree : function() {
+        $(this).find('#inputfree').focus();
+        $(this).find('paper-button').removeAttr('active');
+        $(this).find('#buttonfree').attr('active', true);
+      }             
     });
   </script>
 </dom-module>

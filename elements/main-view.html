@@ -279,13 +279,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         cursor: pointer;
       }
 
+
+      .admin {
+        float:right;
+      }
+
   </style>
 
     <paper-drawer-panel id="paperDrawerPanel">
       <div drawer class="drawer">
 
         <!-- Drawer Toolbar -->
-        <paper-toolbar id="drawerToolbar"><span class="title">{{shiftdate}}</span></paper-toolbar>
+        <paper-toolbar id="drawerToolbar"><span class="title">{{shiftdate}}</span><iron-icon on-click="toggleAdmin" icon="communication:vpn-key" class="admin"></iron-icon></paper-toolbar>
         <!--
          <div class='logo'>
           <img src="../images/touch/icon-128x128.png">
@@ -301,6 +306,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <span>Commander</span>
             <paper-ripple></paper-ripple>
           </a>
+
+          <a data-route="production" tabindex="-1" on-tap="closeDrawer" >
+            <iron-icon icon="social:whatshot"></iron-icon>
+            <span>Production</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
+          <a data-route="payement" tabindex="-1" on-tap="closeDrawer" >
+            <iron-icon icon="editor:attach-money"></iron-icon>
+            <span>Payement</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
+        <div hidden="{{!admin}}">
 
           <a data-route="stock" tabindex="-1" on-tap="closeDrawer" >
             <iron-icon icon="device:storage"></iron-icon>
@@ -320,18 +339,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-ripple></paper-ripple>
           </a>
 
-          <a data-route="production" tabindex="-1" on-tap="closeDrawer" >
-            <iron-icon icon="social:whatshot"></iron-icon>
-            <span>Production</span>
-            <paper-ripple></paper-ripple>
-          </a>
-
-          <a data-route="payement" tabindex="-1" on-tap="closeDrawer" >
-            <iron-icon icon="editor:attach-money"></iron-icon>
-            <span>Payement</span>
-            <paper-ripple></paper-ripple>
-          </a>
-
           <hr />
 
           <a tabindex="-1" class="export" on-tap="export" >
@@ -344,8 +351,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <iron-icon icon="icons:block"></iron-icon>
             <span>Reset</span>
             <paper-ripple></paper-ripple>
-          </a>          
+          </a>   
 
+      </div>
         </paper-menu>
       </div>
       <paper-header-panel main>
@@ -442,7 +450,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type : String,
           value : false,
           notify: true,
-        }
+        },
+        admin : {
+          type : Boolean,
+          value : false,
+          notify: true,
+        }        
       },
       created: function() {
         this.dev = false;
@@ -451,6 +464,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         this.bdd = 'https://black-rhino.firebaseio.com';
         this.bdd_dev = 'https://black-rhino-dev.firebaseio.com';
+      },
+      toggleAdmin : function() {
+
+        if(this.admin) {
+          this.set('admin', false);
+        } else {
+          this.set('admin', true);
+        }
+
       },
       _getShiftDate : function() {
         if (!this.shiftdate) {

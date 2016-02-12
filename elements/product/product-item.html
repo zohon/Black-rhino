@@ -18,7 +18,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     :host {
       font-family: Roboto, Helvetica, Arial, sans-serif;
       display: block; 
-      background: #FFF;
 
       -webkit-user-select: none; /* Chrome/Safari */        
       -moz-user-select: none; /* Firefox */
@@ -27,11 +26,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       -o-user-select: none;
       user-select: none;
       transition: all 0.2s ease;
-
     }
 
-    :host:hover {
-      box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
+    :host.lite {
+      min-width: 30%;
     }
 
     paper-icon-item .avatar {
@@ -44,11 +42,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       height: 40px;
       bproduct-radius: 50%;
       overflow: hidden;
-      background: #ccc;
+      background: #fff;
       line-height: 40px;
       text-align: center;
       text-transform: uppercase;
-      color:#FFF;
+      color:#ccc;
       font-size: 20px;
       transition : all 0.4s ease;
     }
@@ -137,13 +135,68 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     .person {
+      background: #FFF;
       box-shadow: 0 0px 2px rgba(0,0,0,0.16),0 0px 2px rgba(0,0,0,0.08);
+    }
+
+    :host:hover .person {
+      box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
+    }
+
+    :host.lite .person {
+      cursor: pointer;
+      transition: all 0.5s ease;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      font-size: 15px;
+      padding: 4px 9px;
+      justify-content: center;
+      white-space: nowrap;
+      border-radius: 3px;
+      box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.2);
+    }
+    :host.lite .person paper-item-body {
+      max-width: none;
+    }
+
+    :host.lite .person {
+      text-shadow: 1px 2px 2px rgba(0,0,0,0.1);
+    }
+
+    :host .person.black .avatar,
+    :host.lite .person.black {
+      background: #000 !important;
+      color:#FFF;
+    }
+
+    :host .person.purple .avatar,
+    :host.lite .person.purple {
+      background: #AF2195 !important;
+      color:#FFF;
+    }
+
+    :host .person.orange .avatar,
+    :host.lite .person.orange {
+      background: #d05e20 !important;
+      color:#FFF;
+    }
+
+    :host .person.yellow .avatar,
+    :host.lite .person.yellow {
+      background: #FFCB00 !important;
+      color:#fff;
+    }
+
+    :host .person.sunny .avatar,
+    :host.lite .person.sunny {
+      background: #FE730F !important;
+      color:#fff;
     }
 
     .active .person {
       box-shadow: 0 1px 5px rgba(0,0,0,0.23),0 1px 0px rgba(0,0,0,0.16);
     }
-
 
     :focus {
       outline: none;
@@ -210,6 +263,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background: #FFF;
       }
 
+      :host.lite .editing {
+        display: none !important;
+      }
+
       .customers {
         position: absolute;
         right:15px;
@@ -225,13 +282,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
   <div class$="[[_getClass(active, 'content')]]" class="content">
 
-    <paper-icon-item tabindex="0" class="person" on-tap="onTap"  on-track="handleTrack" >
+    <paper-icon-item tabindex="0" class="person" class$="[[_getClass(product.color, 'person')]]" on-click="onTap"  on-track="handleTrack" >
 
-        <div class="avatar" item-icon>{{_getAvatar(product.label)}}</div>
+        <div class="avatar" item-icon hidden="{{affichage}}">{{_getAvatar(product.label)}}</div>
 
           <paper-item-body two-line>
             <div class="name">{{product.label}}</div>
-            <div secondary class="secondary">
+            <div secondary class="secondary" hidden="{{affichage}}">
                 <div hidden="{{!product.value}}">value : <span>{{product.value}}</span></div>
                 <div hidden="{{!product.pains}}">pains : <span>{{product.pains}}</span></div>
                 <div hidden="{{!product.steak}}">steak : <span>{{product.steak}}</span></div>
@@ -258,12 +315,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <paper-input on-tap="_dontListen" type="number" value="{{product.pains}}" on-keydown="_checkKey" class="short inputlabel" label="pains" ></paper-input>
 
+        <paper-input on-tap="_dontListen" type="number" value="{{product.inter}}" on-keydown="_checkKey" class="short inputlabel" label="inter" ></paper-input>
+
         <paper-input on-tap="_dontListen" type="number" value="{{product.truite}}" on-keydown="_checkKey" class="short inputlabel" label="truite" ></paper-input>
 
         <paper-input on-tap="_dontListen" type="number" value="{{product.pork}}" on-keydown="_checkKey" class="short inputlabel" label="pork" ></paper-input>
 
         <paper-input on-tap="_dontListen" type="number" value="{{product.bacon}}" on-keydown="_checkKey" class="short inputlabel" label="bacon" ></paper-input>
 
+        <paper-input on-tap="_dontListen" value="{{product.color}}" on-keydown="_checkKey" class="short inputlabel" label="color" ></paper-input>
     </div>
 
   </div>
@@ -382,10 +442,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       _getAvatar : function(name) {
 
-        /*if(color) {
-          $(this).find('paper-icon-item .avatar').css('background', his.product.color);
-        } else*/ if(name) {
-
+        if(name) {
+/*
           var hash  = 0;
           for (var i = 0; i < name.length; i++) {
              hash  = name.charCodeAt(i) + ((hash  << 5) - hash );
@@ -395,9 +453,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var color =  "00000".substring(0, 6 - c.length) + c;
           this.colorAvatar = "#"+color;
           $(this).find('paper-icon-item .avatar').css('background', this.colorAvatar);
+*/
+        return name.charAt(0);
         }
 
-        return name.charAt(0);
+
 
       },
       _checkKey: function(e) {

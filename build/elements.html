@@ -19642,7 +19642,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     </style>
     
-     <div class="orderProduct" on-tap="onTap">
+     <div class="orderProduct" on-click="onTap">
        <span class="number">{{item.nb}}</span>
        <span class="label">{{item.label}}</span>
        <span class="value">{{_getTotal(item.value, item.nb)}}</span>
@@ -20042,13 +20042,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     </style>
     
-  <div class$="[[_getClass(active, 'content')]]" class="content" on-tap="onTap">
+  <div class$="[[_getClass(active, 'content')]]" class="content" on-click="onTap">
 
     <paper-icon-item tabindex="0" class="person" on-track="handleTrack">
 
-        <div class="print" hidden="{{!order.schedule}}" item-icon="" on-tap="printMe"><iron-icon icon="icons:print"></iron-icon><paper-ripple></paper-ripple></div>
+        <div class="print" hidden="{{!order.schedule}}" item-icon="" on-click="printMe"><iron-icon icon="icons:print"></iron-icon><paper-ripple></paper-ripple></div>
 
-        <div class="schedule" hidden="{{!order.schedule}}" on-tap="selectplanned" item-icon="">{{ order.schedule }}</div>
+        <div class="schedule" hidden="{{!order.schedule}}" on-click="selectplanned" item-icon="">{{ order.schedule }}</div>
         <div class="avatar" hidden="{{order.schedule}}" item-icon="">{{_getAvatar(order.label)}}</div>
 
           <paper-item-body two-line="">
@@ -20057,13 +20057,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       <div class="delete" item-icon=""><iron-icon icon="icons:delete"></iron-icon><paper-ripple></paper-ripple></div>
 
-      <div class="edit" item-icon="" on-tap="_selectEdit"><iron-icon icon="editor:mode-edit"></iron-icon><paper-ripple></paper-ripple></div>
+      <div class="edit" item-icon="" on-click="_selectEdit"><iron-icon icon="editor:mode-edit"></iron-icon><paper-ripple></paper-ripple></div>
 
-      <div class="select" item-icon="" on-tap="select" hidden="{{edit}}"><iron-icon icon="icons:check"></iron-icon><paper-ripple></paper-ripple></div>
+      <div class="select" item-icon="" on-click="select" hidden="{{edit}}"><iron-icon icon="icons:check"></iron-icon><paper-ripple></paper-ripple></div>
 
-      <div class="planned" hidden="{{_plannedListen(order.list.length,order.schedule)}}" item-icon="" on-tap="selectplanned"><iron-icon icon="icons:today"></iron-icon><paper-ripple></paper-ripple></div>
+      <div class="planned" hidden="{{_plannedListen(order.list.length,order.schedule)}}" item-icon="" on-click="selectplanned"><iron-icon icon="icons:today"></iron-icon><paper-ripple></paper-ripple></div>
 
-      <div class="planned" hidden="{{!order.schedule}}" item-icon="" on-tap="selectpayement"><iron-icon icon="editor:attach-money"></iron-icon><paper-ripple></paper-ripple></div>
+      <div class="planned" hidden="{{!order.schedule}}" item-icon="" on-click="selectpayement"><iron-icon icon="editor:attach-money"></iron-icon><paper-ripple></paper-ripple></div>
 
 
       <div class="total">{{_getTotal(order.list.length)}}</div>
@@ -20071,14 +20071,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </paper-icon-item>
 
     <div class="editing" hidden="{{!edit}}">
-      <paper-input on-tap="_dontListen" value="{{order.label}}" on-keydown="_checkKey" class="short" label="label"><div suffix=""><iron-icon icon="icons:done" on-tap="desactivate"></iron-icon></div></paper-input>
+      <paper-input on-click="_dontListen" value="{{order.label}}" on-keydown="_checkKey" class="short" label="label"><div suffix=""><iron-icon icon="icons:done" on-click="desactivate"></iron-icon></div></paper-input>
 
-      <paper-input on-tap="_dontListen" value="{{order.infos}}" on-keydown="_checkKey" class="short" label="Infos"><div suffix=""><iron-icon icon="icons:done" on-tap="desactivate"></iron-icon></div></paper-input>    
+      <paper-input on-click="_dontListen" value="{{order.infos}}" on-keydown="_checkKey" class="short" label="Infos"><div suffix=""><iron-icon icon="icons:done" on-click="desactivate"></iron-icon></div></paper-input>    
     </div>
 
-    <div class="showInfo" on-tap="_selectEdit" hidden="{{!order.infos}}"><iron-icon icon="icons:warning"></iron-icon><span>{{order.infos}}</span></div>
+    <div class="showInfo" on-click="_selectEdit" hidden="{{!order.infos}}"><iron-icon icon="icons:warning"></iron-icon><span>{{order.infos}}</span></div>
 
-    <div class="listItemOrder" hidden="{{!order.list.length}}" on-tap="_dontListen">
+    <div class="listItemOrder" hidden="{{!order.list.length}}" on-click="_dontListen">
       <template is="dom-repeat" items="{{order.list}}" as="item">
       <order-item-product item="{{item}}" on-deleteitem="deleteItem" on-changeitem="getAllNeed"></order-item-product>
       </template>
@@ -20674,7 +20674,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     :host {
       font-family: Roboto, Helvetica, Arial, sans-serif;
       display: block; 
-      background: #FFF;
 
       -webkit-user-select: none; /* Chrome/Safari */        
       -moz-user-select: none; /* Firefox */
@@ -20683,11 +20682,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       -o-user-select: none;
       user-select: none;
       transition: all 0.2s ease;
-
     }
 
-    :host:hover {
-      box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
+    :host.lite {
+      min-width: 30%;
     }
 
     paper-icon-item .avatar {
@@ -20700,11 +20698,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       height: 40px;
       bproduct-radius: 50%;
       overflow: hidden;
-      background: #ccc;
+      background: #fff;
       line-height: 40px;
       text-align: center;
       text-transform: uppercase;
-      color:#FFF;
+      color:#ccc;
       font-size: 20px;
       transition : all 0.4s ease;
     }
@@ -20793,13 +20791,68 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     }
 
     .person {
+      background: #FFF;
       box-shadow: 0 0px 2px rgba(0,0,0,0.16),0 0px 2px rgba(0,0,0,0.08);
+    }
+
+    :host:hover .person {
+      box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.2);
+    }
+
+    :host.lite .person {
+      cursor: pointer;
+      transition: all 0.5s ease;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      font-size: 15px;
+      padding: 4px 9px;
+      justify-content: center;
+      white-space: nowrap;
+      border-radius: 3px;
+      box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.2);
+    }
+    :host.lite .person paper-item-body {
+      max-width: none;
+    }
+
+    :host.lite .person {
+      text-shadow: 1px 2px 2px rgba(0,0,0,0.1);
+    }
+
+    :host .person.black .avatar,
+    :host.lite .person.black {
+      background: #000 !important;
+      color:#FFF;
+    }
+
+    :host .person.purple .avatar,
+    :host.lite .person.purple {
+      background: #AF2195 !important;
+      color:#FFF;
+    }
+
+    :host .person.orange .avatar,
+    :host.lite .person.orange {
+      background: #d05e20 !important;
+      color:#FFF;
+    }
+
+    :host .person.yellow .avatar,
+    :host.lite .person.yellow {
+      background: #FFCB00 !important;
+      color:#fff;
+    }
+
+    :host .person.sunny .avatar,
+    :host.lite .person.sunny {
+      background: #FE730F !important;
+      color:#fff;
     }
 
     .active .person {
       box-shadow: 0 1px 5px rgba(0,0,0,0.23),0 1px 0px rgba(0,0,0,0.16);
     }
-
 
     :focus {
       outline: none;
@@ -20866,6 +20919,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         background: #FFF;
       }
 
+      :host.lite .editing {
+        display: none !important;
+      }
+
       .customers {
         position: absolute;
         right:15px;
@@ -20881,13 +20938,13 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     
   <div class$="[[_getClass(active, 'content')]]" class="content">
 
-    <paper-icon-item tabindex="0" class="person" on-tap="onTap" on-track="handleTrack">
+    <paper-icon-item tabindex="0" class="person" class$="[[_getClass(product.color, 'person')]]" on-click="onTap" on-track="handleTrack">
 
-        <div class="avatar" item-icon="">{{_getAvatar(product.label)}}</div>
+        <div class="avatar" item-icon="" hidden="{{affichage}}">{{_getAvatar(product.label)}}</div>
 
           <paper-item-body two-line="">
             <div class="name">{{product.label}}</div>
-            <div secondary="" class="secondary">
+            <div secondary="" class="secondary" hidden="{{affichage}}">
                 <div hidden="{{!product.value}}">value : <span>{{product.value}}</span></div>
                 <div hidden="{{!product.pains}}">pains : <span>{{product.pains}}</span></div>
                 <div hidden="{{!product.steak}}">steak : <span>{{product.steak}}</span></div>
@@ -20914,12 +20971,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         <paper-input on-tap="_dontListen" type="number" value="{{product.pains}}" on-keydown="_checkKey" class="short inputlabel" label="pains"></paper-input>
 
+        <paper-input on-tap="_dontListen" type="number" value="{{product.inter}}" on-keydown="_checkKey" class="short inputlabel" label="inter"></paper-input>
+
         <paper-input on-tap="_dontListen" type="number" value="{{product.truite}}" on-keydown="_checkKey" class="short inputlabel" label="truite"></paper-input>
 
         <paper-input on-tap="_dontListen" type="number" value="{{product.pork}}" on-keydown="_checkKey" class="short inputlabel" label="pork"></paper-input>
 
         <paper-input on-tap="_dontListen" type="number" value="{{product.bacon}}" on-keydown="_checkKey" class="short inputlabel" label="bacon"></paper-input>
 
+        <paper-input on-tap="_dontListen" value="{{product.color}}" on-keydown="_checkKey" class="short inputlabel" label="color"></paper-input>
     </div>
 
   </div>
@@ -21038,10 +21098,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
       _getAvatar : function(name) {
 
-        /*if(color) {
-          $(this).find('paper-icon-item .avatar').css('background', his.product.color);
-        } else*/ if(name) {
-
+        if(name) {
+/*
           var hash  = 0;
           for (var i = 0; i < name.length; i++) {
              hash  = name.charCodeAt(i) + ((hash  << 5) - hash );
@@ -21051,9 +21109,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           var color =  "00000".substring(0, 6 - c.length) + c;
           this.colorAvatar = "#"+color;
           $(this).find('paper-icon-item .avatar').css('background', this.colorAvatar);
+*/
+        return name.charAt(0);
         }
 
-        return name.charAt(0);
+
 
       },
       _checkKey: function(e) {
@@ -21238,7 +21298,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
     <template is="dom-repeat" items="{{products}}" as="product" filter="{{_computeFilter(filterBy)}}" observe="isComplete" sort="_sort">
-      <product-item product="{{product}}" affichage="{{affichage}}"></product-item>
+      <product-item product="{{product}}" affichage="{{affichage}}" class$="[[affichage]]"></product-item>
     </template>
 
   </template>
@@ -21253,8 +21313,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }        
       },
       _sort : function(a, b) {
-        if (a.label === b.label) return 0;
-        return a.label < b.label ? -1 : 1;
+        if (a.color === b.color) resultColor = 0;
+        resultColor = a.color < b.color ? -1 : 1;
+        return resultColor;
       },      
       _computeFilter: function(filterBy) {
         if (filterBy) {
@@ -22141,6 +22202,21 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.2);
       }
 
+      product-list {
+              padding: 0;
+        margin: 0;
+        list-style: none;
+        
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        
+        -webkit-flex-flow: row wrap;
+        justify-content: space-between;
+      }
+
     </style>
 
     <paper-item on-tap="add" class="actionList" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
@@ -22166,7 +22242,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     <order-list orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-selectitem="selectitem" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder"></order-list>
 
     <div class="productSelect" hidden="{{!selectProduct}}" style="display: inline-block; width:100%;">
-        <product-list products="{{products}}" affichage="lite" filter-by="{{route}}" on-selectproduct="_selectproduct"></product-list>
+        <product-list products="{{products}}" affichage="lite" sort="color" filter-by="{{route}}" on-selectproduct="_selectproduct"></product-list>
     </div>
 
     <div class="planningSelect" hidden="{{!selectPlanning}}" style="display: inline-block; width:100%;">
@@ -24368,13 +24444,23 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         background: var(--accent-color);
       }
 
+      .infos {
+        color:var(--alert-color);
+        background: var(--alert-background);
+        padding: 5px;
+        margin-bottom: 10px;
+      }
  
 
     </style>
     <div on-track="handleTrack">
       <div class="showSchedule"><span>{{schedule.hour}}</span><span hidden="{{!schedule}}">h</span><span>{{schedule.min}}</span></div>
 
-      <paper-slider id="ratings" snaps="" on-immediate-value-change="getSchedule" on-change="getSchedule" value="{{timer}}" max="{{_getMarkerMax(plannings.length)}}" max-markers="10" step="10"></paper-slider>
+      <paper-slider id="ratings" snaps="" on-immediate-value-change="getSchedule" on-change="getSchedule" value="{{timer}}" max="[[_getMarkerMax(plannings.length)]]" step="10"></paper-slider>
+
+      <div class="infos" hidden="{{!infos.length}}">
+        <template is="dom-repeat" items="{{infos}}" as="info"><div>{{info.text}}</div></template>
+      </div>
 
       <production-list productions="{{productions}}" filter-by="{{route}}"></production-list>
     </div>
@@ -24390,7 +24476,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       _getMarker : function(length) {
         console.log("_getMarker");
         console.log(length);
-        return (length-1);
+        return length;
       },      
       _getMarkerMax : function(length) {
         console.log("_getMarkerMax");
@@ -24453,37 +24539,60 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           var result = _.where(orders, {
             schedule: this.schedule.hour+"h"+this.schedule.min
           });
+
+          console.log("getProduction");
+          console.log(orders);
+          console.log(result);
+
           this.parseProduction(result);
         }
       },
       parseProduction : function(prod) {
         var newProduction = [];
         var allList = [];
+        var infos = [];
+
         _.each(prod, _.bind(function(data, index) {
+
+          if(data.infos) {
+            infos.push({
+              label : data.label,
+              text : data.infos
+            });
+          }
+
           if(data && data.list) {
             allList = _.union(allList, data.list);
           }
         },this));
+        console.log("allList");
+        console.log(allList);
 
         newProduction = this.parseList(allList);
+        console.log(newProduction);
+
+        this.set('infos', infos);
         this.set('productions',newProduction);
       },
       parseList : function(list) {
+        console.log("parseList");
+        this.listneeds = ['steak','pains','bacon', 'inter'];
 
-        this.listneeds = ['steak','pains','bacon'];
-
+        var infos = "";
         var facticeProduction = [];
 
         _.each(this.listneeds, _.bind(function(itemNeed) {
+
 
           //var resultNeed = _.pluck(list, itemNeed);
           var resultNeed =_.map(list, function(data, key){
             if(data[itemNeed]) {
               return data[itemNeed] * data.nb;
             }
+            return 0;
           });
 
-          if(resultNeed.length > 0 && resultNeed[0]) {
+          if(resultNeed.length > 0 && resultNeed[0] != undefined) {
             var sum = _.reduce(resultNeed, function(memo, num){ 
 
               if(!memo) {
@@ -24498,12 +24607,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
             });
 
+
             facticeProduction.push({
               label : itemNeed,
               nb : sum
             });
 
           }
+
         },this));
 
         return facticeProduction;
@@ -24865,36 +24976,25 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       properties: {
         payement: {
           type : Object,
-          //observer : "observeChange"
+          observer : "_getPayed"
         }
       },
       ready : function() {
+
+      },
+      _getPayed : function() {
         if(!this.payed && this.payement.nb) {
           this.set('payed',this.payement.nb);
         }
       },
       check : function() {
         this.set('payed', parseFloat(this.payed)-1);
+        this.fire('addencour', this.payement.value);
       },
       uncheck : function() {
         this.set('payed', parseFloat(this.payed)+1);
-      },      
-      _getAvatar : function(name) {
-        if(name) {
-
-          var hash  = 0;
-          for (var i = 0; i < name.length; i++) {
-             hash  = name.charCodeAt(i) + ((hash  << 5) - hash );
-          }
-
-          var c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
-          var color =  "00000".substring(0, 6 - c.length) + c;
-          this.colorAvatar = "#"+color;
-          $(this).find('paper-icon-item .avatar').css('background', this.colorAvatar);
-    
-          return name.charAt(0);
-        }
-      },      
+        this.fire('removeencour', this.payement.value);
+      }    
     });
   </script>
 </dom-module>
@@ -25050,10 +25150,18 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         justify-content: space-between;
         margin-top: 5px;
       }
-      .listPayement paper-button{
-        margin:0;
-        font-size:15px;
+
+      .listPayement .text {
+        display: none;
       }
+
+      .listPayement paper-button{
+        font-size: 13px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
       .listInput {
         opacity: 0;
         display: flex;
@@ -25072,6 +25180,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       .infototal {
         color: var(--accent-color);
         margin-right: 5px;
+        font-size: 15px;
       }
 
       paper-button[active] .infototal {
@@ -25094,36 +25203,47 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         font-family: 'Roboto', 'Noto', sans-serif;
         font-size: 20px;
         margin-left: 15px;
+        float:right;
+        padding: 10px 0;
+      }
+
+      .encours {
+        color: var(--accent-color);
       }
 
     </style>
 
     <div hidden="{{!order.label}}" class$="{{classinfo(editing, 'content')}}" class="content">
-      <h2>
-      <iron-icon class="done" icon="icons:check-circle" hidden="{{_getTotalRest(order.list.length, order.*)}}"></iron-icon>
-      <span>{{order.label}}</span><span class="schedule">{{order.schedule}}</span><iron-icon icon="image:edit" on-tap="toggle" class="edit"></iron-icon></h2>
+      <h2 on-tap="toggle">
+      <iron-icon class="done" icon="icons:check-circle" hidden="{{!_getTotalRestdone(order.list.length, order.*)}}"></iron-icon>
+      <span>{{order.label}}</span><span class="schedule">{{order.schedule}}</span><span></span></h2>
 
       <div hidden="{{!editing}}" class="data">
-        <payement-list payements="{{order.list}}"></payement-list>
+
+        <payement-list payements="{{order.list}}" on-addencour="_addencour" on-removeencour="_removeencour"></payement-list>
 
         <div hidden="{{order.list.length}}">no command</div>
 
         <div class="infos" hidden="{{!order.list.length}}">
-          <div class="total">Total&nbsp;:&nbsp;<span>{{_getTotal(order.list.length)}}</span><span hidden="{{!order.list.length}}">€</span></div>  
+          <div class="total" on-click="resetpayement">Total&nbsp;:&nbsp;<span>{{_getTotal(order.list.length)}}</span><span hidden="{{!order.list.length}}">€</span></div>  
+
+          <div class="encours" on-click="resetencours"><span>{{encours}}</span><span hidden="{{!encours}}">€</span></div>  
 
           <div class="reste">Reste&nbsp;:&nbsp;<span>{{_getTotalRest(order.list.length, order.*)}}</span><span hidden="{{!order.list.length}}">€</span></div>
         </div>
 
         <div class="listPayement" hidden="{{!order.list.length}}">
-          <paper-button raised="" on-click="selectmoney" id="buttonmoney"><span class="infototal" hidden="{{!order.money}}">{{order.money}}</span><iron-icon icon="editor:attach-money"></iron-icon>Money</paper-button>
-          <paper-button raised="" on-click="selectticket" id="buttonticket"><span class="infototal" hidden="{{!order.ticket}}">{{order.ticket}}</span><iron-icon icon="image:style"></iron-icon>Ticket</paper-button>
-          <paper-button raised="" on-click="selectcb" id="buttoncb"><span class="infototal" hidden="{{!order.cb}}">{{order.cb}}</span><iron-icon icon="icons:credit-card"></iron-icon>Credit&nbsp;card</paper-button>
+          <paper-button raised="" on-click="selectmoney" id="buttonmoney"><span class="infototal" hidden="{{!order.money}}">{{order.money}}</span><iron-icon icon="editor:attach-money"></iron-icon><span class="text">Money</span></paper-button>
+          <paper-button raised="" on-click="selectticket" id="buttonticket"><span class="infototal" hidden="{{!order.ticket}}">{{order.ticket}}</span><iron-icon icon="image:style"></iron-icon><span class="text">Ticket</span></paper-button>
+          <paper-button raised="" on-click="selectcb" id="buttoncb"><span class="infototal" hidden="{{!order.cb}}">{{order.cb}}</span><iron-icon icon="icons:credit-card"></iron-icon><span class="text">Credit&nbsp;card</span></paper-button>
+          <paper-button raised="" on-click="selectfree" id="buttonfree"><span class="infototal" hidden="{{!order.free}}">{{order.free}}</span><iron-icon icon="editor:money-off"></iron-icon><span class="text">Free</span></paper-button>
         </div>
 
         <div class="listInput">
           <paper-input type="number" id="inputmoney" value="{{addmoney}}" on-change="addtomoney" class="short" label="money"></paper-input>
           <paper-input type="number" id="inputticket" value="{{addticket}}" on-change="addtoticket" class="short" label="ticket"></paper-input>
           <paper-input type="number" id="inputcb" value="{{addcb}}" on-change="addtocb" class="short" label="credit card"></paper-input>
+          <paper-input type="number" id="inputfree" value="{{addfree}}" on-change="addtofree" class="short" label="free"></paper-input>          
         </div>
 
       </div>
@@ -25140,12 +25260,20 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           observer: 'changeOrder'
         },
         editing : false,
-        timer : 0
+        timer : 0,
+        encours : 0,
       },
       ready : function() {
-
         this.set('editing', false);
-
+        this.set('encours', 0);
+      },
+      _addencour : function(e) {
+        console.log("addencour");
+        this.set('encours', parseFloat(this.encours)+parseFloat(e.detail));
+      },      
+      _removeencour : function(e) {
+        console.log("removeencour");
+        this.set('encours', parseFloat(this.encours)-parseFloat(e.detail));        
       },
       classinfo : function(editing, classes) {
         return (editing ? 'active ' : '')+classes;
@@ -25160,6 +25288,24 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           this.set('editing', true);
         }
       },
+      resetpayement : function() {
+        this.set('order.money', 0);
+        this.set('order.ticket', 0);
+        this.set('order.cb', 0);
+        this.set('order.free', 0);
+      },
+      resetencours : function() {
+          this.set('encours', 0);
+      },
+      checkEncours : function(value) {
+
+        if(value > this.encours) {
+          this.set('encours',0);
+        } else {
+          this.set('encours', parseFloat(this.encours)-parseFloat(value));
+        }
+
+      },      
       addtomoney: function() {
         var val = 0;
 
@@ -25169,9 +25315,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           val = this.addmoney;
         }
 
+        this.checkEncours(this.addmoney);
         this.set('order.money', val);
         this.set('addmoney', '');
         $(this).find('paper-button').removeAttr('active');
+
       },
       addtoticket: function() {
         var val = 0;
@@ -25182,9 +25330,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           val = this.addticket;
         }
 
+        this.checkEncours(this.addticket);
         this.set('order.ticket', val);
         this.set('addticket', '');
         $(this).find('paper-button').removeAttr('active');
+
       },        
       addtocb: function() {
         var val = 0;
@@ -25194,10 +25344,33 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         } else {
           val = this.addcb;
         }
-
+        this.checkEncours(this.addcb);
         this.set('order.cb', val);
         this.set('addcb', '');
+        $(this).find('paper-button').removeAttr('active');       
+      },
+      addtofree: function() {
+        var val = 0;
+
+        if(this.order.free) {
+          val = parseFloat(this.order.free)+parseFloat(this.addfree);
+        } else {
+          val = this.addfree;
+        }
+
+        this.checkEncours(this.addfree);
+        this.set('order.free', val);
+        this.set('addfree', '');
         $(this).find('paper-button').removeAttr('active');
+      },      
+      _getTotalRestdone : function(nborder, order) {
+
+        if(this._getTotalRest(nborder, order) <= 0 ) {
+          return true;
+        } else {
+          return false;
+        }
+
       },
       _getTotalRest : function(nborder, order) {
         var total = this._getTotal();
@@ -25205,7 +25378,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         var money = (this.order.money ? parseFloat(this.order.money) : 0);
         var ticket = (this.order.ticket ? parseFloat(this.order.ticket) : 0);
         var cb = (this.order.cb ? parseFloat(this.order.cb) : 0);
-        var alreadypayed= money+ticket+cb;
+        var free = (this.order.free ? parseFloat(this.order.free) : 0);        
+        var alreadypayed= money+ticket+cb+free;
 
 
         this.fire('payementchange', this.order);
@@ -25238,7 +25412,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         $(this).find('#inputticket').focus();
         $(this).find('paper-button').removeAttr('active');
         $(this).find('#buttonticket').attr('active', true);
-      }       
+      },
+      selectfree : function() {
+        $(this).find('#inputfree').focus();
+        $(this).find('paper-button').removeAttr('active');
+        $(this).find('#buttonfree').attr('active', true);
+      }             
     });
   </script>
 </dom-module>
@@ -25259,7 +25438,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
     </style>
 
-    <template is="dom-repeat" items="{{orders}}" as="order">
+    <template is="dom-repeat" items="{{orders}}" as="order" sort="_sort">
        <payement-view order="{{order}}"></payement-view>
     </template>
 
@@ -25270,7 +25449,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       is: 'payement-mainview',
       properties: {
         orders : Array
-      }
+      },
+      _sort : function(a, b) {
+        if (a.schedule === b.schedule) return 0;
+        return a.schedule < b.schedule ? -1 : 1;
+      }      
     });
   </script>
 </dom-module>
@@ -25527,13 +25710,18 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         cursor: pointer;
       }
 
+
+      .admin {
+        float:right;
+      }
+
   </style>
 
     <paper-drawer-panel id="paperDrawerPanel">
       <div drawer="" class="drawer">
 
         
-        <paper-toolbar id="drawerToolbar"><span class="title">{{shiftdate}}</span></paper-toolbar>
+        <paper-toolbar id="drawerToolbar"><span class="title">{{shiftdate}}</span><iron-icon on-click="toggleAdmin" icon="communication:vpn-key" class="admin"></iron-icon></paper-toolbar>
         
         
 
@@ -25545,6 +25733,20 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             <span>Commander</span>
             <paper-ripple></paper-ripple>
           </a>
+
+          <a data-route="production" tabindex="-1" on-tap="closeDrawer">
+            <iron-icon icon="social:whatshot"></iron-icon>
+            <span>Production</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
+          <a data-route="payement" tabindex="-1" on-tap="closeDrawer">
+            <iron-icon icon="editor:attach-money"></iron-icon>
+            <span>Payement</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
+        <div hidden="{{!admin}}">
 
           <a data-route="stock" tabindex="-1" on-tap="closeDrawer">
             <iron-icon icon="device:storage"></iron-icon>
@@ -25564,18 +25766,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             <paper-ripple></paper-ripple>
           </a>
 
-          <a data-route="production" tabindex="-1" on-tap="closeDrawer">
-            <iron-icon icon="social:whatshot"></iron-icon>
-            <span>Production</span>
-            <paper-ripple></paper-ripple>
-          </a>
-
-          <a data-route="payement" tabindex="-1" on-tap="closeDrawer">
-            <iron-icon icon="editor:attach-money"></iron-icon>
-            <span>Payement</span>
-            <paper-ripple></paper-ripple>
-          </a>
-
           <hr>
 
           <a tabindex="-1" class="export" on-tap="export">
@@ -25588,8 +25778,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             <iron-icon icon="icons:block"></iron-icon>
             <span>Reset</span>
             <paper-ripple></paper-ripple>
-          </a>          
+          </a>   
 
+      </div>
         </paper-menu>
       </div>
       <paper-header-panel main="">
@@ -25686,7 +25877,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           type : String,
           value : false,
           notify: true,
-        }
+        },
+        admin : {
+          type : Boolean,
+          value : false,
+          notify: true,
+        }        
       },
       created: function() {
         this.dev = false;
@@ -25695,6 +25891,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
         this.bdd = 'https://black-rhino.firebaseio.com';
         this.bdd_dev = 'https://black-rhino-dev.firebaseio.com';
+      },
+      toggleAdmin : function() {
+
+        if(this.admin) {
+          this.set('admin', false);
+        } else {
+          this.set('admin', true);
+        }
+
       },
       _getShiftDate : function() {
         if (!this.shiftdate) {

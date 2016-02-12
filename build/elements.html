@@ -20967,7 +20967,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         }
 
-      },      
+      },
+      _setdata : function(e) {
+
+        console.log("_setdata");
+
+      },  
       onTap : function() {
         if(this.product.label) {
           if(this.active) {
@@ -25662,8 +25667,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
 
         this.closeDrawer(e);
-
-        this.JSONToCSVConvertor(this.orders, "Orders "+this.shiftdate, true);
+        this.JSONToCSVConvertor(this.getCommands(), "Orders "+this.shiftdate);
+        //this.JSONToCSVConvertor(this.orders, "Orders "+this.shiftdate, true);
       },
       _readyCustomers : function() {
         this._calcTotal();
@@ -25867,7 +25872,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.set('page', 'payement');
       },
       _deleteproduct : function(e) {
-        if(product = _.findWhere(this.products, {__firebaseKey__ : e.detail.product_id})) {
+        if(product = _.findWhere(this.products, {__firebaseKey__ : e.detail.__firebaseKey__})) {
           this.gestionStock(product, 'delete');
         }
       },
@@ -25916,63 +25921,103 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
         return time;
       },
-      JSONToCSVConvertor : function(JSONData, ReportTitle, ShowLabel) {
-        //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
-        var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
-        
-        var CSV = '';    
-        //Set Report title in first row or line
-        
-        CSV += ReportTitle + '\r\n\n';
+      extractInfos : function() {
 
-        //This condition will generate the Label/Header
-        if (ShowLabel) {
-            var row = "";
-            
-            //This loop will extract the label from 1st index of on array
-            for (var index in arrData[0]) {
-                
-                //Now convert each value to string and comma-seprated
-                row += index + ',';
-            }
 
-            row = row.slice(0, -1);
-            
-            //append Label row with line break
-            CSV += row + '\r\n';
-        }
-        
-        //1st loop is to extract each row
-        for (var i = 0; i < arrData.length; i++) {
-            var row = "";
-            
-            //2nd loop will extract each column and convert it in string comma-seprated
-            for (var index in arrData[i]) {
 
-              if(index == 'list') {
 
-                var text = "";
-                _.each(arrData[i][index], function(data, index) {
-                  text += "- "+data.label + " ("+data.nb+") ";
+
+
+
+      },
+      getCommands : function() {
+
+        var CSV = "";
+        var sep = ";";
+        var listLabels = [
+          {
+            display : 'Date',
+            label : 'creationDate'
+          },
+          {
+            display : 'Name',
+            label : 'label'
+          },
+          {
+            display : 'Schedule',
+            label : 'schedule'
+          },
+          {
+            display : 'Money',
+            label : 'money'
+          },
+          {
+            display : 'Ticket',
+            label : 'ticket'
+          }, 
+          {
+            display : 'Credit card',
+            label : 'cb'
+          },           
+          {
+            display : 'Order',
+            label : 'list'
+          },          
+        ];
+
+        var labelRow = "";
+
+        _.each(listLabels, function(listLabel) {
+          labelRow += listLabel.display+sep;
+        });
+
+        CSV += labelRow + '\r\n';
+
+        _.each(this.orders, _.bind(function(data, index) {
+          var rowContent = "";
+          _.each(listLabels, _.bind(function(listLabel) {
+            rowContent += this.filterData(data, listLabel.label)+sep;
+          },this));
+          CSV += rowContent + '\r\n';
+        },this));
+
+        return CSV;
+
+      },
+      filterData : function(data, target) {
+
+        console.log("filterData");
+        console.log(data);
+        console.log(target);
+
+        var result = "";
+
+        if(data[target]) {
+
+          switch(target) {
+              case 'list':
+                var resultList = [];
+                _.each(data[target], function(datalist, index) {
+                  resultList.push(datalist.label + " ("+datalist.nb+")");
                 });
+                result = resultList.join(' - ');
+                break;
+              case 'creationDate':
+                result = this.timeConverter(data[target]);
+                break;
+              default:
+                result = data[target];
+          }
 
-                row += '"' + text + '",';
-              } else if(index == 'creationDate') {
-                row += '"' + this.timeConverter(arrData[i][index]) + '",';
-              } else if(index != '__firebaseKey__') {
-                row += '"' + arrData[i][index] + '",';
-              }
-
-
-            }
-
-            row.slice(0, row.length - 1);
-            console.log(row);
-            //add a line break after each row
-            CSV += row + '\r\n';
+        } else {
+          result = "";
         }
 
-        if (CSV == '') {        
+        return result;
+      },
+      JSONToCSVConvertor : function(CSV, ReportTitle) {
+
+        if (CSV == '') {
             alert("Invalid data");
             return;
         }   

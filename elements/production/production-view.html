@@ -80,7 +80,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       properties: {
         productions: Array,
         orders : Array,
-        timer : 0
+        timer : 0,
+        infos : {
+          type : Array,
+          value : []
+        }
       },
       _getMarker : function(length) {
         console.log("_getMarker");

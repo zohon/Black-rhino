@@ -45,8 +45,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         _firebaseConnected: {
           value: false
-        }
+        },
 
+        name : {
+          value : 'items'
+        }
       },
       _firebaseLoaded: function() {
         console.log("_firebaseLoaded");
@@ -54,15 +57,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.items = this.fbItems;
         this.backupItems = this.fbItems;
         this.linkPaths('fbItems', 'items');
-        this.linkPaths('backupItems', 'items');
+        this.linkPaths('backup'+this.name, 'items');
         this.fire('connected');
       },
       _backupLoaded: function() {
         console.log("_backupLoaded");
-        if (!this._firebaseConnected) {
-          this.items = this.backupItems.slice();
-          this.fire('connected');
+        if (!this._firebaseConnected && this['backup'+this.name]) {
+          this.items = this['backup'+this.name].slice();
         }
+        this.fire('connected');
       }
 
     });

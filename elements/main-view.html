@@ -281,7 +281,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         cursor: pointer;
       }
 
-
       .admin {
         float:right;
         cursor: pointer;
@@ -387,19 +386,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <div hidden="{{page}}" class="loader"><paper-spinner active></paper-spinner></div>
 
-          <item-data location="{{_geturlstocks()}}" items="{{stocks}}" on-connected="_readyFirebaseStocks" ></item-data>
+          <item-data name="stocks" location="{{_geturlstocks()}}" items="{{stocks}}" on-connected="_readyFirebaseStocks" ></item-data>
 
-          <stock-view  stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'stock')}}" class="flex" ></stock-view>
+          <stock-view stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'stock')}}" class="flex" ></stock-view>
 
-          <item-data location="{{_geturlproducts()}}" items="{{products}}" on-connected="_readyFirebaseProducts" ></item-data>
+          <item-data name="products" location="{{_geturlproducts()}}" items="{{products}}" on-connected="_readyFirebaseProducts" ></item-data>
           
           <product-view hidden="{{!_selectRoute(page, 'products')}}" class="flex" products="{{products}}" ></product-view>
 
-          <item-data location="{{_geturlplannings()}}" items="{{plannings}}" on-connected="_readyFirebaseOrders" ></item-data>
+          <item-data name="plannings" location="{{_geturlplannings()}}" items="{{plannings}}" on-connected="_readyFirebaseOrders" ></item-data>
 
           <planning-view  plannings="{{plannings}}" hidden="{{!_selectRoute(page, 'planning')}}" class="flex" on-selectplanning="selectplanning"></planning-view>
 
-          <item-data location="{{_geturlorder()}}" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
+          <item-data name="orders" location="{{_geturlorder()}}" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
 
           <order-view  search="{{searchSchedule}}" stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'order')}}" class="flex" products="{{products}}" orders="{{orders}}" plannings="{{plannings}}" on-selectproduct="_selectproduct" on-deleteitem="_deleteproduct" on-setschedule="_setschedule" on-selectorderpayement="_selectorderpayement"></order-view>
 
@@ -693,101 +692,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.selectTable(this.path.table, true);
           }
         }
-      },
-      selectPlace : function(id, nourl) {
-        if(!nourl) {
-          var nourl = false;
-        }
-
-        if(id) {
-          var searchPlace = _.findWhere(this.places, {__firebaseKey__ : id});
-          if(searchPlace) {
-            this._selectPlace('', searchPlace, nourl);
-          }
-        }
-      },      
-      _selectPlace : function(event, place, nourl) {
-
-        this.set('page','tables');
-
-        if(place && this.thePlace != place) {
-          this.set('thePlace', place);
-          this.set('theTable', '');
-          if(!nourl) {
-            page('/place/'+this.thePlace.__firebaseKey__);
-          }
-        }
-
-      },
-      _deleteTable : function(e) {
-        if(e.detail.table && e.detail.table == this.theTable) {
-          this.theTable = "";
-          this.set('page','tables');
-        }
-      },
-      selectTable : function(id, nourl) {
-
-        if(!nourl) {
-          var nourl = false;
-        }
-
-        if(id) {
-          var searchTable = _.findWhere(this.tables, {__firebaseKey__ : id});
-          if(searchTable) {
-            this._selectTables('', searchTable, nourl);
-          }
-        }
-      },        
-      _selectTables  : function(event, table, nourl) {
-
-        this.set('page','customers');
-
-        if(this.theTable != table) {
-          this.set('theTable', table);
-          if(!nourl) {
-            page('/place/'+this.thePlace.__firebaseKey__+'/table/'+this.theTable.__firebaseKey__);
-          }
-        }
-
-        this._calcTotal();
-
-      },
-      _getTablesUrl: function(thePlace) {
-
-        if(thePlace && thePlace.__firebaseKey__) {
-          var tablesUrl = "https://lanote.firebaseio.com/places/"+thePlace.__firebaseKey__+"/tables";
-
-          if(tablesUrl != this.tablesUrl) {
-            this.loader();
-            this.set('tablesUrl',tablesUrl); 
-            return tablesUrl;
-          } 
-          
-        }
-
-      },
-      _getProductsUrl: function(thePlace) {
-        if(thePlace && thePlace.__firebaseKey__) {
-          return "https://lanote.firebaseio.com/places/"+thePlace.__firebaseKey__+"/products";
-        }
-      },
-      _getCustomersUrl: function(thePlace, table) {
-        if(thePlace && thePlace.__firebaseKey__ && table && table.__firebaseKey__) {
-          return "https://lanote.firebaseio.com/places/"+thePlace.__firebaseKey__+"/tables/"+table.__firebaseKey__+"/customers";
-        }
-      },
-      _getSharedUrl: function(thePlace, table) {
-        if(thePlace && thePlace.__firebaseKey__ && table && table.__firebaseKey__) {
-          return "https://lanote.firebaseio.com/places/"+thePlace.__firebaseKey__+"/tables/"+table.__firebaseKey__+"/shared";
-        }
-      },
-      _showCustomer : function(thePlace, theTable) {
-
-        if(thePlace && theTable) {
-          return true;
-        }
-
-        return false;
       },
       _selectRoute : function(info, target) {
         if(info == target) {

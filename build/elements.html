@@ -25457,6 +25457,163 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     });
   </script>
 </dom-module>
+<dom-module id="bill-view" assetpath="bill/">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        -webkit-user-select: none; /* Chrome/Safari */        
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* IE10+ */
+        /* Rules below not implemented in browsers yet */
+        -o-user-select: none;
+        user-select: none;
+              
+      }
+      paper-fab {
+      }
+
+      paper-item {
+        background: var(--accent-color);
+        color: var(--text-primary-color);
+        cursor: pointer;
+        margin-bottom: 5px;
+      }
+
+      .cachet {
+        text-align: center;
+      }
+
+      .infos {
+        display: none;
+        padding: 0 10px;
+      }
+
+      .date {
+        border-bottom: 2px dotted #999;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        font-size: 20px;
+      }
+
+      .repas {
+        display: flex;
+        align-items: center;
+        height: 30px;
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+
+      .ttc {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .action {
+        margin-top: 15px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      @media print {
+        .infos {
+          display: block;
+        }
+
+        .cachet {
+          margin : 15px 0;
+        }
+
+        .form {
+          display: none;
+        }
+
+        :host * { visibility: visible; }
+      }
+
+    </style>
+    <div on-track="handleTrack">
+
+    
+      <div class="cachet">
+        <div>{{sarl}}</div>
+        <div>Siren&nbsp;:&nbsp;<span>{{siren}}</span></div>
+        <div>Ape&nbsp;:&nbsp;<span>{{ape}}</span></div>
+        <div>N° TVA Intercommunautaire&nbsp;:&nbsp;<span>{{ntva}}</span></div>
+      </div>
+
+      <div class="infos">
+        <div class="date">Le&nbsp;<span>[[date]]</span></div>
+        <div class="repas">Nombre de repas&nbsp;:&nbsp;<span>[[nbrepas]]</span></div>
+        <div class="ttc">Total prix TTC&nbsp;:&nbsp;<span>[[total]]</span>€</div>
+        <div hidden="{{!tva10}}">Dont TVA à 10%&nbsp;:&nbsp;<span>[[tva10]]</span>€</div>
+        <div hidden="{{!tva20}}">Dont TVA à 20%&nbsp;:&nbsp;<span>[[tva20]]</span>€</div>
+      </div>
+
+      <div class="form">
+        <paper-input on-tap="_dontListen" value="{{date}}" on-keydown="_checkKey" class="short" label="Date"></paper-input>
+
+        <paper-input on-tap="_dontListen" type="number" value="{{nbrepas}}" on-keydown="_checkKey" class="short" label="Number of meal"></paper-input>
+
+        <paper-input on-tap="_dontListen" type="number" value="{{total}}" on-keydown="_checkKey" class="short" label="Total"></paper-input>
+
+        <paper-input on-tap="_dontListen" type="number" value="{{tva10}}" on-keydown="_checkKey" class="short" label="TVA 10%"></paper-input>
+
+        <paper-input on-tap="_dontListen" type="number" value="{{tva20}}" on-keydown="_checkKey" class="short" label="TVA 20%"></paper-input>
+
+        <div class="action">
+          <paper-fab icon="icons:print" on-click="print"></paper-fab>
+        </div>
+      </div>
+
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'bill-view',
+      properties: {
+        sarl : {
+          type : String,
+          value : 'SARL BLACK RHINO'
+        },
+        siren : {
+          type : String,
+          value : '804 417 772 RCS Grenoble'
+        },
+        ape  : {
+          type : String,
+          value : '5610 A'
+        },
+        ntva  : {
+          type : String,
+          value : 'RF 28 804417772'
+        }              
+      },
+      ready : function() {
+        var date = new Date();
+        var day = date.getDate();
+        if(day < 10) {
+          day = "0"+day;
+        }        
+        var monthIndex = parseFloat(date.getMonth())+1;
+        if(monthIndex < 10) {
+          monthIndex = "0"+monthIndex;
+        }
+        var year = date.getFullYear();
+        this.set('date', day+"/"+monthIndex+"/"+year);
+      },
+      print : function(e) {
+        if(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        window.print();
+      }
+    });
+  </script>
+</dom-module>
 
 <dom-module id="main-view" assetpath="/">
   <template>
@@ -25713,6 +25870,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       .admin {
         float:right;
+        cursor: pointer;
       }
 
   </style>
@@ -25743,6 +25901,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           <a data-route="payement" tabindex="-1" on-tap="closeDrawer">
             <iron-icon icon="editor:attach-money"></iron-icon>
             <span>Payement</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
+          <a data-route="bill" tabindex="-1" on-tap="closeDrawer">
+            <iron-icon icon="icons:bookmark-border"></iron-icon>
+            <span>Bill</span>
             <paper-ripple></paper-ripple>
           </a>
 
@@ -25824,6 +25988,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           <production-view id="productionView" hidden="{{!_selectRoute(page, 'production')}}" class="flex" orders="{{orders}}" plannings="{{plannings}}"></production-view>
 
           <payement-mainview id="payementView" orders="{{orders}}" hidden="{{!_selectRoute(page, 'payement')}}" class="flex"></payement-mainview>
+
+          <bill-view id="billView" hidden="{{!_selectRoute(page, 'bill')}}" class="flex"></bill-view>
 
         </div>
 

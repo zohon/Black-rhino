@@ -26,6 +26,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="planning/planning-view.html">
 <link rel="import" href="production/production-view.html">
 <link rel="import" href="payement/payement-mainview.html">
+<link rel="import" href="bill/bill-view.html">
+
 
 <dom-module id="main-view">
   <template >
@@ -282,6 +284,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .admin {
         float:right;
+        cursor: pointer;
       }
 
   </style>
@@ -316,6 +319,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <a data-route="payement" tabindex="-1" on-tap="closeDrawer" >
             <iron-icon icon="editor:attach-money"></iron-icon>
             <span>Payement</span>
+            <paper-ripple></paper-ripple>
+          </a>
+
+          <a data-route="bill" tabindex="-1" on-tap="closeDrawer" >
+            <iron-icon icon="icons:bookmark-border"></iron-icon>
+            <span>Bill</span>
             <paper-ripple></paper-ripple>
           </a>
 
@@ -397,6 +406,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <production-view id="productionView" hidden="{{!_selectRoute(page, 'production')}}" class="flex" orders="{{orders}}" plannings="{{plannings}}"></production-view>
 
           <payement-mainview id="payementView" orders="{{orders}}" hidden="{{!_selectRoute(page, 'payement')}}" class="flex"></payement-mainview>
+
+          <bill-view id="billView" hidden="{{!_selectRoute(page, 'bill')}}" class="flex"></bill-view>
 
         </div>
 

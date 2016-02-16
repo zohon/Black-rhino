@@ -45,10 +45,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }        
       },
       _sort : function(a, b) {
-        if (a.color === b.color) resultColor = 0;
-        resultColor = a.color < b.color ? -1 : 1;
+
+        var aConcat = a.color+a.label;
+        var bConcat = b.color+b.label;
+
+        if (aConcat.toLowerCase() === bConcat.toLowerCase()) {
+          resultColor = 0;
+        }
+        resultColor = aConcat.toLowerCase() < bConcat.toLowerCase() ? -1 : 1;
         return resultColor;
-      },      
+
+      },
+
       _computeFilter: function(filterBy) {
         if (filterBy) {
 

@@ -124,6 +124,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
       getSchedule : function() {
+
+        console.log("getSchedule");
+        
         if(this.timer !== undefined) {
 
           var sortPlanning = _.sortBy(this.plannings, function(data){ 
@@ -139,7 +142,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
       loadProduction : function(schedule) {
-
+        console.log("loadProduction");
         if(schedule) {
           this.schedule = schedule;
         } else {

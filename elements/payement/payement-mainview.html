@@ -21,15 +21,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         -ms-user-select: none; /* IE10+ */
         /* Rules below not implemented in browsers yet */
         -o-user-select: none;
-        user-select: none;
-              
+        user-select: none;  
       }
+
+      paper-item {
+        background: var(--accent-color);
+        color: var(--text-primary-color);
+        cursor: pointer;
+        margin-bottom: 5px;
+      }
+
     </style>
 
     <template is="dom-repeat" items="{{orders}}" as="order" sort="_sort">
        <payement-view order="{{order}}" ></payement-view>
     </template>
-
 
   </template>
   <script>

@@ -62,7 +62,9 @@ paper-toast {
 @media print {
 
   body * { visibility: hidden; }
+
   order-item * { visibility: visible; }
+  
   #drawer { display: none; }
   #main { left: 0 !important; }
   #mainToolbar {

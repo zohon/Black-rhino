@@ -20407,6 +20407,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           //$(this).find('paper-icon-item .avatar').css('background', this.colorAvatar);
     
           return name.charAt(0);
+        } else {
+          return "?";
         }
       },
       _checkKey: function(e) {
@@ -20805,11 +20807,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     :host.lite .person {
       cursor: pointer;
       transition: all 0.5s ease;
-      height: 45px;
+      height: 35px;
       display: flex;
       align-items: center;
       font-size: 15px;
-      padding: 4px 9px;
+      padding: 5px;
       justify-content: center;
       white-space: nowrap;
       border-radius: 3px;
@@ -21316,10 +21318,18 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }        
       },
       _sort : function(a, b) {
-        if (a.color === b.color) resultColor = 0;
-        resultColor = a.color < b.color ? -1 : 1;
+
+        var aConcat = a.color+a.label;
+        var bConcat = b.color+b.label;
+
+        if (aConcat.toLowerCase() === bConcat.toLowerCase()) {
+          resultColor = 0;
+        }
+        resultColor = aConcat.toLowerCase() < bConcat.toLowerCase() ? -1 : 1;
         return resultColor;
-      },      
+
+      },
+
       _computeFilter: function(filterBy) {
         if (filterBy) {
 
@@ -24518,6 +24528,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       },
       getSchedule : function() {
+
+        console.log("getSchedule");
+        
         if(this.timer !== undefined) {
 
           var sortPlanning = _.sortBy(this.plannings, function(data){ 
@@ -24533,7 +24546,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
       },
       loadProduction : function(schedule) {
-
+        console.log("loadProduction");
         if(schedule) {
           this.schedule = schedule;
         } else {
@@ -25440,15 +25453,21 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         -ms-user-select: none; /* IE10+ */
         /* Rules below not implemented in browsers yet */
         -o-user-select: none;
-        user-select: none;
-              
+        user-select: none;  
       }
+
+      paper-item {
+        background: var(--accent-color);
+        color: var(--text-primary-color);
+        cursor: pointer;
+        margin-bottom: 5px;
+      }
+
     </style>
 
     <template is="dom-repeat" items="{{orders}}" as="order" sort="_sort">
        <payement-view order="{{order}}"></payement-view>
     </template>
-
 
   </template>
   <script>
@@ -25802,37 +25821,37 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       @-webkit-keyframes  alerting {
           0% { 
-            background-color: red;
+            background-color : red;
           }
           30% {
-            background-color :black;
+            background-color : black;
           }
           50% { 
-            background-color: red;
+            background-color : red;
           }
           70% {
-            background-color :black;
+            background-color : black;
           }
           100% { 
-            background-color: red;
+            background-color : red;
           }
       }
 
       @keyframes alerting {
           0% { 
-            background-color: red;
+            background-color : red;
           }
           30% {
-            background-color :black;
+            background-color : black;
           }
           50% { 
-            background-color: red;
+            background-color : red;
           }
           70% {
-            background-color :black;
+            background-color : black;
           }
           100% { 
-            background-color: red;
+            background-color : red;
           }
       }
 
@@ -25888,8 +25907,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         <paper-toolbar id="drawerToolbar"><span class="title">{{shiftdate}}</span><iron-icon on-click="toggleAdmin" icon="communication:vpn-key" class="admin"></iron-icon></paper-toolbar>
         
         
-
-        
         <paper-menu class="list" attr-for-selected="data-route" selected="{{page}}">
 
           <a data-route="order" tabindex="-1" on-tap="closeDrawer">
@@ -25916,41 +25933,38 @@ is separate from validation, and `allowed-pattern` does not affect how the input
             <paper-ripple></paper-ripple>
           </a>
 
-        <div hidden="{{!admin}}">
-
-          <a data-route="stock" tabindex="-1" on-tap="closeDrawer">
+          <a data-route="stock" tabindex="-1" on-tap="closeDrawer" hidden="{{!admin}}">
             <iron-icon icon="device:storage"></iron-icon>
             <span>Stock</span>
             <paper-ripple></paper-ripple>
           </a>
 
-          <a data-route="planning" tabindex="-1" on-tap="closeDrawer">
+          <a data-route="planning" tabindex="-1" on-tap="closeDrawer" hidden="{{!admin}}">
             <iron-icon icon="icons:today"></iron-icon>
             <span>Planning</span>
             <paper-ripple></paper-ripple>
           </a>
 
-          <a data-route="products" tabindex="-1" on-tap="closeDrawer">
+          <a data-route="products" tabindex="-1" on-tap="closeDrawer" hidden="{{!admin}}">
             <iron-icon icon="maps:local-pizza"></iron-icon>
             <span>Products</span>
             <paper-ripple></paper-ripple>
           </a>
 
-          <hr>
+          <hr hidden="{{!admin}}">
 
-          <a tabindex="-1" class="export" on-tap="export">
+          <a tabindex="-1" class="export" on-tap="export" hidden="{{!admin}}">
             <iron-icon icon="icons:cloud-download"></iron-icon>
             <span>Export</span>
             <paper-ripple></paper-ripple>
-          </a>   
+          </a>
 
-          <a tabindex="-1" class="reset" on-tap="reset">
+          <a tabindex="-1" class="reset" on-tap="reset" hidden="{{!admin}}">
             <iron-icon icon="icons:block"></iron-icon>
             <span>Reset</span>
             <paper-ripple></paper-ripple>
-          </a>   
+          </a>
 
-      </div>
         </paper-menu>
       </div>
       <paper-header-panel main="">
@@ -26176,9 +26190,20 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         this.closeDrawer(e);
 
-        $(this).find('order-view').get(0).reset();
-        $(this).find('stock-view').get(0).reset();
-        $(this).find('planning-view').get(0).reset();
+        console.log("reset");
+        console.log(this.page);
+
+        switch(this.page) {
+          case 'order':
+            $(this).find('order-view').get(0).reset();
+            break;
+          case 'stock':
+            $(this).find('stock-view').get(0).reset();
+            break;
+          case 'planning':
+            $(this).find('planning-view').get(0).reset();
+            break;                            
+        }
       },
       export : function(e) {
 
@@ -26242,6 +26267,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
       _changePage : function(page) {
 
+        console.log("_changePage");
+
         switch(page) {
             case 'production':
               $(this).find('#productionView').get(0).loadProduction();
@@ -26272,7 +26299,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.selectRouting();
       },
       selectRouting : function() {
-
         if(this.path) {
           if(this.path.place && !this.thePlace) {
             this.selectPlace(this.path.place, true);

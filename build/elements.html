@@ -12456,7 +12456,7 @@ X.prototype.Ze=function(a,b){D("Firebase.resetPassword",1,2,arguments.length);sg
     </firebase-collection>
 
     
-    <iron-localstorage name="polymer-items" on-iron-localstorage-load="_backupLoaded" value="{{backupItems}}"></iron-localstorage>
+    <iron-localstorage name="[[name]]" on-iron-localstorage-load="_backupLoaded" value="{{backupItems}}"></iron-localstorage>
 
   </template>
   <script>
@@ -12479,20 +12479,22 @@ X.prototype.Ze=function(a,b){D("Firebase.resetPassword",1,2,arguments.length);sg
         }
       },
       _firebaseLoaded: function() {
-        console.log("_firebaseLoaded");
-        this._firebaseConnected = true;
-        this.items = this.fbItems;
-        this.backupItems = this.fbItems;
+        console.log("_firebaseLoaded "+this.name);
+        this.set('_firebaseConnected', true);
+        this.set('items',this.fbItems);
+        this.set('backupItems', this.fbItems);
         this.linkPaths('fbItems', 'items');
-        this.linkPaths('backup'+this.name, 'items');
-        this.fire('connected');
+        this.linkPaths('backupItems', 'items');
+        this.fire('connected'); 
       },
       _backupLoaded: function() {
-        console.log("_backupLoaded");
-        if (!this._firebaseConnected && this['backup'+this.name]) {
-          this.items = this['backup'+this.name].slice();
+
+        if (!this._firebaseConnected && this.backupItems) {
+          console.log("_backupLoaded "+this.name);
+
+          this.set('items', this.backupItems.slice());
+          this.fire('connected');
         }
-        this.fire('connected');
       }
 
     });
@@ -25560,9 +25562,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       }
 
     </style>
-    <div on-track="handleTrack">
+    <div>
 
-    
       <div class="cachet">
         <div>{{sarl}}</div>
         <div>Siren&nbsp;:&nbsp;<span>{{siren}}</span></div>
@@ -25706,7 +25707,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
         font-weight: 400;
-        min-height: 55px;
+        min-height: 50px;
         padding: 0 15px;
         transition : all 0.5s ease;
         position: relative;
@@ -25898,6 +25899,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         cursor: pointer;
       }
 
+      paper-menu hr {
+        margin:0;
+      }
+
   </style>
 
     <paper-drawer-panel id="paperDrawerPanel">
@@ -25989,6 +25994,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
           <div hidden="{{page}}" class="loader"><paper-spinner active=""></paper-spinner></div>
 
+          <item-data name="orders" location="{{_geturlorder()}}" items="{{orders}}" on-connected="_readyFirebaseOrders"></item-data>
+
           <item-data name="stocks" location="{{_geturlstocks()}}" items="{{stocks}}" on-connected="_readyFirebaseStocks"></item-data>
 
           <stock-view stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'stock')}}" class="flex"></stock-view>
@@ -25997,11 +26004,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           
           <product-view hidden="{{!_selectRoute(page, 'products')}}" class="flex" products="{{products}}"></product-view>
 
-          <item-data name="plannings" location="{{_geturlplannings()}}" items="{{plannings}}" on-connected="_readyFirebaseOrders"></item-data>
+          <item-data name="plannings" location="{{_geturlplannings()}}" items="{{plannings}}" on-connected="_readyFirebasePlannings"></item-data>
 
           <planning-view plannings="{{plannings}}" hidden="{{!_selectRoute(page, 'planning')}}" class="flex" on-selectplanning="selectplanning"></planning-view>
-
-          <item-data name="orders" location="{{_geturlorder()}}" items="{{orders}}" on-connected="_readyFirebaseOrders"></item-data>
 
           <order-view search="{{searchSchedule}}" stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'order')}}" class="flex" products="{{products}}" orders="{{orders}}" plannings="{{plannings}}" on-selectproduct="_selectproduct" on-deleteitem="_deleteproduct" on-setschedule="_setschedule" on-selectorderpayement="_selectorderpayement"></order-view>
 
@@ -26160,6 +26165,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.loader();
         */
       },
+      _readyFirebasePlannings : function() {
+        /*this.selectRouting();
+        this.loader();
+        */
+      },      
       _readyFirebaseStocks : function() {
         $(this).find('.MiniStock').addClass('appear');
       },

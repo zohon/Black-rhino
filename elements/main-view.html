@@ -94,7 +94,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
         font-weight: 400;
-        min-height: 55px;
+        min-height: 50px;
         padding: 0 15px;
         transition : all 0.5s ease;
         position: relative;
@@ -286,6 +286,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         cursor: pointer;
       }
 
+      paper-menu hr {
+        margin:0;
+      }
+
   </style>
 
     <paper-drawer-panel id="paperDrawerPanel">
@@ -381,6 +385,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <div hidden="{{page}}" class="loader"><paper-spinner active></paper-spinner></div>
 
+          <item-data name="orders" location="{{_geturlorder()}}" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
+
           <item-data name="stocks" location="{{_geturlstocks()}}" items="{{stocks}}" on-connected="_readyFirebaseStocks" ></item-data>
 
           <stock-view stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'stock')}}" class="flex" ></stock-view>
@@ -389,11 +395,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           <product-view hidden="{{!_selectRoute(page, 'products')}}" class="flex" products="{{products}}" ></product-view>
 
-          <item-data name="plannings" location="{{_geturlplannings()}}" items="{{plannings}}" on-connected="_readyFirebaseOrders" ></item-data>
+          <item-data name="plannings" location="{{_geturlplannings()}}" items="{{plannings}}" on-connected="_readyFirebasePlannings" ></item-data>
 
           <planning-view  plannings="{{plannings}}" hidden="{{!_selectRoute(page, 'planning')}}" class="flex" on-selectplanning="selectplanning"></planning-view>
-
-          <item-data name="orders" location="{{_geturlorder()}}" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
 
           <order-view  search="{{searchSchedule}}" stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'order')}}" class="flex" products="{{products}}" orders="{{orders}}" plannings="{{plannings}}" on-selectproduct="_selectproduct" on-deleteitem="_deleteproduct" on-setschedule="_setschedule" on-selectorderpayement="_selectorderpayement"></order-view>
 
@@ -552,6 +556,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.loader();
         */
       },
+      _readyFirebasePlannings : function() {
+        /*this.selectRouting();
+        this.loader();
+        */
+      },      
       _readyFirebaseStocks : function() {
         $(this).find('.MiniStock').addClass('appear');
       },

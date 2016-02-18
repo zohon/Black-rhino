@@ -25002,8 +25002,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       is: 'payement-item',
       properties: {
         payement: {
-          type : Object,
-          observer : "_getPayed"
+          type : Object
         }
       },
       observers: [
@@ -25351,6 +25350,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.set('addmoney', '');
         $(this).find('paper-button').removeAttr('active');
 
+        $(this).find('paper-button').focus();
+
       },
       addtoticket: function() {
         var val = 0;
@@ -25365,7 +25366,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.set('order.ticket', val);
         this.set('addticket', '');
         $(this).find('paper-button').removeAttr('active');
-
+        $(this).find('paper-button').focus();
       },        
       addtocb: function() {
         var val = 0;
@@ -25378,7 +25379,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.checkEncours(this.addcb);
         this.set('order.cb', val);
         this.set('addcb', '');
-        $(this).find('paper-button').removeAttr('active');       
+        $(this).find('paper-button').removeAttr('active');
+        $(this).find('paper-button').focus();        
       },
       addtofree: function() {
         var val = 0;
@@ -25393,6 +25395,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         this.set('order.free', val);
         this.set('addfree', '');
         $(this).find('paper-button').removeAttr('active');
+        $(this).find('paper-button').focus();        
       },      
       _getTotalRestdone : function(nborder, order) {
 
@@ -25804,7 +25807,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           left: 0;
           z-index: 300;
           background: #FFF;
-          padding: 5px 5px 0;
+          padding: 0px 5px 0;
           max-height: 68px;
           overflow: auto;
           box-shadow: 0px 0px 15px -3px #888;
@@ -25821,8 +25824,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         background: var(--dark-primary-color);
         color : var(--text-primary-color);
         padding: 5px 15px;
+        margin : 5px 0;
         border-radius: 2px;
-        margin-bottom: 5px;
       }
 
       @-webkit-keyframes  alerting {
@@ -26025,7 +26028,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         <div class="MiniStock" hidden="{{!stocks.length}}">
 
-          <template is="dom-repeat" items="{{stocks}}" observe="{{stocks.*}}" filter="_stocksWatchOut" as="stock" sort="_sortStock" hidden="{{!stocks.length}}">
+          <template id="miniStocksList" is="dom-repeat" items="{{stocks}}" filter="_stocksWatchOut" as="stock" sort="_sortStock" hidden="{{!stocks.length}}">
               <div class$="{{ _getStockClass(stock.nb, stock.nbMax, 'item') }}" class="item" hidden="{{!stock.label}}"><b class="title">{{stock.label}}</b>&nbsp;<span>{{ stock.nb }}</span></div>
           </template>
 
@@ -26080,6 +26083,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           notify: true,
         }        
       },
+      observers: [
+        '_sortListStocks(stocks.*)'
+      ],      
       created: function() {
         this.dev = false;
         if(window.location.href.indexOf('localhost') >= 0) {
@@ -26110,6 +26116,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         return resultColor;
 
       },
+      _sortListStocks : function() {
+        this.$.miniStocksList.render();
+      },
       _stocksWatchOut : function(target) {
 
         if( (target.nb/target.nbMax) * 100 < 40) {
@@ -26117,7 +26126,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
 
         return false;
-
       },
       _getShiftDate : function() {
         if (!this.shiftdate) {

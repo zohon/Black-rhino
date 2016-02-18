@@ -186,7 +186,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           left: 0;
           z-index: 300;
           background: #FFF;
-          padding: 5px 5px 0;
+          padding: 0px 5px 0;
           max-height: 68px;
           overflow: auto;
           box-shadow: 0px 0px 15px -3px #888;
@@ -203,8 +203,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background: var(--dark-primary-color);
         color : var(--text-primary-color);
         padding: 5px 15px;
+        margin : 5px 0;
         border-radius: 2px;
-        margin-bottom: 5px;
       }
 
       @-webkit-keyframes  alerting {
@@ -411,7 +411,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <div class="MiniStock" hidden="{{!stocks.length}}">
 
-          <template is="dom-repeat" items="{{stocks}}" observe="{{stocks.*}}" filter="_stocksWatchOut" as="stock" sort="_sortStock" hidden="{{!stocks.length}}">
+          <template id="miniStocksList" is="dom-repeat" items="{{stocks}}"  filter="_stocksWatchOut" as="stock" sort="_sortStock" hidden="{{!stocks.length}}">
               <div class$="{{ _getStockClass(stock.nb, stock.nbMax, 'item') }}" class="item" hidden="{{!stock.label}}"><b class="title">{{stock.label}}</b>&nbsp;<span>{{ stock.nb }}</span></div>
           </template>
 
@@ -466,6 +466,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
         }        
       },
+      observers: [
+        '_sortListStocks(stocks.*)'
+      ],      
       created: function() {
         this.dev = false;
         if(window.location.href.indexOf('localhost') >= 0) {
@@ -496,6 +499,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return resultColor;
 
       },
+      _sortListStocks : function() {
+        this.$.miniStocksList.render();
+      },
       _stocksWatchOut : function(target) {
 
         if( (target.nb/target.nbMax) * 100 < 40) {
@@ -503,7 +509,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         return false;
-
       },
       _getShiftDate : function() {
         if (!this.shiftdate) {

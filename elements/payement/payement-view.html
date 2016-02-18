@@ -274,6 +274,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.set('addmoney', '');
         $(this).find('paper-button').removeAttr('active');
 
+        $(this).find('paper-button').focus();
+
       },
       addtoticket: function() {
         var val = 0;
@@ -288,7 +290,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.set('order.ticket', val);
         this.set('addticket', '');
         $(this).find('paper-button').removeAttr('active');
-
+        $(this).find('paper-button').focus();
       },        
       addtocb: function() {
         var val = 0;
@@ -301,7 +303,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.checkEncours(this.addcb);
         this.set('order.cb', val);
         this.set('addcb', '');
-        $(this).find('paper-button').removeAttr('active');       
+        $(this).find('paper-button').removeAttr('active');
+        $(this).find('paper-button').focus();        
       },
       addtofree: function() {
         var val = 0;
@@ -316,6 +319,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.set('order.free', val);
         this.set('addfree', '');
         $(this).find('paper-button').removeAttr('active');
+        $(this).find('paper-button').focus();        
       },      
       _getTotalRestdone : function(nborder, order) {
 

@@ -25006,11 +25006,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           observer : "_getPayed"
         }
       },
+      observers: [
+        '_getPayed(payement.nb)'
+      ],
       ready : function() {
 
       },
       _getPayed : function() {
-        if(!this.payed && this.payement.nb) {
+        console.log('_getPayed');
+        if(this.payement.nb) {
           this.set('payed',this.payement.nb);
         }
       },
@@ -25252,7 +25256,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         <div hidden="{{order.list.length}}">no command</div>
 
         <div class="infos" hidden="{{!order.list.length}}">
-          <div class="total" on-click="resetpayement">Total&nbsp;:&nbsp;<span>{{_getTotal(order.list.length)}}</span><span hidden="{{!order.list.length}}">€</span></div>  
+          <div class="total" on-click="resetpayement">Total&nbsp;:&nbsp;<span>{{_getTotal(order.list.length, order.*)}}</span><span hidden="{{!order.list.length}}">€</span></div>  
 
           <div class="encours" on-click="resetencours"><span>{{encours}}</span><span hidden="{{!encours}}">€</span></div>  
 
@@ -25408,12 +25412,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         var free = (this.order.free ? parseFloat(this.order.free) : 0);        
         var alreadypayed= money+ticket+cb+free;
 
-
         this.fire('payementchange', this.order);
-
-
         return total-alreadypayed;
-
       },      
       _getTotal : function() {
         var total = 0;

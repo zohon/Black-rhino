@@ -179,7 +179,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div hidden="{{order.list.length}}">no command</div>
 
         <div class="infos" hidden="{{!order.list.length}}">
-          <div class="total" on-click="resetpayement">Total&nbsp;:&nbsp;<span>{{_getTotal(order.list.length)}}</span><span hidden="{{!order.list.length}}" >€</span></div>  
+          <div class="total" on-click="resetpayement">Total&nbsp;:&nbsp;<span>{{_getTotal(order.list.length, order.*)}}</span><span hidden="{{!order.list.length}}" >€</span></div>  
 
           <div class="encours" on-click="resetencours" ><span>{{encours}}</span><span hidden="{{!encours}}" >€</span></div>  
 
@@ -335,12 +335,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var free = (this.order.free ? parseFloat(this.order.free) : 0);        
         var alreadypayed= money+ticket+cb+free;
 
-
         this.fire('payementchange', this.order);
-
-
         return total-alreadypayed;
-
       },      
       _getTotal : function() {
         var total = 0;

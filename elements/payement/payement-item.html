@@ -111,11 +111,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer : "_getPayed"
         }
       },
+      observers: [
+        '_getPayed(payement.nb)'
+      ],
       ready : function() {
 
       },
       _getPayed : function() {
-        if(!this.payed && this.payement.nb) {
+        console.log('_getPayed');
+        if(this.payement.nb) {
           this.set('payed',this.payement.nb);
         }
       },

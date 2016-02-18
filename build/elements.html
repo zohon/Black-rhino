@@ -20839,6 +20839,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       color:#FFF;
     }
 
+    :host .person.blue .avatar,
+    :host.lite .person.blue {
+      background: #1972D2 !important;
+      color:#FFF;
+    }
+
     :host .person.orange .avatar,
     :host.lite .person.orange {
       background: #d05e20 !important;
@@ -21331,7 +21337,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         return resultColor;
 
       },
-
       _computeFilter: function(filterBy) {
         if (filterBy) {
 
@@ -26020,7 +26025,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         <div class="MiniStock" hidden="{{!stocks.length}}">
 
-          <template is="dom-repeat" items="{{stocks}}" as="stock" hidden="{{!stocks.length}}">
+          <template is="dom-repeat" items="{{stocks}}" observe="{{stocks.*}}" filter="_stocksWatchOut" as="stock" sort="_sortStock" hidden="{{!stocks.length}}">
               <div class$="{{ _getStockClass(stock.nb, stock.nbMax, 'item') }}" class="item" hidden="{{!stock.label}}"><b class="title">{{stock.label}}</b>&nbsp;<span>{{ stock.nb }}</span></div>
           </template>
 
@@ -26090,6 +26095,28 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         } else {
           this.set('admin', true);
         }
+
+      },
+      _sortStock : function(a, b) {
+
+        var aConcat = a.nb-a.nbMax;
+        var bConcat = b.nb+b.nbMax;
+
+        if (aConcat === bConcat) {
+          resultColor = 0;
+        }
+
+        resultColor = aConcat < bConcat ? -1 : 1;
+        return resultColor;
+
+      },
+      _stocksWatchOut : function(target) {
+
+        if( (target.nb/target.nbMax) * 100 < 40) {
+          return true;
+        }
+
+        return false;
 
       },
       _getShiftDate : function() {

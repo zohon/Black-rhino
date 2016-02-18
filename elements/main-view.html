@@ -411,7 +411,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <div class="MiniStock" hidden="{{!stocks.length}}">
 
-          <template is="dom-repeat" items="{{stocks}}" as="stock"  hidden="{{!stocks.length}}">
+          <template is="dom-repeat" items="{{stocks}}" observe="{{stocks.*}}" filter="_stocksWatchOut" as="stock" sort="_sortStock" hidden="{{!stocks.length}}">
               <div class$="{{ _getStockClass(stock.nb, stock.nbMax, 'item') }}" class="item" hidden="{{!stock.label}}"><b class="title">{{stock.label}}</b>&nbsp;<span>{{ stock.nb }}</span></div>
           </template>
 
@@ -481,6 +481,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           this.set('admin', true);
         }
+
+      },
+      _sortStock : function(a, b) {
+
+        var aConcat = a.nb-a.nbMax;
+        var bConcat = b.nb+b.nbMax;
+
+        if (aConcat === bConcat) {
+          resultColor = 0;
+        }
+
+        resultColor = aConcat < bConcat ? -1 : 1;
+        return resultColor;
+
+      },
+      _stocksWatchOut : function(target) {
+
+        if( (target.nb/target.nbMax) * 100 < 40) {
+          return true;
+        }
+
+        return false;
 
       },
       _getShiftDate : function() {

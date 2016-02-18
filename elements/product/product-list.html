@@ -7,8 +7,11 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-
+<link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-left-animation.html">
 <link rel="import" href="product-item.html">
+
 
 <dom-module id="product-list">
 
@@ -16,14 +19,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <style>
       :host {
-        display: block;
         -webkit-user-select: none; /* Chrome/Safari */        
         -moz-user-select: none; /* Firefox */
         -ms-user-select: none; /* IE10+ */
         /* Rules below not implemented in browsers yet */
         -o-user-select: none;
         user-select: none;
+      
       }
+
+      :host.lite {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        
+        display: none;
+        flex-flow: row wrap;
+        justify-content: space-between;          
+      }
+
       product-item {
         margin-bottom: 10px;
       }
@@ -37,12 +51,66 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
     Polymer({
       is: 'product-list',
+      behaviors : [Polymer.NeonAnimationRunnerBehavior],
       properties: {
         tables: Array,
         filterBy: {
           type: String,
           value: 'all'
-        }        
+        },
+        animationConfig: {
+          value: function() {
+            return {
+              'entry': {
+                name: 'slide-from-right-animation',
+                node: this,
+                timing : {duration : 500}                
+              },
+               'exit': {
+                name: 'slide-left-animation',
+                node: this,
+                timing : {duration : 500}                
+              }   
+            }
+          }
+        }      
+      },
+      listeners: {
+        'neon-animation-finish' : '_onNeonAnimationFinish'
+      },
+      showItems: function() {
+
+       // if(!this.isShow) {
+        /*  _.each($(this).find('product-item'), _.bind(function(data, index) {
+            setTimeout(function(){ data.show(); }, index*100);
+          },this));
+          this.isShow = true; */ 
+        //} else {
+
+          this.show = true;
+          this.style.display = "flex";
+          this.playAnimation('entry');
+          
+        //}
+
+      },
+      hideItems : function() {
+        if(this.show) {
+          this.show = false;
+          this.style.position = "absolute";
+          this.playAnimation('exit');
+        }
+
+      },
+      _onNeonAnimationFinish  : function(){
+
+        if(this.show) {
+          
+        } else {
+          this.style.position = 'initial';
+          this.style.display = "none";
+        }
+
       },
       _sort : function(a, b) {
 

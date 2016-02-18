@@ -73,18 +73,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         text-transform: uppercase;
         font-weight: lighter;
         color: var(--default-primary-color);
-          
-      }
-
-      h2 .edit {
-        height:40px;
-        width:40px;
-        float:right;
         cursor: pointer;
-      }
-
-      h2 .edit:hover {
-        color: var(--accent-color);
       }
 
       h2 .done {
@@ -114,6 +103,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: flex;
         justify-content: center;
         align-items: center;
+        width: 25%;
       }
 
       .listInput {
@@ -144,13 +134,56 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .infos {
         display: flex;
         justify-content: space-between;
+        margin-bottom: 15px;
       }
 
       .total {
-
+        background: #000;
+        color : #FFF;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        border-radius: 0;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+        text-transform: uppercase;
+        font-size: 20px;
+        transition: all 0.4s ease;
+        cursor: pointer;        
       }
-      .reste {
 
+
+      .reste {
+        background: #FE730F;
+        color : #FFF;
+        width: 48px;
+        height: 48px;
+        margin-right: 10px;
+        display: flex;
+        border-radius: 0;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+        text-transform: uppercase;
+        font-size: 20px;
+        transition: all 0.4s ease;
+        cursor: pointer;        
+      }
+
+      .encours {
+        color: var(--accent-color);
+        width: 48px;
+        height: 48px;
+        display: flex;
+        border-radius: 0;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+        text-transform: uppercase;
+        font-size: 20px;
+        transition: all 0.4s ease;
+        cursor: pointer;        
       }
 
       h2 .schedule {
@@ -161,9 +194,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 10px 0;
       }
 
-      .encours {
-        color: var(--accent-color);
-      }
+
 
     </style>
 
@@ -179,11 +210,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div hidden="{{order.list.length}}">no command</div>
 
         <div class="infos" hidden="{{!order.list.length}}">
-          <div class="total" on-click="resetpayement">Total&nbsp;:&nbsp;<span>{{_getTotal(order.list.length, order.*)}}</span><span hidden="{{!order.list.length}}" >€</span></div>  
+          <div class="reste"><span>{{_getTotalRest(order.list.length, order.*)}}</span><span hidden="{{!order.list.length}}" >€</span></div>
 
-          <div class="encours" on-click="resetencours" ><span>{{encours}}</span><span hidden="{{!encours}}" >€</span></div>  
+          <div class="encours" on-click="resetencours" hidden="{{!encours}}"><span>{{encours}}</span><span hidden="{{!encours}}" >€</span></div>  
 
-          <div class="reste">Reste&nbsp;:&nbsp;<span>{{_getTotalRest(order.list.length, order.*)}}</span><span hidden="{{!order.list.length}}" >€</span></div>
+          <div class="total" on-click="resetpayement"><span>{{_getTotal(order.list.length, order.*)}}</span><span hidden="{{!order.list.length}}" >€</span></div>  
         </div>
 
         <div class="listPayement"  hidden="{{!order.list.length}}">

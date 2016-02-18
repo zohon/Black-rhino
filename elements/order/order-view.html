@@ -39,7 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         /* Input foreground color */
         --paper-input-container-input-color: var(--text-primary-color);
-
+        overflow: hidden;
       }
       paper-fab {
           position: fixed;
@@ -65,7 +65,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width:45px;
       }
 
-      .productSelect .editing {
+      .orderActions .editing {
         display: none !important;
       }
 
@@ -83,20 +83,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.2);
       }
 
-      product-list {
-              padding: 0;
-        margin: 0;
-        list-style: none;
-        
-        display: -webkit-box;
-        display: -moz-box;
-        display: -ms-flexbox;
-        display: -webkit-flex;
-        display: flex;
-        
-        -webkit-flex-flow: row wrap;
-        justify-content: space-between;
-      }
 
     </style>
 
@@ -122,12 +108,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <order-list orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-selectitem="selectitem" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder" ></order-list>
 
-    <div class="productSelect" hidden="{{!selectProduct}}" style="display: inline-block; width:100%;">
-        <product-list products="{{products}}" affichage="lite" sort="color" filter-by="{{route}}" on-selectproduct="_selectproduct"></product-list>
-    </div>
+    <div class="orderActions">
 
-    <div class="planningSelect" hidden="{{!selectPlanning}}" style="display: inline-block; width:100%;">
-        <planning-list plannings="{{plannings}}" affichage="lite" filter-by="{{filterBy}}" on-selectplanning="_selectplanning" selectneeds="[[selectneeds]]" selectschedule="[[selectschedule]]"></product-list>
+        <product-list id="productsSelectList" class="lite" products="{{products}}" affichage="lite" sort="color" filter-by="{{route}}" on-selectproduct="_selectproduct"></product-list>
+
+        <planning-list id="planningsSelectList" class="lite" plannings="{{plannings}}" affichage="lite" filter-by="{{filterBy}}" on-selectplanning="_selectplanning" selectneeds="[[selectneeds]]" selectschedule="[[selectschedule]]"></product-list>
+
     </div>
 
   </template>
@@ -139,11 +125,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         route: String,
         selectProduct : {
           type : Boolean,
-          value: false
+          value: false,
+          observer : '_changeSelectProduct'
         },
         selectPlanning : {
           type : Boolean,
-          value: false
+          value: false,
+          observer : '_changeSelectPlanning'          
         },
         theOrder : {
           type : Object,
@@ -151,6 +139,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
         },
       },
+      _changeSelectProduct : function(data) {
+
+        if(data) {
+          this.$.productsSelectList.showItems();
+        } else {
+          this.$.productsSelectList.hideItems();
+        }
+
+        this.switchItemOrder();
+      },
+      _changeSelectPlanning : function(data) {
+
+        if(data) {
+          this.$.planningsSelectList.showItems();
+        } else {
+          this.$.planningsSelectList.hideItems();
+        }
+
+        this.switchItemOrder();
+      },
+      switchItemOrder : function() {
+
+        if(this.desactivateTimeout) {
+         clearTimeout(this.desactivateTimeout);
+        }
+
+        if(this.selectProduct || this.selectPlanning) {
+          $(this).find('order-item.active').removeClass('active');
+          $(this).find('order-item').addClass('hidden');
+        } else {
+        
+          this.desactivateTimeout = setTimeout(_.bind(function(){
+            $(this).find('order-item.active').removeClass('active');
+            $(this).find('order-item.hidden').removeClass('hidden');
+          },this), 500);
+        }
+
+      },           
       _onlyhide : function(elem1, elem2, elem3) {
 
         if (elem1 || elem2 || elem3) {
@@ -176,10 +202,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         $(this).find('order-item').addClass('hidden');
       },
       unselect : function(e) {
-        $(this).find('order-item.active').removeClass('active');
-        $(this).find('order-item.hidden').removeClass('hidden');
         this.set('selectPlanning', false);
-        this.set('selectProduct', false);        
+        this.set('selectProduct', false);
+        this.set('activeOrder', "");
       },
       selectorder : function(e) {
 
@@ -190,26 +215,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.set('selectProduct', true);
           } else {
             this.set('selectProduct', false);
-            this.set('activeOrder', "");
-            $(this).find('order-item.active').removeClass('active');
-            $(this).find('order-item.hidden').removeClass('hidden');             
+            this.set('activeOrder', "");           
           }
 
         } else {
 
           if(this.selectPlanning) {
             this.set('selectPlanning', false);
-            this.set('selectProduct', true);
           }
 
           this.set('activeOrder', e);
           this.set('theOrder', e.detail);
           this.set('selectneeds',  e.detail.needs);
           this.set('selectschedule',  e.detail.schedule);
-                    
           this.set('selectProduct', true);
-          $(this).find('order-item.active').removeClass('active');
-          $(this).find('order-item').addClass('hidden');
         }
 
       },
@@ -218,14 +237,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if(this.activeOrder && this.activeOrder.detail.label == e.detail.label) {
 
           if(this.selectProduct) {
-            this.set('selectPlanning', true);
             this.set('selectProduct', false);
+            this.set('selectPlanning', true);            
           } else {
             this.set('selectPlanning', false);
-            this.set('activeOrder', "");
-            this.desselectOrder();            
+            this.set('activeOrder', "");            
           }
-
 
         } else {
 
@@ -238,15 +255,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.set('selectneeds',  e.detail.needs);
           this.set('selectschedule',  e.detail.schedule);
          
-          this.set('selectPlanning', true);
-          this.desselectOrder();       
+          this.set('selectPlanning', true);      
         }
 
       },
-      desselectOrder : function() {
-        $(this).find('order-item.active').removeClass('active');
-        $(this).find('order-item').addClass('hidden');
-      },
+
       changeOrder : function(e) {
 
         if(this.activeOrder && this.activeOrder.detail.__firebaseKey__ == e.detail.__firebaseKey__) {

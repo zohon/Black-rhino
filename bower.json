@@ -13,7 +13,8 @@
     "underscore": "~1.8.3",
     "google-map": "GoogleWebComponents/google-map#~1.1.2",
     "paper-dialog": "PolymerElements/paper-dialog#~1.0.2",
-    "paper-slider": "PolymerElements/paper-slider#~1.0.9"
+    "paper-slider": "PolymerElements/paper-slider#~1.0.9",
+    "neon-animation": "PolymerElements/neon-animation#~1.1.0"
   },
   "devDependencies": {
     "web-component-tester": "*",
@@ -21,6 +22,7 @@
   },
   "resolutions": {
     "polymer": "master",
-    "paper-styles": "^1.0.0"
+    "paper-styles": "^1.0.0",
+    "neon-animation": "^1.0.0"
   }
 }

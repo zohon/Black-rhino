@@ -8,6 +8,10 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+
 <dom-module id="product-item">
 
   <template>
@@ -30,6 +34,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     :host.lite {
       min-width: 30%;
+     /* display: none;*/
     }
 
     paper-icon-item .avatar {
@@ -285,7 +290,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
     </style>
-    
+
+
   <div class$="[[_getClass(active, 'content')]]" class="content">
 
     <paper-icon-item tabindex="0" class="person" class$="[[_getClass(product.color, 'person')]]" on-click="onTap"  on-track="handleTrack" >
@@ -339,7 +345,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
 
       is: 'product-item',
-
+      behaviors : [Polymer.NeonAnimationRunnerBehavior],
       properties: {
         product: {
           type : Object,
@@ -348,7 +354,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         edit : {
           type : Boolean,
           value: false,
-        }
+        },
+        animationConfig: {
+          value: function() {
+            return {
+              'entry': {
+                name: 'scale-up-animation',
+                node: this
+              },
+              'exit': {
+                name: 'fade-out-animation',
+                node: this
+              }             
+            }
+          }
+        }        
+      },
+      listeners: {
+        'neon-animation-finish' : '_onNeonAnimationFinish'
+      },
+      show: function() {
+        this.style.display = "block";
+        this.playAnimation('entry');
+      },
+      _onNeonAnimationFinish : function() {
+
       },
       ready : function() {
         this.setScrollDirection('y', $(this).find('paper-icon-item').get(0));

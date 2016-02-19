@@ -266,11 +266,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
   <div class$="[[_getNeedsClass(selectneeds, 'content')]]" class="content">
 
-    <paper-icon-item tabindex="0" class="person"  on-track="handleTrack" >
+    <paper-icon-item tabindex="0" class="person" on-track="handleTrack" >
 
         <div class="infos">
-          <div class="label" on-tap="select" ><span>{{planning.hour}}</span>h<span>{{planning.min}}</span></div>
-          <div class="secondary" on-tap="onTap">{{planning.nb}}</div>
+          <div class="label" on-click="select" ><span>{{planning.hour}}</span>h<span>{{planning.min}}</span></div>
+          <div class="secondary" on-click="onTap">{{planning.nb}}</div>
         </div>
 
       <div class="delete" item-icon><iron-icon icon="icons:delete"></iron-icon><paper-ripple></paper-ripple></div>
@@ -488,6 +488,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       handleTrack: function(e) {
+ 
+        console.log(this.affichage );
+
+        if (this.affichage && this.affichage == 'lite') {
+          return true;
+        }
 
         if(!this.trackInfo) {
             this.trackInfo = {};

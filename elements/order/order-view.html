@@ -161,19 +161,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       switchItemOrder : function() {
 
-        if(this.desactivateTimeout) {
+        /*if(this.desactivateTimeout) {
          clearTimeout(this.desactivateTimeout);
-        }
+        }*/
 
         if(this.selectProduct || this.selectPlanning) {
           $(this).find('order-item.active').removeClass('active');
           $(this).find('order-item').addClass('hidden');
         } else {
         
-          this.desactivateTimeout = setTimeout(_.bind(function(){
+          //this.desactivateTimeout = setTimeout(_.bind(function(){
             $(this).find('order-item.active').removeClass('active');
             $(this).find('order-item.hidden').removeClass('hidden');
-          },this), 500);
+          //},this), 500);
         }
 
       },           
@@ -271,6 +271,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _selectplanning : function(e) {
         if(this.activeOrder) {
           this.activeOrder.target.associatePlanning(e.detail);
+          this.unselect();
         }
       },
       _selectproduct : function(e) {

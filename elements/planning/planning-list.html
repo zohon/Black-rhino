@@ -8,8 +8,8 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-right-animation.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/slide-left-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
 
 <link rel="import" href="planning-item.html">
 
@@ -74,14 +74,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: function() {
             return {
               'entry': {
-                name: 'slide-from-right-animation',
+                name: 'scale-up-animation',
                 node: this,
-                timing : {duration : 500}
+                timing : {duration : 200}
               },
                'exit': {
-                name: 'slide-left-animation',
+                name: 'fade-out-animation',
                 node: this,
-                timing : {duration : 500}
+                timing : {duration : 200}
               }   
             }
           }
@@ -98,14 +98,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _onNeonAnimationFinish  : function(){
         if(this.show) {
         } else {
-          this.style.position = 'initial';
           this.style.display = "none";
         }
       },
       hideItems : function() {
-        this.style.position = 'absolute';
-        this.show = false;
-        this.playAnimation('exit');
+        if(this.show) {
+          this.show = false;
+          this.style.display = "none";
+          //this.playAnimation('exit');
+        }
       },           
       _sort : function(a, b) {
         if (a.hour*60+a.min === b.hour*60+b.min) return 0;

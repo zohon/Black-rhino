@@ -20022,7 +20022,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         color: var(--accent-color);
         line-height: 40px;
         margin-right: 10px;
-        font-size: 35px;        
+        font-size: 25px;        
       }
 
       .showInfo {
@@ -21051,70 +21051,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
   Polymer({
 
-    is: 'slide-from-right-animation',
-
-    behaviors: [
-      Polymer.NeonAnimationBehavior
-    ],
-
-    configure: function(config) {
-      var node = config.node;
-
-      if (config.transformOrigin) {
-        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
-      } else {
-        this.setPrefixedProperty(node, 'transformOrigin', '0 50%');
-      }
-
-      this._effect = new KeyframeEffect(node, [
-        {'transform': 'translateX(100%)'},
-        {'transform': 'none'}
-      ], this.timingFromConfig(config));
-
-      return this._effect;
-    }
-
-  });
-
-</script>
-
-
-<script>
-
-  Polymer({
-
-    is: 'slide-left-animation',
-
-    behaviors: [
-      Polymer.NeonAnimationBehavior
-    ],
-
-    configure: function(config) {
-      var node = config.node;
-
-      if (config.transformOrigin) {
-        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
-      } else {
-        this.setPrefixedProperty(node, 'transformOrigin', '0 50%');
-      }
-
-      this._effect = new KeyframeEffect(node, [
-        {'transform': 'none'},
-        {'transform': 'translateX(-100%)'}
-      ], this.timingFromConfig(config));
-
-      return this._effect;
-    }
-
-  });
-
-</script>
-
-
-<script>
-
-  Polymer({
-
     is: 'scale-up-animation',
 
     behaviors: [
@@ -21567,9 +21503,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
       },
       _setdata : function(e) {
-
         console.log("_setdata");
-
       },  
       onTap : function() {
         if(this.product.label) {
@@ -21664,6 +21598,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       handleTrack: function(e) {
+        
+        if (this.affichage && this.affichage == 'lite') {
+          return true;
+        }
 
         if(!this.trackInfo) {
             this.trackInfo = {};
@@ -21865,14 +21803,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           value: function() {
             return {
               'entry': {
-                name: 'slide-from-right-animation',
+                name: 'scale-up-animation',
                 node: this,
-                timing : {duration : 500}                
+                timing : {duration : 200}                
               },
                'exit': {
-                name: 'slide-left-animation',
+                name: 'fade-out-animation',
                 node: this,
-                timing : {duration : 500}                
+                timing : {duration : 200}                
               }   
             }
           }
@@ -21883,34 +21821,30 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
       showItems: function() {
 
-       // if(!this.isShow) {
-        /*  _.each($(this).find('product-item'), _.bind(function(data, index) {
-            setTimeout(function(){ data.show(); }, index*100);
+        /*if(!this.isShow) {
+          _.each($(this).find('product-item'), _.bind(function(data, index) {
+            setTimeout(function(){ data.show(); }, index*200);
           },this));
-          this.isShow = true; */ 
-        //} else {
-
+          //this.isShow = true;
+          this.style.display = "flex";
+        } else {*/
           this.show = true;
           this.style.display = "flex";
           this.playAnimation('entry');
-          
         //}
-
       },
       hideItems : function() {
         if(this.show) {
           this.show = false;
-          this.style.position = "absolute";
-          this.playAnimation('exit');
+          this.style.display = "none";
+          //this.playAnimation('exit');
         }
-
       },
       _onNeonAnimationFinish  : function(){
 
         if(this.show) {
           
         } else {
-          this.style.position = 'initial';
           this.style.display = "none";
         }
 
@@ -22208,8 +22142,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     <paper-icon-item tabindex="0" class="person" on-track="handleTrack">
 
         <div class="infos">
-          <div class="label" on-tap="select"><span>{{planning.hour}}</span>h<span>{{planning.min}}</span></div>
-          <div class="secondary" on-tap="onTap">{{planning.nb}}</div>
+          <div class="label" on-click="select"><span>{{planning.hour}}</span>h<span>{{planning.min}}</span></div>
+          <div class="secondary" on-click="onTap">{{planning.nb}}</div>
         </div>
 
       <div class="delete" item-icon=""><iron-icon icon="icons:delete"></iron-icon><paper-ripple></paper-ripple></div>
@@ -22427,6 +22361,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
 
       handleTrack: function(e) {
+ 
+        console.log(this.affichage );
+
+        if (this.affichage && this.affichage == 'lite') {
+          return true;
+        }
 
         if(!this.trackInfo) {
             this.trackInfo = {};
@@ -22636,14 +22576,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           value: function() {
             return {
               'entry': {
-                name: 'slide-from-right-animation',
+                name: 'scale-up-animation',
                 node: this,
-                timing : {duration : 500}
+                timing : {duration : 200}
               },
                'exit': {
-                name: 'slide-left-animation',
+                name: 'fade-out-animation',
                 node: this,
-                timing : {duration : 500}
+                timing : {duration : 200}
               }   
             }
           }
@@ -22660,14 +22600,15 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       _onNeonAnimationFinish  : function(){
         if(this.show) {
         } else {
-          this.style.position = 'initial';
           this.style.display = "none";
         }
       },
       hideItems : function() {
-        this.style.position = 'absolute';
-        this.show = false;
-        this.playAnimation('exit');
+        if(this.show) {
+          this.show = false;
+          this.style.display = "none";
+          //this.playAnimation('exit');
+        }
       },           
       _sort : function(a, b) {
         if (a.hour*60+a.min === b.hour*60+b.min) return 0;
@@ -22938,19 +22879,19 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       },
       switchItemOrder : function() {
 
-        if(this.desactivateTimeout) {
+        /*if(this.desactivateTimeout) {
          clearTimeout(this.desactivateTimeout);
-        }
+        }*/
 
         if(this.selectProduct || this.selectPlanning) {
           $(this).find('order-item.active').removeClass('active');
           $(this).find('order-item').addClass('hidden');
         } else {
         
-          this.desactivateTimeout = setTimeout(_.bind(function(){
+          //this.desactivateTimeout = setTimeout(_.bind(function(){
             $(this).find('order-item.active').removeClass('active');
             $(this).find('order-item.hidden').removeClass('hidden');
-          },this), 500);
+          //},this), 500);
         }
 
       },           
@@ -23048,6 +22989,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       _selectplanning : function(e) {
         if(this.activeOrder) {
           this.activeOrder.target.associatePlanning(e.detail);
+          this.unselect();
         }
       },
       _selectproduct : function(e) {
@@ -26446,7 +26388,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       /* Height of the scroll area */
       .content {
         padding: 15px 15px 0;
-        padding-bottom: 15px;
+        padding-bottom: 10px;
       }
 
       .drawer {
@@ -27137,7 +27079,11 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           {
             display : 'Credit card',
             label : 'cb'
-          },           
+          },
+          {
+            display : 'Free',
+            label : 'free'
+          },                     
           {
             display : 'Order',
             label : 'list'

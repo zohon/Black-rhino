@@ -276,6 +276,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       observeChange : function(datas) {
 
+        console.log("observeChange");
+
         if(this.stock) {
 
           if(this.stock.creationDate) {
@@ -321,19 +323,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           e.stopPropagation();
         }
 
-/*
-        $(this).find('.content').removeClass('active');
-        this.active = false;
-        this.fire('selectstock', this.stock);
 
-*/
-      },
-      _getCustomersNumber : function(taget) {
-        var nbr = 0;
-        if(taget.customers) {
-          nbr = Object.size(taget.customers);
-        }
-        return nbr;
       },
       _getClass : function(target, others) {
 

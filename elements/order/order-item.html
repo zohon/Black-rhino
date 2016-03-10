@@ -425,7 +425,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         } else {
 
-          this.set('order.schedule', datas.hour+"h"+datas.min);
+
+          var schedule = (datas.hour? datas.hour : "00")+"h"+(datas.min? datas.min : "")
+
+          this.set('order.schedule', schedule);
           this.fire('changeorder', this.order);
 
           var infos = {

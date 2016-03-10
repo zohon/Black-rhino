@@ -20,6 +20,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
 
+<link rel="import" href="auth/auth-view.html">
+
 <link rel="import" href="order/order-view.html">
 <link rel="import" href="product/product-view.html">
 <link rel="import" href="stock/stock-view.html">
@@ -27,7 +29,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="production/production-view.html">
 <link rel="import" href="payement/payement-mainview.html">
 <link rel="import" href="bill/bill-view.html">
-
+<link rel="import" href="user/user-view.html">
 
 <dom-module id="main-view">
   <template >
@@ -59,10 +61,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-size: 35px;
       }
 
+
       paper-toolbar .title {
         font-family: 'ostrich', sans-serif !important;
         font-size: 35px !important;
         margin:0 !important;
+
       }
 
       #drawerToolbar .logo img{
@@ -126,7 +130,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       #mainToolbar .middle-container {
         height: 100%;
-        margin-left: 48px;
+      }
+
+      #middleBar.paper-toolbar {
+        left: 45px !important;
       }
 
       #mainToolbar:not(.tall) .middle {
@@ -142,8 +149,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       /* Height of the scroll area */
       .content {
-        padding: 15px 15px 0;
-        padding-bottom: 10px;
+        padding: 15px 15px;
+        padding-bottom: 41px;
       }
 
       .drawer {
@@ -188,8 +195,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           background: #FFF;
           padding: 0px 5px 0;
           max-height: 68px;
-          overflow: auto;
-          box-shadow: 0px 0px 15px -3px #888;
+          box-shadow: 0px 0px 10px -3px #888;
           width: 100%;
           transition: all 1s ease;
       }
@@ -290,19 +296,70 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin:0;
       }
 
+      .changeshiftdate {
+        padding : 0 15px;
+      }
+
+      .MiniStock .closeStock {
+        position: absolute;
+        top: -24px;
+        right: 10px;
+        z-index: 2000;
+        box-shadow: 0px -1px 1px 0px rgba(0,0,0,0.2);
+        background: #FFF;
+      }
+
+      .MiniStock .item{
+        display: none;
+      }
+
+      .MiniStock.active .item{
+        display: inline-block;
+      }
+
+      .MiniStock.active .closeStock .less{
+        display: none;
+      }  
+
+      .MiniStock.active .closeStock .more{
+        display: block;
+      }      
+
+      .MiniStock .closeStock .less{
+        display: block;
+      }
+
+      .MiniStock .closeStock .more{
+        display: none;
+      }
+
+      .userControl {
+        position: absolute;
+        top:0;
+        right:0;
+        z-index:2000;
+      }      
+
   </style>
 
+    <auth-view id="auth" user="{{user}}" location="{{_geturlauth()}}" on-offline="offline" on-logout="logout" on-login="login"></auth-view>
+
     <paper-drawer-panel id="paperDrawerPanel">
-      <div drawer class="drawer">
+      <div drawer class="drawer" hidden="{{!user}}">
 
         <!-- Drawer Toolbar -->
-        <paper-toolbar id="drawerToolbar"><span class="title">{{shiftdate}}</span><iron-icon on-click="toggleAdmin" icon="communication:vpn-key" class="admin"></iron-icon></paper-toolbar>
+        <paper-toolbar id="drawerToolbar" on-click="showchangeshiftdateswitch"><span class="title">{{shiftdate}}</span><iron-icon on-click="toggleAdmin" icon="communication:vpn-key" class="admin"></iron-icon></paper-toolbar>
         <!--
          <div class='logo'>
           <img src="../images/touch/icon-128x128.png">
           </div>
         -->
         <!-- Drawer Content -->
+
+        <div hidden="{{!admin}}" class="changeshiftdate">
+          <paper-input id="selectshiftdate" value="[[shiftdate]]" class="short" label="Shift" ><div suffix><iron-icon icon="icons:done" on-click="changeshiftdate"></iron-icon></div></paper-input>
+        </div>
+        
         <paper-menu class="list" attr-for-selected="data-route" selected="{{page}}">
 
           <a data-route="order" tabindex="-1" on-tap="closeDrawer">
@@ -368,34 +425,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <!-- Main Toolbar -->
         <paper-toolbar id="mainToolbar">
         
-          <paper-icon-button id="paperToggle" icon="icons:menu" paper-drawer-toggle ></paper-icon-button>
+
           <span class="flex"></span>
 
           <!-- Application name -->
           <div class="middle middle-container center horizontal layout flex">
-            <div class="app-name flex">Black Rhino&nbsp;<span>{{page}}</span></div>
+
+          <paper-icon-button id="paperToggle" icon="icons:menu" paper-drawer-toggle ></paper-icon-button>
+
+          <div class="app-name flex"><span>{{page}}</span></div>
+
+          <paper-icon-button hidden="{{!isOffline(user)}}" icon="device:signal-wifi-off" ></paper-icon-button>
+          
+          <paper-icon-button hidden="{{!showUser(user)}}" on-click="goToUser" id="userControl" icon="social:person" ></paper-icon-button>
+
           </div>
 
         </paper-toolbar>
 
         <!-- Main Content -->
-        <div class="content">
+        <div class="content" hidden="{{!user}}">
 
           <div hidden="{{!loading}}" class="loader"><paper-spinner active></paper-spinner></div>
 
           <div hidden="{{page}}" class="loader"><paper-spinner active></paper-spinner></div>
 
-          <item-data name="orders" location="{{_geturlorder()}}" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
+          <item-data name="orders" location="{{_geturlorder(firebaseLocation, shiftdate)}}" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
 
-          <item-data name="stocks" location="{{_geturlstocks()}}" items="{{stocks}}" on-connected="_readyFirebaseStocks" ></item-data>
+          <item-data name="stocks" location="{{_geturlstocks(firebaseLocation)}}" items="{{stocks}}" on-connected="_readyFirebaseStocks" ></item-data>
 
           <stock-view stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'stock')}}" class="flex" ></stock-view>
 
-          <item-data name="products" location="{{_geturlproducts()}}" items="{{products}}" on-connected="_readyFirebaseProducts" ></item-data>
+          <item-data name="products" location="{{_geturlproducts(firebaseLocation)}}" items="{{products}}" on-connected="_readyFirebaseProducts" ></item-data>
           
           <product-view hidden="{{!_selectRoute(page, 'products')}}" class="flex" products="{{products}}" ></product-view>
 
-          <item-data name="plannings" location="{{_geturlplannings()}}" items="{{plannings}}" on-connected="_readyFirebasePlannings" ></item-data>
+          <item-data name="plannings" location="{{_geturlplannings(firebaseLocation)}}" items="{{plannings}}" on-connected="_readyFirebasePlannings" ></item-data>
 
           <planning-view  plannings="{{plannings}}" hidden="{{!_selectRoute(page, 'planning')}}" class="flex" on-selectplanning="selectplanning"></planning-view>
 
@@ -407,13 +472,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <bill-view id="billView" hidden="{{!_selectRoute(page, 'bill')}}" class="flex"></bill-view>
 
+          <user-view id="userView" location="{{_geturlauth()}}" on-logout="logout" on-login="login" hidden="{{!_selectRoute(page, 'user')}}" user="{{user}}" class="flex"></user-view>
+
         </div>
 
-        <div class="MiniStock" hidden="{{!stocks.length}}">
+        <div class="MiniStock active" hidden="{{!user}}">
 
           <template id="miniStocksList" is="dom-repeat" items="{{stocks}}"  filter="_stocksWatchOut" as="stock" sort="_sortStock" hidden="{{!stocks.length}}">
-              <div class$="{{ _getStockClass(stock.nb, stock.nbMax, 'item') }}" class="item" hidden="{{!stock.label}}"><b class="title">{{stock.label}}</b>&nbsp;<span>{{ stock.nb }}</span></div>
+              <div class$="{{ _getStockClass(stock.nb, stock.nbMax, 'item') }}" class="item" hidden="{{!stock.label}}"><b class="title">{{stock.label}}</b>&nbsp;<span>{{stock.nb}}</span></div>
           </template>
+
+          <div class="closeStock" on-click="closeStock" hidden="{{!stocks.length}}"><iron-icon  icon="icons:expand-more" class="more"></iron-icon><iron-icon icon="icons:expand-less" class="less"></iron-icon></div>
 
         </div>
 
@@ -425,6 +494,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'main-view',
       properties: {
+        user: {
+          type: Object,
+          value : "",
+          notify: true   
+        },
+        changeshiftdateswitch : {
+          value : false
+        },
+        shiftdate: {
+          value : ''
+        },
         page: {
           value : '',
           notify: true,
@@ -464,25 +544,103 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type : Boolean,
           value : false,
           notify: true,
-        }        
+        },
+        firebaseLocation : "",   
       },
       observers: [
         '_sortListStocks(stocks.*)'
       ],      
       created: function() {
         this.dev = false;
+
         if(window.location.href.indexOf('localhost') >= 0) {
           this.dev = true;
         }
+
         this.bdd = 'https://black-rhino.firebaseio.com';
         this.bdd_dev = 'https://black-rhino-dev.firebaseio.com';
       },
-      toggleAdmin : function() {
+      login : function(e, data) {
+        console.log("login");
+        if(data.user) {
+          this.set('user', data.user);
+
+          var newLoacation = (this.dev ? this.bdd_dev : this.bdd);
+          if(this.firebaseLocation != newLoacation) {
+            this.set('firebaseLocation', newLoacation); 
+          }
+
+        }
+      },
+      isOffline : function(user) {
+        if(user == 'offline') {
+          return true;
+        }
+
+        return false;
+      },
+      showUser : function(user) {
+
+        console.log("showUser");
+        console.log(user);
+
+        if(user != "" && user != 'offline') {
+          return true;
+        }
+
+        return false;
+
+      },
+
+      offline : function(e, data) {
+        console.log("offline ----");
+        this.set('user', "offline");
+        console.log(this.user);
+
+
+        var newLoacation = (this.dev ? this.bdd_dev : this.bdd);
+        if(this.firebaseLocation != newLoacation) {
+          this.set('firebaseLocation', newLoacation); 
+        }
+        
+      },
+      logout : function() {
+          this.set('user', "");
+          this.set('firebaseLocation', "" );  
+      },
+      goToUser : function() {
+        this.set('page', 'user');
+      },     
+      disconnect : function() {
+        console.log("disconnect");
+        this.$.auth.logout();
+      },
+      toggleAdmin : function(e) {
 
         if(this.admin) {
           this.set('admin', false);
         } else {
           this.set('admin', true);
+        }
+
+      },
+      closeStock : function() {
+        console.log('closeStock');
+        if($(this).find('.MiniStock').hasClass('active')) {
+          $(this).find('.MiniStock.active').removeClass('active');
+        } else {
+          $(this).find('.MiniStock').addClass('active');
+        }
+
+      },
+      showchangeshiftdateswitch : function() {
+
+        console.log("showchangeshiftdateswitch");
+
+        if(this.changeshiftdateswitch) {
+          this.set('changeshiftdateswitch', false);
+        } else {
+          this.set('changeshiftdateswitch', true);
         }
 
       },
@@ -510,71 +668,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         return false;
       },
+      changeshiftdate : function() {
+        this.set("shiftdate", this.$.selectshiftdate.value);
+      },
       _getShiftDate : function() {
         if (!this.shiftdate) {
           var d = new Date();
           var day = (d.getDate() < 10 ? "0"+d.getDate() : d.getDate());
-          var month = (d.getDay() < 10 ? "0"+d.getDay() : d.getDay());          
+          var month = (d.getMonth()+1 < 10 ? "0"+(d.getMonth()+1) : (d.getMonth()+1));          
           var year = (d.getFullYear() < 10 ? "0"+d.getFullYear() : d.getFullYear());
-          this.shiftdate = day+"-"+month+"-"+year;
+
+          var resultDate = day+"-"+month+"-"+year;
+
+          this.set('shiftdate',resultDate);
         }
         return this.shiftdate;
       },
-      _geturlorderpayement : function(orderpayementid) {
-        console.log("_geturlorderpayement");
-        console.log(this._geturlorder()+"/"+orderpayementid);
-        return this._geturlorder()+"/"+orderpayementid;
+      _geturlauth : function() {
+
+        if(this.dev) {
+          url = this.bdd_dev;
+        } else {
+          url = this.bdd;
+        }
+
+        return url;
       },      
-      _geturlorder : function() {
+      _geturlorder : function(location) {
         var shiftdate = this._getShiftDate();
-        var url = "";
-        if(this.dev) {
-          url = this.bdd_dev;
-        } else {
-          url = this.bdd;
+        if(location) {
+          return location+"/orders/"+shiftdate;
         }
-        return url+"/orders/"+shiftdate;
       },
-      _geturlplannings : function() {
-
-        var url = "";
-        if(this.dev) {
-          url = this.bdd_dev;
-        } else {
-          url = this.bdd;
+      _geturlplannings : function(location) {
+        if(location) {
+          return location+"/plannings";
         }
-
-        return url+"/plannings";
       }, 
-      _geturlproducts : function() {
-
-        var url = "";
-        if(this.dev) {
-          url = this.bdd_dev;
-        } else {
-          url = this.bdd;
+      _geturlproducts : function(location) {
+        if(location) {        
+          return location+"/products";
         }
-
-        return url+"/products";
       },
-      _geturlstocks : function() {
-        var url = "";
-
-        if(this.dev) {
-          url = this.bdd_dev;
-        } else {
-          url = this.bdd;
+      _geturlstocks : function(location) {
+        if(location) {        
+          return location+"/stocks";
         }
-
-        return url+"/stocks";
       },  
       _readyFirebaseOrders : function() {
 
         console.log("_readyFirebaseOrders");
 
-        if(!this.page) {
+        if(!this.page && this.user) {
           this.set('page','order');
         }
+
         this.selectRouting();
         //this.loader();
       },

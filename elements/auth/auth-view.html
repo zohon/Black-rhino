@@ -72,6 +72,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'auth-view',
       properties: {
+        email : {
+          value :"contact@black-rhino.com"
+        },
+        password : {
+          value :"black-rhino"
+        },                
         status : {
           value :""
         },
@@ -157,7 +163,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       checkAuth : function() {
 
         var authData = this.ref.getAuth();
-
         if (authData) {
           console.log("User " + authData.uid + " is logged in with " + authData.provider);
           console.log(authData);
@@ -166,7 +171,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           console.log("User is logged out");
           this.fire('logout');
         }
-
       },
       logout : function() {
         this.ref.unauth();

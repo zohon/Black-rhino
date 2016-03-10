@@ -566,9 +566,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.set('user', data.user);
 
           var newLoacation = (this.dev ? this.bdd_dev : this.bdd);
-          if(this.firebaseLocation != newLoacation) {
-            this.set('firebaseLocation', newLoacation); 
-          }
+          //if(this.firebaseLocation != newLoacation) {
+            console.log("login changefirebaselocation");
+            this.set('firebaseLocation', newLoacation);
+          //}
 
         }
       },
@@ -589,31 +590,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         return false;
-
       },
-
       offline : function(e, data) {
         console.log("offline ----");
         this.set('user', "offline");
         console.log(this.user);
-
-
         var newLoacation = (this.dev ? this.bdd_dev : this.bdd);
         if(this.firebaseLocation != newLoacation) {
-          this.set('firebaseLocation', newLoacation); 
+          this.set('firebaseLocation', newLoacation);
         }
-        
       },
-      logout : function() {
+      logout : function() { 
           this.set('user', "");
-          this.set('firebaseLocation', "" );  
+          //this.set('firebaseLocation', "" );
       },
       goToUser : function() {
         this.set('page', 'user');
-      },     
-      disconnect : function() {
-        console.log("disconnect");
-        this.$.auth.logout();
       },
       toggleAdmin : function(e) {
 

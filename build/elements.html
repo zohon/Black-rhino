@@ -20892,6 +20892,12 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     Polymer({
       is: 'auth-view',
       properties: {
+        email : {
+          value :"contact@black-rhino.com"
+        },
+        password : {
+          value :"black-rhino"
+        },                
         status : {
           value :""
         },
@@ -20977,7 +20983,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       checkAuth : function() {
 
         var authData = this.ref.getAuth();
-
         if (authData) {
           console.log("User " + authData.uid + " is logged in with " + authData.provider);
           console.log(authData);
@@ -20986,7 +20991,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           console.log("User is logged out");
           this.fire('logout');
         }
-
       },
       logout : function() {
         this.ref.unauth();
@@ -27805,7 +27809,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     </style>
 
 
-
       <paper-card heading="Change password" class="cyan">
         <div class="card-content">
           <div hidden="{{!messageInfo}}" class="infoMessage">{{messageInfo}}</div>        
@@ -28459,9 +28462,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           this.set('user', data.user);
 
           var newLoacation = (this.dev ? this.bdd_dev : this.bdd);
-          if(this.firebaseLocation != newLoacation) {
-            this.set('firebaseLocation', newLoacation); 
-          }
+          //if(this.firebaseLocation != newLoacation) {
+            console.log("login changefirebaselocation");
+            this.set('firebaseLocation', newLoacation);
+          //}
 
         }
       },
@@ -28482,31 +28486,22 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         }
 
         return false;
-
       },
-
       offline : function(e, data) {
         console.log("offline ----");
         this.set('user', "offline");
         console.log(this.user);
-
-
         var newLoacation = (this.dev ? this.bdd_dev : this.bdd);
         if(this.firebaseLocation != newLoacation) {
-          this.set('firebaseLocation', newLoacation); 
+          this.set('firebaseLocation', newLoacation);
         }
-        
       },
-      logout : function() {
+      logout : function() { 
           this.set('user', "");
-          this.set('firebaseLocation', "" );  
+          //this.set('firebaseLocation', "" );
       },
       goToUser : function() {
         this.set('page', 'user');
-      },     
-      disconnect : function() {
-        console.log("disconnect");
-        this.$.auth.logout();
       },
       toggleAdmin : function(e) {
 

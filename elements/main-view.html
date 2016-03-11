@@ -564,6 +564,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.set('bdd_dev', 'https://black-rhino-dev.firebaseio.com');
 
       },
+      ready : function() {
+        this.set('firebaseLocation', (this.dev ? this.bdd_dev : this.bdd));
+      },
       online : function() {
         console.log("main-view online()");
         this.set('network' ,  "online");
@@ -571,7 +574,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       offline : function() {
         console.log("main-view offline()");
         this.set('network' ,  "offline");
-        this.set('firebaseLocation', (this.dev ? this.bdd_dev : this.bdd));
+
+        if(this.page == 'user') {
+          this.set('page', "order");
+        }
+
       },
       showOnlogin : function(user, network) {
 
@@ -593,16 +600,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log("main-view login()");
         if(data.user) {
           this.set('user', data.user);
-          if(!this.firebaseLocation) {
-            this.set('firebaseLocation', (this.dev ? this.bdd_dev : this.bdd));
-          }
         }
       },      
       logout : function() {
         console.log("main-view logout()");
         if(this.user) {
           this.set('user', "");
-          this.set('page', "order");
         }
       },
       showOfflineIcon : function(network) {
@@ -885,12 +888,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       selectRouting : function() {
         if(this.path) {
-          if(this.path.place && !this.thePlace) {
-            this.selectPlace(this.path.place, true);
-          }
-          if(this.path.table && !this.theTable) {
-            this.selectTable(this.path.table, true);
-          }
+          
         }
       },
       _selectRoute : function(info, target) {

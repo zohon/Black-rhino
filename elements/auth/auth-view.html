@@ -67,6 +67,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </paper-dialog>
 
+    <iron-localstorage name="auth" on-iron-localstorage-load="_backupLoaded" value="{{authData}}"></iron-localstorage>
+
   </template>
   <script>
     Polymer({
@@ -121,7 +123,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         this.listenConnection();
         this.listenAuth();
-
       },
       listenConnection : function() {
         console.log("listenConnection");
@@ -143,14 +144,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.ref.onAuth(function(authData) {
           if (authData) {
             console.log("User " + authData.uid + " is logged in with " + authData.provider);
+            this.set('authData', authData);
             this.fire('login', {user: authData});
           } else {
             console.log("User is logged out");
+            this.set('authData', "");
             this.fire('logout');
           }
         }.bind(this));
 
-      },      
+      },
+      _backupLoaded : function() {
+        console.log("_backupLoaded");
+      },
       _getClass : function(data) {
         return data;
       },

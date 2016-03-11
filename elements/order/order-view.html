@@ -86,7 +86,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <paper-item on-tap="add" class="actionList" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
+    <paper-item on-click="add" class="actionList" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
       <paper-item-body two-line>
         <div>Create an order</div>
         <div secondary></div>
@@ -94,15 +94,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-ripple></paper-ripple>
     </paper-item>
 
-    <paper-item class="returnback" class="actionList" on-tap="unselect" hidden="{{_onlyhideList(search,selectPlanning,selectProduct)}}">
+    <paper-item class="returnback" class="actionList" on-click="unselect" hidden="{{_onlyhideList(search,selectPlanning,selectProduct)}}">
       <paper-item-body two-line>
         <div><iron-icon class="icon" icon="icons:chevron-left" ></iron-icon>Return list</div>
         <div secondary></div>
       </paper-item-body>
       <paper-ripple></paper-ripple>
-    </paper-item>    
+    </paper-item>
 
-    <paper-item hidden="{{!search}}"  >
+    <paper-item hidden="{{!search}}" >
       <paper-input on-tap="_dontListen" no-label-float value="{{search}}" class="short" label="Search" ><div on-tap="resetSearch" suffix><iron-icon icon="icons:cancel"></iron-icon></div><div prefix><iron-icon icon="icons:search" ></iron-icon></div></paper-input>
     </paper-item>
 

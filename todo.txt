@@ -1,1 +1,1 @@
-@todo Graph
+@todo Connexion and offline

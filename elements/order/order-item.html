@@ -476,7 +476,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       associateProduct : function(datas) {
 
-        if(this.order.list) {
+        if(this.order.list && datas.__firebaseKey__) {
 
           if (_.findWhere(this.order.list, { __firebaseKey__ : datas.__firebaseKey__ })) {
 

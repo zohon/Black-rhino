@@ -38,7 +38,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <paper-dialog class$="{{_getClass(status)}}" modal="with-backdrop" opened="{{!user}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+    <paper-dialog class$="{{_getClass(status)}}" modal="with-backdrop" opened="{{_canOpen(user, network)}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
       <div >
 
@@ -72,6 +72,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'auth-view',
       properties: {
+        network : {
+          value :""
+        },
         email : {
           value :"contact@black-rhino.com"
         },
@@ -95,6 +98,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _dontListen : function() {
 
       },
+      _canOpen : function(user, network) {
+
+        if(!user && (!network|| network == 'online') ) {
+          return true;
+        }
+
+        return false;
+      },
       _checkKey: function(e) {
         this.set('errorMessage', "");        
         if (e.keyCode === 13) {
@@ -106,21 +117,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(this.location);
 
         var ref =  new Firebase(this.location);
+        this.set('ref', ref);
 
-        ref.child('.info/connected').on('value', function(connectedSnap) {
-          if (connectedSnap.val() === true) {
+        this.listenConnection();
+        this.listenAuth();
+
+      },
+      listenConnection : function() {
+        console.log("listenConnection");
+        this.ref.child('.info/connected').on('value', function(snap) {
+          if (snap.val() === true) {
             /* we're connected! */
-            console.log('- online');
-            this.checkAuth();           
+            console.log("we're connected!");
+            this.fire('online');
+
           } else {
             /* we're disconnected! */
-            console.log('- offline');
+            console.log("we're disconnected!");           
             this.fire('offline');
           }
         }.bind(this));
-
-        this.set('ref', ref);
       },
+      listenAuth : function() {
+        console.log("listenAuth");
+        this.ref.onAuth(function(authData) {
+          if (authData) {
+            console.log("User " + authData.uid + " is logged in with " + authData.provider);
+            this.fire('login', {user: authData});
+          } else {
+            console.log("User is logged out");
+            this.fire('logout');
+          }
+        }.bind(this));
+
+      },      
       _getClass : function(data) {
         return data;
       },
@@ -159,18 +189,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
         }
 
-      },      
-      checkAuth : function() {
-
-        var authData = this.ref.getAuth();
-        if (authData) {
-          console.log("User " + authData.uid + " is logged in with " + authData.provider);
-          console.log(authData);
-          this.fire('login', {user: authData});
-        } else {
-          console.log("User is logged out");
-          this.fire('logout');
-        }
       },
       logout : function() {
         this.ref.unauth();

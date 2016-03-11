@@ -23,7 +23,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         on-firebase-value="_firebaseLoaded"
         log>
     </firebase-collection>
-
+ 
     <!-- Backfill items from localstorage. This prevents an initial flash while
          we're waiting to hear from Firebase, and it lets the user see their
          old items if they start the app offline.
@@ -52,12 +52,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
       _firebaseLoaded: function() {
+
         console.log("_firebaseLoaded "+this.name);
+        console.log(this.items);
+
         this.set('_firebaseConnected', true);
         this.set('items',this.fbItems);
         this.set('backupItems', this.fbItems);
         this.linkPaths('fbItems', 'items');
         this.linkPaths('backupItems', 'items');
+
         this.fire('connected'); 
       },
       _backupLoaded: function() {

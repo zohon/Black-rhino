@@ -11755,6 +11755,8 @@ X.prototype.Ze=function(a,b){D("Firebase.resetPassword",1,2,arguments.length);sg
         this._error('Firebase Error', error);
       }
 
+      console.log(error);
+
       this._log('Firebase query subscription cancelled.');
       this.disconnect();
     },
@@ -12454,7 +12456,7 @@ X.prototype.Ze=function(a,b){D("Firebase.resetPassword",1,2,arguments.length);sg
 
     <firebase-collection location="{{location}}" ref="{{ref}}" data="{{fbItems}}" on-firebase-value="_firebaseLoaded" log="">
     </firebase-collection>
-
+ 
     
     <iron-localstorage name="[[name]]" on-iron-localstorage-load="_backupLoaded" value="{{backupItems}}"></iron-localstorage>
 
@@ -12479,12 +12481,16 @@ X.prototype.Ze=function(a,b){D("Firebase.resetPassword",1,2,arguments.length);sg
         }
       },
       _firebaseLoaded: function() {
+
         console.log("_firebaseLoaded "+this.name);
+        console.log(this.items);
+
         this.set('_firebaseConnected', true);
         this.set('items',this.fbItems);
         this.set('backupItems', this.fbItems);
         this.linkPaths('fbItems', 'items');
         this.linkPaths('backupItems', 'items');
+
         this.fire('connected'); 
       },
       _backupLoaded: function() {
@@ -20858,7 +20864,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
     </style>
 
-    <paper-dialog class$="{{_getClass(status)}}" modal="with-backdrop" opened="{{!user}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+    <paper-dialog class$="{{_getClass(status)}}" modal="with-backdrop" opened="{{_canOpen(user, network)}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
 
       <div>
 
@@ -20892,6 +20898,9 @@ is separate from validation, and `allowed-pattern` does not affect how the input
     Polymer({
       is: 'auth-view',
       properties: {
+        network : {
+          value :""
+        },
         email : {
           value :"contact@black-rhino.com"
         },
@@ -20915,6 +20924,14 @@ is separate from validation, and `allowed-pattern` does not affect how the input
       _dontListen : function() {
 
       },
+      _canOpen : function(user, network) {
+
+        if(!user && (!network|| network == 'online') ) {
+          return true;
+        }
+
+        return false;
+      },
       _checkKey: function(e) {
         this.set('errorMessage', "");        
         if (e.keyCode === 13) {
@@ -20926,21 +20943,40 @@ is separate from validation, and `allowed-pattern` does not affect how the input
         console.log(this.location);
 
         var ref =  new Firebase(this.location);
+        this.set('ref', ref);
 
-        ref.child('.info/connected').on('value', function(connectedSnap) {
-          if (connectedSnap.val() === true) {
+        this.listenConnection();
+        this.listenAuth();
+
+      },
+      listenConnection : function() {
+        console.log("listenConnection");
+        this.ref.child('.info/connected').on('value', function(snap) {
+          if (snap.val() === true) {
             /* we're connected! */
-            console.log('- online');
-            this.checkAuth();           
+            console.log("we're connected!");
+            this.fire('online');
+
           } else {
             /* we're disconnected! */
-            console.log('- offline');
+            console.log("we're disconnected!");           
             this.fire('offline');
           }
         }.bind(this));
-
-        this.set('ref', ref);
       },
+      listenAuth : function() {
+        console.log("listenAuth");
+        this.ref.onAuth(function(authData) {
+          if (authData) {
+            console.log("User " + authData.uid + " is logged in with " + authData.provider);
+            this.fire('login', {user: authData});
+          } else {
+            console.log("User is logged out");
+            this.fire('logout');
+          }
+        }.bind(this));
+
+      },      
       _getClass : function(data) {
         return data;
       },
@@ -20979,18 +21015,6 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           });
         }
 
-      },      
-      checkAuth : function() {
-
-        var authData = this.ref.getAuth();
-        if (authData) {
-          console.log("User " + authData.uid + " is logged in with " + authData.provider);
-          console.log(authData);
-          this.fire('login', {user: authData});
-        } else {
-          console.log("User is logged out");
-          this.fire('logout');
-        }
       },
       logout : function() {
         this.ref.unauth();
@@ -28242,10 +28266,10 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
   </style>
 
-    <auth-view id="auth" user="{{user}}" location="{{_geturlauth()}}" on-offline="offline" on-logout="logout" on-login="login"></auth-view>
+    <auth-view id="auth" user="{{user}}" network="{{network}}" location="{{_geturlauth()}}" on-logout="logout" on-login="login" on-online="online" on-offline="offline"></auth-view>
 
     <paper-drawer-panel id="paperDrawerPanel">
-      <div drawer="" class="drawer" hidden="{{!user}}">
+      <div drawer="" class="drawer" hidden="{{!showOnlogin(user, network)}}">
 
         
         <paper-toolbar id="drawerToolbar" on-click="showchangeshiftdateswitch"><span class="title">{{shiftdate}}</span><iron-icon on-click="toggleAdmin" icon="communication:vpn-key" class="admin"></iron-icon></paper-toolbar>
@@ -28331,16 +28355,16 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
           <div class="app-name flex"><span>{{page}}</span></div>
 
-          <paper-icon-button hidden="{{!isOffline(user)}}" icon="device:signal-wifi-off"></paper-icon-button>
+          <paper-icon-button hidden="{{!showOfflineIcon(network)}}" icon="device:signal-wifi-off"></paper-icon-button>
           
-          <paper-icon-button hidden="{{!showUser(user)}}" on-click="goToUser" id="userControl" icon="social:person"></paper-icon-button>
+          <paper-icon-button hidden="{{!showUserIcon(user, network)}}" on-click="goToUser" id="userControl" icon="social:person"></paper-icon-button>
 
           </div>
 
         </paper-toolbar>
 
         
-        <div class="content" hidden="{{!user}}">
+        <div class="content" hidden="{{!showOnlogin(user, network)}}">
 
           <div hidden="{{!loading}}" class="loader"><paper-spinner active=""></paper-spinner></div>
 
@@ -28372,7 +28396,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         </div>
 
-        <div class="MiniStock active" hidden="{{!user}}">
+        <div class="MiniStock active" hidden="{{!showOnlogin(user, network)}}">
 
           <template id="miniStocksList" is="dom-repeat" items="{{stocks}}" filter="_stocksWatchOut" as="stock" sort="_sortStock" hidden="{{!stocks.length}}">
               <div class$="{{ _getStockClass(stock.nb, stock.nbMax, 'item') }}" class="item" hidden="{{!stock.label}}"><b class="title">{{stock.label}}</b>&nbsp;<span>{{stock.nb}}</span></div>
@@ -28441,65 +28465,82 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           value : false,
           notify: true,
         },
-        firebaseLocation : "",   
+        network : {
+          value : "",
+          notify: true  
+        }              
       },
       observers: [
         '_sortListStocks(stocks.*)'
       ],      
       created: function() {
-        this.dev = false;
+        this.set('dev' , false);
 
         if(window.location.href.indexOf('localhost') >= 0) {
-          this.dev = true;
+          this.set('dev' , true);
         }
 
-        this.bdd = 'https://black-rhino.firebaseio.com';
-        this.bdd_dev = 'https://black-rhino-dev.firebaseio.com';
+        this.set('bdd', 'https://black-rhino.firebaseio.com');
+        this.set('bdd_dev', 'https://black-rhino-dev.firebaseio.com');
+
       },
-      login : function(e, data) {
-        console.log("login");
+      online : function() {
+        console.log("main-view online()");
+        this.set('network' ,  "online");
+      },
+      offline : function() {
+        console.log("main-view offline()");
+        this.set('network' ,  "offline");
+        this.set('firebaseLocation', (this.dev ? this.bdd_dev : this.bdd));
+      },
+      showOnlogin : function(user, network) {
+
+        if(user == "" && network == 'online') {
+          return false;
+        }
+
+        return true;
+      },
+      isOnline : function(network) {
+
+        if(network == "online") {
+          return true;
+        }
+
+        return false;
+      },
+      login : function(e, data) { 
+        console.log("main-view login()");
         if(data.user) {
           this.set('user', data.user);
-
-          var newLoacation = (this.dev ? this.bdd_dev : this.bdd);
-          //if(this.firebaseLocation != newLoacation) {
-            console.log("login changefirebaselocation");
-            this.set('firebaseLocation', newLoacation);
-          //}
-
+          if(!this.firebaseLocation) {
+            this.set('firebaseLocation', (this.dev ? this.bdd_dev : this.bdd));
+          }
         }
-      },
-      isOffline : function(user) {
-        if(user == 'offline') {
-          return true;
-        }
-
-        return false;
-      },
-      showUser : function(user) {
-
-        console.log("showUser");
-        console.log(user);
-
-        if(user != "" && user != 'offline') {
-          return true;
-        }
-
-        return false;
-      },
-      offline : function(e, data) {
-        console.log("offline ----");
-        this.set('user', "offline");
-        console.log(this.user);
-        var newLoacation = (this.dev ? this.bdd_dev : this.bdd);
-        if(this.firebaseLocation != newLoacation) {
-          this.set('firebaseLocation', newLoacation);
-        }
-      },
-      logout : function() { 
+      },      
+      logout : function() {
+        console.log("main-view logout()");
+        if(this.user) {
           this.set('user', "");
-          //this.set('firebaseLocation', "" );
+          this.set('page', "order");
+        }
       },
+      showOfflineIcon : function(network) {
+        console.log('main-view isOffline()');
+        if(network == 'offline') {
+          return true;
+        }
+        return false;
+      },
+      showUserIcon : function(user, network) {
+
+        console.log("main-view showUser()");
+        if(user != "" && network == 'online') {
+          return true;
+        }
+
+        return false;
+      },      
       goToUser : function() {
         this.set('page', 'user');
       },
@@ -28607,7 +28648,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
 
         console.log("_readyFirebaseOrders");
 
-        if(!this.page && this.user) {
+        if(!this.page && (this.user|| this.network == 'offline')) {
           this.set('page','order');
         }
 

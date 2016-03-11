@@ -342,10 +342,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   </style>
 
-    <auth-view id="auth" user="{{user}}" location="{{_geturlauth()}}" on-offline="offline" on-logout="logout" on-login="login"></auth-view>
+    <auth-view id="auth" user="{{user}}" network="{{network}}" location="{{_geturlauth()}}" on-logout="logout" on-login="login" on-online="online" on-offline="offline" ></auth-view>
 
     <paper-drawer-panel id="paperDrawerPanel">
-      <div drawer class="drawer" hidden="{{!user}}">
+      <div drawer class="drawer" hidden="{{!showOnlogin(user, network)}}">
 
         <!-- Drawer Toolbar -->
         <paper-toolbar id="drawerToolbar" on-click="showchangeshiftdateswitch"><span class="title">{{shiftdate}}</span><iron-icon on-click="toggleAdmin" icon="communication:vpn-key" class="admin"></iron-icon></paper-toolbar>
@@ -435,16 +435,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <div class="app-name flex"><span>{{page}}</span></div>
 
-          <paper-icon-button hidden="{{!isOffline(user)}}" icon="device:signal-wifi-off" ></paper-icon-button>
+          <paper-icon-button hidden="{{!showOfflineIcon(network)}}" icon="device:signal-wifi-off" ></paper-icon-button>
           
-          <paper-icon-button hidden="{{!showUser(user)}}" on-click="goToUser" id="userControl" icon="social:person" ></paper-icon-button>
+          <paper-icon-button hidden="{{!showUserIcon(user, network)}}" on-click="goToUser" id="userControl" icon="social:person" ></paper-icon-button>
 
           </div>
 
         </paper-toolbar>
 
         <!-- Main Content -->
-        <div class="content" hidden="{{!user}}">
+        <div class="content" hidden="{{!showOnlogin(user, network)}}">
 
           <div hidden="{{!loading}}" class="loader"><paper-spinner active></paper-spinner></div>
 
@@ -476,7 +476,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         </div>
 
-        <div class="MiniStock active" hidden="{{!user}}">
+        <div class="MiniStock active" hidden="{{!showOnlogin(user, network)}}">
 
           <template id="miniStocksList" is="dom-repeat" items="{{stocks}}"  filter="_stocksWatchOut" as="stock" sort="_sortStock" hidden="{{!stocks.length}}">
               <div class$="{{ _getStockClass(stock.nb, stock.nbMax, 'item') }}" class="item" hidden="{{!stock.label}}"><b class="title">{{stock.label}}</b>&nbsp;<span>{{stock.nb}}</span></div>
@@ -545,65 +545,82 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value : false,
           notify: true,
         },
-        firebaseLocation : "",   
+        network : {
+          value : "",
+          notify: true  
+        }              
       },
       observers: [
         '_sortListStocks(stocks.*)'
       ],      
       created: function() {
-        this.dev = false;
+        this.set('dev' , false);
 
         if(window.location.href.indexOf('localhost') >= 0) {
-          this.dev = true;
+          this.set('dev' , true);
         }
 
-        this.bdd = 'https://black-rhino.firebaseio.com';
-        this.bdd_dev = 'https://black-rhino-dev.firebaseio.com';
+        this.set('bdd', 'https://black-rhino.firebaseio.com');
+        this.set('bdd_dev', 'https://black-rhino-dev.firebaseio.com');
+
       },
-      login : function(e, data) {
-        console.log("login");
+      online : function() {
+        console.log("main-view online()");
+        this.set('network' ,  "online");
+      },
+      offline : function() {
+        console.log("main-view offline()");
+        this.set('network' ,  "offline");
+        this.set('firebaseLocation', (this.dev ? this.bdd_dev : this.bdd));
+      },
+      showOnlogin : function(user, network) {
+
+        if(user == "" && network == 'online') {
+          return false;
+        }
+
+        return true;
+      },
+      isOnline : function(network) {
+
+        if(network == "online") {
+          return true;
+        }
+
+        return false;
+      },
+      login : function(e, data) { 
+        console.log("main-view login()");
         if(data.user) {
           this.set('user', data.user);
-
-          var newLoacation = (this.dev ? this.bdd_dev : this.bdd);
-          //if(this.firebaseLocation != newLoacation) {
-            console.log("login changefirebaselocation");
-            this.set('firebaseLocation', newLoacation);
-          //}
-
+          if(!this.firebaseLocation) {
+            this.set('firebaseLocation', (this.dev ? this.bdd_dev : this.bdd));
+          }
         }
-      },
-      isOffline : function(user) {
-        if(user == 'offline') {
-          return true;
-        }
-
-        return false;
-      },
-      showUser : function(user) {
-
-        console.log("showUser");
-        console.log(user);
-
-        if(user != "" && user != 'offline') {
-          return true;
-        }
-
-        return false;
-      },
-      offline : function(e, data) {
-        console.log("offline ----");
-        this.set('user', "offline");
-        console.log(this.user);
-        var newLoacation = (this.dev ? this.bdd_dev : this.bdd);
-        if(this.firebaseLocation != newLoacation) {
-          this.set('firebaseLocation', newLoacation);
-        }
-      },
-      logout : function() { 
+      },      
+      logout : function() {
+        console.log("main-view logout()");
+        if(this.user) {
           this.set('user', "");
-          //this.set('firebaseLocation', "" );
+          this.set('page', "order");
+        }
       },
+      showOfflineIcon : function(network) {
+        console.log('main-view isOffline()');
+        if(network == 'offline') {
+          return true;
+        }
+        return false;
+      },
+      showUserIcon : function(user, network) {
+
+        console.log("main-view showUser()");
+        if(user != "" && network == 'online') {
+          return true;
+        }
+
+        return false;
+      },      
       goToUser : function() {
         this.set('page', 'user');
       },
@@ -711,7 +728,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         console.log("_readyFirebaseOrders");
 
-        if(!this.page && this.user) {
+        if(!this.page && (this.user|| this.network == 'offline')) {
           this.set('page','order');
         }
 

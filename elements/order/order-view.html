@@ -86,7 +86,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <paper-item on-click="add" class="actionList" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
+    <paper-item on-tap="add" class="actionList" hidden="{{_onlyhide(search,selectPlanning,selectProduct)}}">
       <paper-item-body two-line>
         <div>Create an order</div>
         <div secondary></div>
@@ -106,7 +106,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-input on-tap="_dontListen" no-label-float value="{{search}}" class="short" label="Search" ><div on-tap="resetSearch" suffix><iron-icon icon="icons:cancel"></iron-icon></div><div prefix><iron-icon icon="icons:search" ></iron-icon></div></paper-input>
     </paper-item>
 
-    <order-list orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-selectitem="selectitem" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder" ></order-list>
+    <order-list id="elementorderlist" orders="{{orders}}" filter-by="{{search}}" on-delete="delete" on-validorder="validorder" on-selectitem="selectitem" on-selectorder="selectorder" on-selectorderplanned="_selectorderplanned" on-changeorder="changeOrder" ></order-list>
 
     <div class="orderActions">
 
@@ -280,10 +280,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },   
       add: function(e) {
-        this.push('orders', {
+
+        var item = {
           label: "",
           creationDate : new Date().getTime(),
-        });
+        };
+
+        this.push('orders', item);
+
+
+        setTimeout(function() {
+          console.log('editnew order-view');          
+          this.$.elementorderlist.editnew(item);
+        }.bind(this), 10);
+        
+
       },
       delete: function(e) {
 

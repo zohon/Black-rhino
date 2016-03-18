@@ -48,6 +48,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (a.schedule === b.schedule) return 0;
         return a.schedule < b.schedule ? -1 : 1;
       },
+      editnew : function(item) {
+
+        console.log('editnew list');
+        _.each($(this).find('order-item'), function(target) {
+          target.editnew(item);
+        });
+
+      },
       _computeFilter: function(filterBy) {
 
         if (filterBy) {

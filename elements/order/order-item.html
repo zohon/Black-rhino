@@ -306,9 +306,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
     
-  <div class$="[[_getClass(active, 'content')]]" class="content" on-click="onTap">
+  <div class$="[[_getClass(active, 'content')]]" class="content" >
 
-    <paper-icon-item tabindex="0" class="person" on-track="handleTrack" >
+    <paper-icon-item tabindex="0" class="person" on-track="handleTrack" on-tap="onTap">
 
         <div class="print" hidden="{{!order.schedule}}" item-icon on-click="printMe"><iron-icon icon="icons:print"></iron-icon><paper-ripple></paper-ripple></div>
 
@@ -343,7 +343,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="showInfo" on-click="_selectEdit" hidden="{{!order.infos}}"><iron-icon icon="icons:warning"></iron-icon><span>{{order.infos}}</span></div>
 
     <div class="listItemOrder" hidden="{{!order.list.length}}" on-click="_dontListen">
-      <template  is="dom-repeat" items="{{order.list}}" as="item" >
+      <template  is="dom-repeat" items="{{order.list}}" as="item" observe="{{stocks.length}}">
       <order-item-product item="{{item}}" on-deleteitem="deleteItem" on-changeitem="getAllNeed"></order-item-product>
       </template>
     </div>
@@ -361,7 +361,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       properties: {
         order: {
           type : Object,
-          observer : "observeChange"
+          //observer : "observeChange"
         },        
         edit : {
           type : Boolean,
@@ -523,22 +523,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         return needs;
       },
+      editnew : function(item) {
+
+        console.log('editnew');
+        console.log(item);
+        console.log(this.order);
+
+        if(item.creationDate == this.order.creationDate && !this.order.label) {
+          this._selectEdit();
+        }
+
+      },
       observeChange : function(datas) {
 
-        if(this.order) {
+        if(datas) {
 
-          if(this.order.creationDate) {
-            var diffDate = new Date().getTime() - this.order.creationDate;
-          
-            if(!this.order.label && diffDate < 1000 ) {
+          if(!datas.label) {
 
-              setTimeout(_.bind(function() {
-                if(!this.order.label) {
+            //this._selectEdit();
+
+            /*
+            if(datas.creationDate) {
+              var diffDate = new Date().getTime() - datas.creationDate;
+              console.log(diffDate);
+              if(diffDate < 1000) {
+                setTimeout(_.bind(function() {
                   this._selectEdit();
-                }
-              },this), 100);
-
+                },this), 100);
+              }
             }
+            */
 
           }
 
@@ -639,6 +653,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         e.stopPropagation();
       },
       _selectEdit : function(e) {
+
         if(e) {
           e.preventDefault();
           e.stopPropagation();

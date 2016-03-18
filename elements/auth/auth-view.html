@@ -9,8 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/firebase-element/firebase.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-down-animation.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -27,6 +27,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .loadingInfo {
         text-align: center;
+        width: 100%;
       }
 
       .errorMessage {
@@ -36,17 +37,65 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         box-shadow: 0 1px 1px 0px #aaa;
       }
 
+      paper-dialog {
+        padding:0;
+      }
+
+      .unabletoconnect {
+        margin-bottom: 24px;
+        text-align: center;
+      }
+
+      .unabletoconnect iron-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        margin-bottom: 10px;
+        height: 45px;
+        left: 0;
+        top: 45%;
+        position: absolute;
+      }
+
+      .title {
+        background : var(--default-primary-color);
+        color : var(--text-primary-color);
+        margin:0;
+        padding: 10px;
+        font-size: 30px;
+        font-family: var(--special-font-family);
+      }
+
+      .online {
+        min-width: 210px;
+        padding: 0 15px;
+      }
+
+      .offline {
+        opacity : 0.2;
+        min-width: 210px;
+        pointer-events: none;
+        padding: 0 15px;
+      }
+
+      paper-button {
+        font-size:13px;
+      }
+
     </style>
 
-    <paper-dialog class$="{{_getClass(status)}}" modal="with-backdrop" opened="{{_canOpen(user, network)}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+    <paper-dialog class$="{{_getClass(status)}}" modal="with-backdrop" opened="{{_canOpen(user, network)}}" entry-animation="slide-from-bottom-animation" exit-animation="scale-down-animation">
 
-      <div >
+      <div class="title">Auth</div>
+
+      <div hidden="{{_canlog(user, network)}}" class="unabletoconnect">
+        <iron-icon icon="device:signal-wifi-off" ></iron-icon>
+      </div>
+
+      <div class$="{{_getClass(network)}}">
 
         <div hidden="{{!errorMessage}}" class="errorMessage">{{errorMessage}}</div>
-
-        <p>Login : contact@black-rhino.com</p>
-        <p>password : black-rhino</p>
-
 
         <paper-input required on-tap="_dontListen" id="inputemail" value="{{email}}" on-keydown="_checkKey" class="short" label="Login" ></paper-input>
 
@@ -100,13 +149,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _dontListen : function() {
 
       },
-      _canOpen : function(user, network) {
+      _canlog : function(user, network) {
 
-        if(!user && (!network|| network == 'online') ) {
-          return true;
+        if(network != 'online') {
+          return false;
         }
 
-        return false;
+        return true;
+      },
+      _canOpen : function(user, network) {
+
+        if(user) {
+          return false;
+        }
+
+        return true;
       },
       _checkKey: function(e) {
         this.set('errorMessage', "");        

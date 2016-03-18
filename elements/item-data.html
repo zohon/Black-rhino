@@ -15,13 +15,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template>
 
-    <style></style>
-
-    <firebase-collection location="{{location}}"
+    <firebase-collection id="theFirebasecollection" location="{{location}}"
         ref="{{ref}}"
         data="{{fbItems}}"
         on-firebase-value="_firebaseLoaded"
-        log>
+        > <!-- log -->
     </firebase-collection>
  
     <!-- Backfill items from localstorage. This prevents an initial flash while
@@ -54,8 +52,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         if(!this._firebaseConnected) {
           console.log("_firebaseLoaded "+this.location);
-          console.log(this.items);
-          console.log(this.fbItems);
         }
 
         this.set('_firebaseConnected', true);
@@ -69,12 +65,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _backupLoaded: function() {
 
         if (!this._firebaseConnected && this.backupItems) {
-          console.log("_backupLoaded "+this.name);
-          this.set('items', this.backupItems.slice());
+          this.set('items', this.backupItems.slice());         
+          if(!this.offlineItems) {
+            this.set('offlineItems', JSON.stringify(this.items));
+          }
           this.fire('connected');
         }
-      }
-
+      }    
     });
 
   </script>

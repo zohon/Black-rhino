@@ -29,7 +29,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <template is="dom-repeat" items="{{stocks}}" as="stock" filter="{{_computeFilter(filterBy)}}" observe="isComplete" sort="_sort" observe="{{stocks.length}}">
+    <template is="dom-repeat" items="{{stocks}}" as="stock" filter="{{_computeFilter(filterBy)}}"  sort="_sort" observer="{{stocks.length}}">
       <stock-item stock="{{stock}}"></stock-item>
     </template>
 

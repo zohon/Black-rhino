@@ -450,9 +450,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <div hidden="{{page}}" class="loader"><paper-spinner active></paper-spinner></div>
 
-          <item-data name="orders" location="{{_geturlorder(firebaseLocation, shiftdate)}}" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
+          <item-data id="itemDataOrder" name="orders" location="{{_geturlorder(firebaseLocation, shiftdate)}}" items="{{orders}}" on-connected="_readyFirebaseOrders" ></item-data>
 
-          <item-data name="stocks" location="{{_geturlstocks(firebaseLocation)}}" items="{{stocks}}" on-connected="_readyFirebaseStocks" ></item-data>
+          <item-data  name="stocks" location="{{_geturlstocks(firebaseLocation)}}" items="{{stocks}}" on-connected="_readyFirebaseStocks" ></item-data>
 
           <stock-view stocks="{{stocks}}" hidden="{{!_selectRoute(page, 'stock')}}" class="flex" ></stock-view>
 
@@ -565,7 +565,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
       ready : function() {
-        this.set('firebaseLocation', (this.dev ? this.bdd_dev : this.bdd));
+        //this.set('firebaseLocation', (this.dev ? this.bdd_dev : this.bdd));
       },
       online : function() {
         console.log("main-view online()");
@@ -574,15 +574,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       offline : function() {
         console.log("main-view offline()");
         this.set('network' ,  "offline");
-
-        if(this.page == 'user') {
-          this.set('page', "order");
-        }
-
       },
       showOnlogin : function(user, network) {
 
-        if(user == "" && network == 'online') {
+        if(!user) {
           return false;
         }
 
@@ -600,6 +595,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log("main-view login()");
         if(data.user) {
           this.set('user', data.user);
+          this.set('firebaseLocation', "");
+          this.set('firebaseLocation', (this.dev ? this.bdd_dev : this.bdd));
         }
       },      
       logout : function() {
@@ -609,15 +606,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
       showOfflineIcon : function(network) {
-        console.log('main-view isOffline()');
         if(network == 'offline') {
           return true;
         }
         return false;
       },
       showUserIcon : function(user, network) {
-
-        console.log("main-view showUser()");
         if(user != "" && network == 'online') {
           return true;
         }

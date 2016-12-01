@@ -48,7 +48,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script type="text/javascript" src="build/libs/underscore-min.js"></script>
 
   <!-- will be replaced with elements/elements.vulcanized.html -->
-  <!--<link rel="import" href="elements/elements.html">-->
+  <!-- <link rel="import" href="elements/elements.html"> -->
   <link rel="import" href="build/elements.html">
 
   <!-- endreplace-->
@@ -70,7 +70,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-toast id="caching-complete" duration="6000" text="Caching complete! This app will work offline."></paper-toast>
     <paper-toast id="toast" text="" duration="3000"></paper-toast>
 
-    <platinum-sw-register auto-register clients-claim skip-waiting 
+    <platinum-sw-register auto-register clients-claim skip-waiting
       on-service-worker-installed="displayInstalledToast">
       <platinum-sw-cache default-cache-strategy="networkFirst" precache-file="precache.json">
       </platinum-sw-cache>

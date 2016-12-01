@@ -1,11 +1,37 @@
 <!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+
+download app : APP & WEB POS PRINTER DRIVER
+https://play.google.com/store/apps/details?id=com.fidelier.posprinterdriver&hl=fr
+
+https://bitbucket.org/fidelier/posprinterdrivertest/src
+
+Print From Web in an android device web. Just make a link:
+
+a href="com.fidelier.printfromweb://$biguhw$Print From Web$intro$$small$Print small letter$intro$->$intro$->$intro$->$intro$$intro$$intro$$intro$$cut$$intro$"Test print from web/a
+
+Print direct from Server!
+Read instruction in the web
+
+Open and close a tag
+Include helpers for ESC commands like
+Easy font size selection.
+$small$ For small size
+$smallh$ For small size with double hight
+$smallw$ For small size with double width
+$smallhw$ For small size with double hight and width
+$smallu$ For small size underline
+$smalluh$ For small size with double hight underline
+$smalluw$ For small size with double width underline
+$smalluhw$ For small size with double hight and width underline
+
+$big$ For big size
+$bigh$ For big size with double hight
+$bigw$ For big size with double width
+$bighw$ For big size with double hight and width
+Add u to underline
+$cut$ To cut the paper
+$drawer$ To open the first drawer
+
 -->
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
@@ -17,13 +43,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style>
       :host {
         display: block;
-        -webkit-user-select: none; /* Chrome/Safari */        
+        -webkit-user-select: none; /* Chrome/Safari */
         -moz-user-select: none; /* Firefox */
         -ms-user-select: none; /* IE10+ */
         /* Rules below not implemented in browsers yet */
         -o-user-select: none;
         user-select: none;
-              
+
       }
       paper-fab {
       }
@@ -115,8 +141,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <paper-input on-tap="_dontListen" type="number" value="{{tva20}}" on-keydown="_checkKey" class="short" label="TVA 20%" ></paper-input>
 
+        <!-- <a href="com.fidelier.printfromweb://$biguhw$Print From Web$intro$$small$Print small letter$intro$->$intro$->$intro$->$intro$$intro$$intro$$intro$$cut$$intro$">tessst</a> -->
+
         <div class="action">
-          <paper-fab icon="icons:print" on-click="print"></paper-fab>
+          <a href="{{_formatToPOS(date, nbrepas, total, tva10, tva20)}}">
+            <paper-fab icon="icons:print" on-click="print"></paper-fab>
+          </a>
         </div>
       </div>
 
@@ -141,14 +171,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         ntva  : {
           type : String,
           value : 'RF 28 804417772'
-        }              
+        }
+      },
+      _formatToPOS : function() {
+
+        var titre = "SARL BLACK RHINO";
+
+        var siren = "Siren:804 417 772 RCS Grenoble";
+
+        var ape = "Ape:5610 A";
+
+        var ntva = "N° TVA Intercommunautaire:RF 28 804417772";
+
+        var date ="Le "+this.date;
+
+        var nbrepas = "Nombre de repas:"+this.nbrepas;
+
+        var total = "Total prix TTC:"+this.total+"Euros";
+
+        var tva10 = "Dont TVA à 10%:"+this.tva10+"euros";
+
+        var tva20 = "Dont TVA à 20%:"+this.tva20+"euros";
+
+        var result = "com.fidelier.printfromweb://"+"$bigh$"+titre+"$intro$$small$"+siren+"$intro$"+ape+"$intro$"+ntva+"$intro$"+date+"$intro$"+nbrepas+"$intro$"+total;
+
+        if(this.tva10) {
+          result += "$intro$"+tva10;
+        }
+
+        if(this.tva20) {
+          result += "$intro$"+tva20;
+        }
+
+        return result+"$intro$$intro$$intro$$cut$$intro$";
       },
       ready : function() {
         var date = new Date();
         var day = date.getDate();
         if(day < 10) {
           day = "0"+day;
-        }        
+        }
         var monthIndex = parseFloat(date.getMonth())+1;
         if(monthIndex < 10) {
           monthIndex = "0"+monthIndex;
@@ -157,6 +219,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.set('date', day+"/"+monthIndex+"/"+year);
       },
       print : function(e) {
+        return;
         if(e) {
           e.preventDefault();
           e.stopPropagation();

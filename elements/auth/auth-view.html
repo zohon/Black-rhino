@@ -85,7 +85,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <paper-dialog class$="{{_getClass(status)}}" modal="with-backdrop" opened="{{_canOpen(user, network)}}" entry-animation="slide-from-bottom-animation" exit-animation="scale-down-animation">
+    <paper-dialog class$="{{_getClass(status)}}" modal="with-backdrop" opened="{{_canOpen(user, network)}}" >
 
       <div class="title">Auth</div>
 
@@ -131,7 +131,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         password : {
           value :"black-rhino"
-        },                
+        },
         status : {
           value :""
         },
@@ -144,7 +144,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         location: {
           notify: true,
           observer : 'initFirebase',
-        },        
+        },
       },
       _dontListen : function() {
 
@@ -166,7 +166,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return true;
       },
       _checkKey: function(e) {
-        this.set('errorMessage', "");        
+        this.set('errorMessage', "");
         if (e.keyCode === 13) {
           this.submit();
         }
@@ -191,7 +191,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           } else {
             /* we're disconnected! */
-            console.log("we're disconnected!");           
+            console.log("we're disconnected!");
             this.fire('offline');
           }
         }.bind(this));
@@ -256,7 +256,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       logout : function() {
         this.ref.unauth();
         this.fire('logout');
-      },     
+      },
       signIn: function(email, password) {
         console.log("signIn");
 
@@ -281,7 +281,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
       userSuccess : function(user) {
-        
+
         this.set({
           email : '',
           password : ''
